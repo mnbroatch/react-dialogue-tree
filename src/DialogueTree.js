@@ -6,8 +6,7 @@ import defaultStyles from './styles.js'
 export default function DialogueTree ({
   dialogue,
   customComponents = {},
-  customScripts = {},
-  transformText
+  customScripts = {}
 }) {
   const styles = defaultStyles
   const [ history, setHistory ] = useState([])

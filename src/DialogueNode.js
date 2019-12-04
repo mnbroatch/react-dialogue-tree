@@ -13,11 +13,10 @@ export default function DialogueNode (props) {
     customScripts,
     styles = {},
     text,
-    then,
-    transformText
+    then
   } = props
   useEffect(() => {
-    if (active && script) findScript(customScripts, script)()
+    if (script) findScript(customScripts, script)()
   }, [])
 
   const rootClassName = active
@@ -39,7 +38,6 @@ export default function DialogueNode (props) {
         customScripts={customScripts}
         styles={styles.dialogueTreeInner} 
         then={then}
-        transformText={transformText}
       />
     </div>
   )

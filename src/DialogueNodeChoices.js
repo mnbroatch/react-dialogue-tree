@@ -9,8 +9,7 @@ export default function DialogueNodeChoices ({
   script,
   styles = {},
   text,
-  then,
-  transformText
+  then
 }) {
   if (Array.isArray(choices) && choices.length === 0) {
     //  Empty array explicitly means no choices.
@@ -42,7 +41,7 @@ export default function DialogueNodeChoices ({
             className='dialogue-node-choices__choice'
             onClick={active ? choiceCallback : undefined}
           >
-            {transformText ? transformText(choice.text) : choice.text}
+            {choice.text}
           </li>
         )
       })}
