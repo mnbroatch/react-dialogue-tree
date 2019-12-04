@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import ReactMarkdown from 'react-markdown'
 import DialogueNodeChoices from './DialogueNodeChoices.js'
 
 export default function DialogueNode (props) {
@@ -32,7 +31,7 @@ export default function DialogueNode (props) {
   const MaybeCustomComponent = customComponents && customComponents[customComponent]
   const prompt = MaybeCustomComponent
     ? <MaybeCustomComponent {...props} />
-    : <ReactMarkdown source={text} />
+    : text
 
   return (
     <div style={rootStyles} className={rootClassName}>

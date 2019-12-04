@@ -1,0 +1,40 @@
+{
+  "name": "react-dialogue-tree",
+  "version": "0.1.0",
+  "description": "Flexible Dialogue Tree for React",
+  "main": "dist/react-dialogue-tree.min.js",
+  "scripts": {
+    "build": "rollup -c -o dist/react-dialogue-tree.min.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mnbroatch/react-dialogue-tree.git"
+  },
+  "keywords": [
+    "react",
+    "dialogue",
+    "ui"
+  ],
+  "author": "Matthew Broatch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mnbroatch/react-dialogue-tree/issues"
+  },
+  "homepage": "https://github.com/mnbroatch/react-dialogue-tree#readme",
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-react": "^7.7.4",
+    "@rollup/plugin-json": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^6.0.0",
+    "react": "^16.8.0",
+    "rollup": "^1.27.8",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^5.1.2"
+  },
+  "dependencies": {}
+}

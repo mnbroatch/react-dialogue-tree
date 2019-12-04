@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, cloneElement } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import DialogueNode from './DialogueNode.js'
 
 import defaultStyles from './styles.js'

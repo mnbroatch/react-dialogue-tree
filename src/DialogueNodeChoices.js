@@ -1,5 +1,4 @@
-import React, { useState, useCallback, cloneElement } from 'react'
-import ReactMarkdown from 'react-markdown'
+import React, { useState, useCallback } from 'react'
 
 export default function DialogueNodeChoices ({
   active,
@@ -42,7 +41,7 @@ export default function DialogueNodeChoices ({
             className='dialogue-node-choices__choice'
             onClick={active ? choiceCallback : undefined}
           >
-            <ReactMarkdown source={choice.text} />
+            {choice.text}
           </li>
         )
       })}
