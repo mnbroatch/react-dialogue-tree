@@ -1,0 +1,23 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+}
+
+.welcome-dialogue-story {
+  height: 100%;
+  background-color: #FDDD9B;
+  box-sizing: border-box;
+  padding: 8px;
+}
+
+.dialogue-tree__container {
+  bottom: 10px;
+  height: 300px;
+  left: 10px;
+  position: fixed;
+  right: 10px;
+}

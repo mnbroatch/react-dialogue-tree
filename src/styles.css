@@ -1,0 +1,43 @@
+.dialogue-tree {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 10px;
+  background-color: #616163;
+}
+
+.dialogue-tree__inner {
+  box-sizing: border-box;
+  height: 100%;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #929487;
+}
+
+.dialogue-node {
+  background-color: none;
+  border-radius: 5px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.dialogue-node--current {
+  background-color: white;
+}
+
+.dialogue-node-choices {
+  list-style-type: none; 
+  padding: 0;
+}
+
+.dialogue-node-choices__choice {
+  display:flex;
+  padding-left: 40px;
+}
+
+.dialogue-node-choices__choice:hover {
+  background-color: lightGrey; 
+}
+
+.dialogue-node-choices__choice::before {
+  content: '-';
+}
