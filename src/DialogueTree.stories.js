@@ -1,15 +1,21 @@
 import React from 'react';
 import { forceReRender } from '@storybook/react';
 import { withKnobs, object } from '@storybook/addon-knobs';
-
-import DialogueTree from './index.js';
-import RainbowWaveAnimation from '../RainbowWaveAnimation';
+import Markdown from 'markdown-to-jsx';
+import DialogueTree, { DialogueNode } from './index.js';
 
 import './styles.stories.css'
 
 //  https://coolors.co/616163-fddd9b-929487-a1b0ab-c3dac3
 
-export const Basic Dialogue = () => (
+const DialogueNodeWithMarkdown = (props) => (
+  <DialogueNode
+    {...props}
+    text={<Markdown>{props.text}</Markdown>}
+  />
+)
+
+export const BasicDialogue = () => (
   <div className={'dialogue-tree-container'}>
     <DialogueTree
       dialogue={{
@@ -18,9 +24,10 @@ export const Basic Dialogue = () => (
           "then": "world"
         },
         "world": {
-          "text": "world"
+          "text": "**world**"
         }
       }}
+      customComponents={{ default: DialogueNodeWithMarkdown }}
     />
   </div>
 )

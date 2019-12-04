@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rollup -c -o dist/react-dialogue-tree.min.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "start-storybook",
     "prepare": "npm run build"
   },
   "repository": {
@@ -31,11 +32,15 @@
     "@babel/preset-react": "^7.7.4",
     "@rollup/plugin-json": "^4.0.0",
     "@rollup/plugin-node-resolve": "^6.0.0",
+    "babel-loader": "^8.0.6",
+    "markdown-to-jsx": "^6.10.3",
     "react": "^16.8.0",
     "rollup": "^1.27.8",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-terser": "^5.1.2"
+    "rollup-plugin-terser": "^5.1.2",
+    "@storybook/react": "^5.1.11",
+    "@storybook/addon-knobs": "^5.2.6"
   },
   "dependencies": {}
 }

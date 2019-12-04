@@ -5,8 +5,8 @@ export default function DialogueNodeChoices ({
   changeNode,
   choices,
   chosenChoice,
+  customScripts,
   script,
-  scripts,
   styles = {},
   text,
   then,
@@ -27,11 +27,11 @@ export default function DialogueNodeChoices ({
   return (
     <ul style={styles.choices} className='dialogue-node-choices'>
       {choices.map((choice, index) => {
-        if (choice.hiddenWhen && scripts[choice.hiddenWhen]()) return null
+        if (choice.hiddenWhen && customScripts[choice.hiddenWhen]()) return null
 
         const choiceCallback = () => {
           if (!active) return
-          const scriptToRun = findScript(scripts, script)
+          const scriptToRun = findScript(customScripts, script)
           if (scriptToRun) scriptToRun()
           changeNode(choice)
         }
@@ -42,7 +42,7 @@ export default function DialogueNodeChoices ({
             className='dialogue-node-choices__choice'
             onClick={active ? choiceCallback : undefined}
           >
-            {transformText ? transformText(choice.text) : text}
+            {transformText ? transformText(choice.text) : choice.text}
           </li>
         )
       })}
@@ -50,8 +50,8 @@ export default function DialogueNodeChoices ({
   )
 }
 
-function findScript (scripts, accessPath) {
+function findScript (customScripts, accessPath) {
   if (!accessPath) return null
   const pathSegments = accessPath.split('.')
-  return pathSegments.reduce((acc, seg) => acc[seg], scripts)
+  return pathSegments.reduce((acc, seg) => acc[seg], customScripts)
 }

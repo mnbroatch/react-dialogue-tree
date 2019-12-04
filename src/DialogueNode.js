@@ -10,14 +10,14 @@ export default function DialogueNode (props) {
     customComponent,
     customComponents,
     script,
-    scripts,
+    customScripts,
     styles = {},
     text,
     then,
     transformText
   } = props
   useEffect(() => {
-    if (active && script) findScript(scripts, script)()
+    if (active && script) findScript(customScripts, script)()
   }, [])
 
   const rootClassName = active
@@ -28,35 +28,25 @@ export default function DialogueNode (props) {
     ? { ...styles.dialogueNode, ...styles.dialogueNodeCurrent }
     : { ...styles.dialogueNode }
 
-  //  Need intermediary variable because it has to be TitleCase
-  const MaybeCustomComponent = customComponents && customComponents[customComponent]
-  const prompt = MaybeCustomComponent
-    ? (
-      <MaybeCustomComponent
-        {...props}
-        text={transformText ? transformText(choice.text) : text}
-      />
-    )
-    : text
-
   return (
     <div style={rootStyles} className={rootClassName}>
-      {prompt}
+      {text}
       <DialogueNodeChoices
         active={active}
         choices={choices}
         chosenChoice={chosenChoice}
         changeNode={changeNode}
-        scripts={scripts}
+        customScripts={customScripts}
         styles={styles.dialogueTreeInner} 
         then={then}
+        transformText={transformText}
       />
     </div>
   )
 }
 
-function findScript (scripts, accessPath) {
+function findScript (customScripts, accessPath) {
   if (!accessPath) return null
   const pathSegments = accessPath.split('.')
-  return pathSegments.reduce((acc, seg) => acc[seg], scripts)
+  return pathSegments.reduce((acc, seg) => acc[seg], customScripts)
 }
