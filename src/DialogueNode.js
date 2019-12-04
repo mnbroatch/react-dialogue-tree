@@ -13,7 +13,8 @@ export default function DialogueNode (props) {
     scripts,
     styles = {},
     text,
-    then
+    then,
+    transformText
   } = props
   useEffect(() => {
     if (active && script) findScript(scripts, script)()
@@ -30,7 +31,12 @@ export default function DialogueNode (props) {
   //  Need intermediary variable because it has to be TitleCase
   const MaybeCustomComponent = customComponents && customComponents[customComponent]
   const prompt = MaybeCustomComponent
-    ? <MaybeCustomComponent {...props} />
+    ? (
+      <MaybeCustomComponent
+        {...props}
+        text={transformText ? transformText(choice.text) : text}
+      />
+    )
     : text
 
   return (
