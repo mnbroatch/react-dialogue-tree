@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import DialogueNode from './DialogueNode.js'
 
-import defaultStyles from './styles.js'
+import './styles.css'
 
 export default function DialogueTree ({
   dialogue,
   customComponents = {},
   customScripts = {}
 }) {
-  const styles = defaultStyles
   const [ history, setHistory ] = useState([])
   const [ currentNode, setCurrentNode ] = useState(dialogue.root)
   const innerRef = useRef()
@@ -24,10 +23,10 @@ export default function DialogueTree ({
   })
 
   return (
-    <div style={styles.dialogueTree} className='dialogue-tree'>
-      <div style={styles.dialogueTreeInner} className='dialogue-tree__inner' ref={innerRef}>
+    <div className='dialogue-tree'>
+      <div className='dialogue-tree__inner' ref={innerRef}>
         {[ ...history, currentNode ].map((node, index) => {
-          const NodeComponent = customComponents[node.customComponent]
+          const NodeComponent = customComponents[node.component]
             || customComponents.default
             || DialogueNode
 
@@ -39,7 +38,6 @@ export default function DialogueTree ({
               customScripts={customScripts}
               customComponents={customComponents}
               active={index === history.length}
-              styles={styles.dialogueTreeInner} 
             />
           )
         })}

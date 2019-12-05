@@ -4,7 +4,7 @@ import { withKnobs, object } from '@storybook/addon-knobs';
 import Markdown from 'markdown-to-jsx';
 import DialogueTree, { DialogueNode } from './index.js';
 
-import './styles.stories.css'
+import './storyStyles.css'
 
 //  https://coolors.co/616163-fddd9b-929487-a1b0ab-c3dac3
 

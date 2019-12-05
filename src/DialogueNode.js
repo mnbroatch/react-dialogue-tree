@@ -7,11 +7,8 @@ export default function DialogueNode (props) {
     changeNode,
     choices,
     chosenChoice,
-    customComponent,
-    customComponents,
-    script,
     customScripts,
-    styles = {},
+    script,
     text,
     then
   } = props
@@ -23,12 +20,8 @@ export default function DialogueNode (props) {
     ? 'dialogue-node dialogue-node--current'
     : 'dialogue-node'
 
-  const rootStyles = active
-    ? { ...styles.dialogueNode, ...styles.dialogueNodeCurrent }
-    : { ...styles.dialogueNode }
-
   return (
-    <div style={rootStyles} className={rootClassName}>
+    <div className={rootClassName}>
       {text}
       <DialogueNodeChoices
         active={active}
@@ -36,7 +29,6 @@ export default function DialogueNode (props) {
         chosenChoice={chosenChoice}
         changeNode={changeNode}
         customScripts={customScripts}
-        styles={styles.dialogueTreeInner} 
         then={then}
       />
     </div>

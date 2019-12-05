@@ -8,10 +8,10 @@ Dialogue Tree is a react component that produces a video game-style branching di
 It is extremely flexible:
   - Dialogue logic includes branching, looping, or jumping to any node.
   - You can run custom scripts when a node enters, or when a choice is made.
-  - You can provide a custom react component to use instead of any node in the tree.
   - You can provide custom styles 
+  - You can provide a custom react component to use instead of any (or every) node in the tree.
 
-With the exception of the custom scripts, custom react components, and custom styles, the tree's only input is a simple, human readable JSON format.
+Excepting custom scripts, custom react components, and custom styles, the tree's only input is a simple, human readable JSON format.
 
 
 How do I install it?
@@ -130,23 +130,16 @@ Remember that a dialogue node with a `then` but no `choices` property gets a def
 
 ### Styling
 
-For maximum drop-in-ability to any build system, inline styles are used. You can supply your own styles object, which will be merged with the defaults.
-
-
-Supplying a classname prefix will disable most inline styles (some must still be managed by view logic javascript).
-
-
-default 
 
 ### Advanced
 
 ##### script
 
-You can run custom functions either when a dialogue node is arrived at or a choice is chosen. These are supplied with a `scripts` object.
+You can run custom functions either when a dialogue node is arrived at or a choice is chosen. These are supplied with a `customScripts` object.
 
     <DialogueTree
       dialogue={myDialogue}
-      scripts={{
+      customScripts={{
         logHello: () => { console.log('hello') },
         logWorld: () => { console.log('world') }
       }}
@@ -180,10 +173,10 @@ You can run custom functions either when a dialogue node is arrived at or a choi
 
 As soon as the dialogue starts, the root node is arrived at. The root node has a `script` property that points to `logHello`, so that runs. If the user then picks the "world" choice, the `logWorld` script runs because of the choice node's `script` property.
 
-The scripts object doesn't have to be flat; in the dialogue you can include the access path to the desired script, like so:
+The customScripts object doesn't have to be flat; in the dialogue you can include the access path to the desired script, like so:
 
 
-    const scripts = {
+    const customScripts = {
       logs: {
         hello: () => { console.log('hello') },
         world: () => { console.log('world') }
@@ -197,9 +190,9 @@ The scripts object doesn't have to be flat; in the dialogue you can include the 
     }
 
 
-##### customComponent
+##### component
 
-Instead of a `text` property, a dialogue node can have a `customComponent` property. Components are supplied in a customComponents object.
+Instead of a `text` property, a dialogue node can have a `component` property. Components are supplied in a customComponents object.
 
 
     <DialogueTree
@@ -214,7 +207,7 @@ Instead of a `text` property, a dialogue node can have a `customComponent` prope
 
     {
       "root": {
-        "customComponent": "Echo",
+        "component": "Echo",
         "yell": "echo"
       }
     }
@@ -226,8 +219,6 @@ This dialogue will show the arbitrarily-added "yell" value three times.
 This custom component will be supplied all the properties of the dialogue node (`then`, `choices`, arbitrary custom properties, etc.), plus:
 
 **scripts** - The custom scripts object passed to DialogueTree (defaults to an empty object)
-**customComponents** - The custom components object passed to DialogueTree (defaults to an empty object)
-**styles** - The component's inline styles
 **changeNode** - If you're hiding the choices section (via an empty `choices` array in a dialogue node), you'll want a way to continue the dialogue. The **changeNode** function should be called with a choice node (an object with a `then` property pointing to the dialogue node to jump to).
 **active** - This boolean tells you whether the node is the current node or if it is being rendered in the dialogue history.
 **chosenChoice** - This is the choice node that was chosen when this dialogue node was active. If it is active now, this prop will be `undefined`.

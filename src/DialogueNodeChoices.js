@@ -7,13 +7,12 @@ export default function DialogueNodeChoices ({
   chosenChoice,
   customScripts,
   script,
-  styles = {},
   text,
   then
 }) {
   if (Array.isArray(choices) && choices.length === 0) {
     //  Empty array explicitly means no choices.
-    //  Dead end unless customComponent calls changeNode.
+    //  Dead end unless custom component calls changeNode.
     return null
   } else if (!choices) {
     choices = [{ text: 'Continue', then }]
@@ -24,7 +23,7 @@ export default function DialogueNodeChoices ({
   // TODO: "Choice Has Been Clicked Before" indicator
 
   return (
-    <ul style={styles.choices} className='dialogue-node-choices'>
+    <ul className='dialogue-node-choices'>
       {choices.map((choice, index) => {
         if (choice.hiddenWhen && customScripts[choice.hiddenWhen]()) return null
 
