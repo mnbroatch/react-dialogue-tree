@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel' 
 import { terser } from "rollup-plugin-terser";
+import postcss from 'rollup-plugin-postcss'
 
 const config = {
   input: 'src/index.js',
@@ -12,9 +13,8 @@ const config = {
     }
   },
   plugins: [
-    babel({
-      exclude: "node_modules/**"
-    }),
+    babel({ exclude: "node_modules/**" }),
+    postcss({ plugins: [] }),
     terser()
   ]
 }

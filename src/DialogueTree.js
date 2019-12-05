@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import DialogueNode from './DialogueNode.js'
+import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 import './styles.css'
 
@@ -26,9 +27,11 @@ export default function DialogueTree ({
     <div className='dialogue-tree'>
       <div className='dialogue-tree__inner' ref={innerRef}>
         {[ ...history, currentNode ].map((node, index) => {
-          const NodeComponent = customComponents[node.component]
-            || customComponents.default
-            || DialogueNode
+          const NodeComponent = getFromNestedObject(
+            customComponents,
+            node.component,
+            customComponents.default || DialogueNode
+          )
 
           return (
             <NodeComponent
@@ -46,8 +49,7 @@ export default function DialogueTree ({
   )
 }
 
-function findNode (dialogue, newNodeOrAccessPath) {
-  if (typeof newNodeOrAccessPath === 'object') return newNodeOrAccessPath
-  const pathSegments = newNodeOrAccessPath.split('.')
-  return pathSegments.reduce((acc, seg) => acc[seg], dialogue)
+function findNode (dialogue, newNodeOrId) {
+  if (typeof newNodeOrId === 'object') return newNodeOrId
+  return dialogue[newNodeOrId]
 }

@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react'
+import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 export default function DialogueNodeChoices ({
   active,
@@ -10,17 +11,10 @@ export default function DialogueNodeChoices ({
   text,
   then
 }) {
-  if (Array.isArray(choices) && choices.length === 0) {
-    //  Empty array explicitly means no choices.
-    //  Dead end unless custom component calls changeNode.
-    return null
-  } else if (!choices) {
-    choices = [{ text: 'Continue', then }]
-  } else if (chosenChoice) {
-    choices = [chosenChoice]
-  }
-
   // TODO: "Choice Has Been Clicked Before" indicator
+
+  choices = getChoices(choices, chosenChoice, then)
+  if (!choices) return null
 
   return (
     <ul className='dialogue-node-choices'>
@@ -29,7 +23,7 @@ export default function DialogueNodeChoices ({
 
         const choiceCallback = () => {
           if (!active) return
-          const scriptToRun = findScript(customScripts, script)
+          const scriptToRun = getFromNestedObject(customScripts, script)
           if (scriptToRun) scriptToRun()
           changeNode(choice)
         }
@@ -48,8 +42,20 @@ export default function DialogueNodeChoices ({
   )
 }
 
-function findScript (customScripts, accessPath) {
-  if (!accessPath) return null
-  const pathSegments = accessPath.split('.')
-  return pathSegments.reduce((acc, seg) => acc[seg], customScripts)
+function getChoices (choices, chosenChoice, then) {
+  switch (true) {
+    case (!!chosenChoice):
+      return [chosenChoice]  // Only show chosen choice, if applicable
+    case (!choices && !!then):
+      return [{ text: 'Continue', then }]  // Construct default choice
+
+    //  We can't rely solely on absence of "then" property to disable
+    //  choices, because a custom component might use that property to
+    //  call changeNode({ then }).
+    case (Array.isArray(choices) && choices.length === 0):
+    case (!choices && !then):
+      return null
+    default:
+      return choices
+  }
 }

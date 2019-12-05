@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import DialogueNodeChoices from './DialogueNodeChoices.js'
+import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 export default function DialogueNode (props) {
   const {
@@ -13,7 +14,7 @@ export default function DialogueNode (props) {
     then
   } = props
   useEffect(() => {
-    if (script) findScript(customScripts, script)()
+    if (script) getFromNestedObject(customScripts, script)()
   }, [])
 
   const rootClassName = active
@@ -33,10 +34,4 @@ export default function DialogueNode (props) {
       />
     </div>
   )
-}
-
-function findScript (customScripts, accessPath) {
-  if (!accessPath) return null
-  const pathSegments = accessPath.split('.')
-  return pathSegments.reduce((acc, seg) => acc[seg], customScripts)
 }

@@ -25,19 +25,14 @@
 }
 
 .dialogue-node-choices {
-  list-style-type: none; 
-  padding: 0;
+  margin-top: 20px;
 }
 
-.dialogue-node-choices__choice {
-  display:flex;
-  padding-left: 40px;
+.dialogue-node--current .dialogue-node-choices__choice {
+  list-style-type: circle; 
 }
 
-.dialogue-node-choices__choice:hover {
+.dialogue-node--current .dialogue-node-choices__choice:hover {
+  list-style-type: disc; 
   background-color: lightGrey; 
-}
-
-.dialogue-node-choices__choice::before {
-  content: '-';
 }
