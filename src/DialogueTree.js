@@ -9,6 +9,11 @@ export default function DialogueTree ({
   customComponents = {},
   customScripts = {}
 }) {
+  if (!dialogue || !dialogue.root) {
+    console.error('DialogueTree requires a "dialogue" object with a "root" property')
+    return null
+  }
+
   const [ history, setHistory ] = useState([])
   const [ currentNode, setCurrentNode ] = useState(dialogue.root)
   const innerRef = useRef()
@@ -25,7 +30,13 @@ export default function DialogueTree ({
 
   return (
     <div className='dialogue-tree'>
-      <div className='dialogue-tree__inner' ref={innerRef}>
+      <div className='dialogue-tree__inner' 
+        ref={innerRef}
+        style={{
+          height: '100%',
+          overflowY: 'auto'
+        }}
+      >
         {[ ...history, currentNode ].map((node, index) => {
           const NodeComponent = getFromNestedObject(
             customComponents,
@@ -33,15 +44,27 @@ export default function DialogueTree ({
             customComponents.default || DialogueNode
           )
 
+          const active = index === history.length
+
+          const nodeWrapperClass = active
+            ? 'dialogue-tree__node-wrapper dialogue-tree__node-wrapper--active'
+            : 'dialogue-tree__node-wrapper'
+
+          //  Node spacer has top padding so there's some headroom
+          //  when we scroll to the latest node automatically.
           return (
-            <NodeComponent
-              key={index}
-              {...node}
-              changeNode={changeNode}
-              customScripts={customScripts}
-              customComponents={customComponents}
-              active={index === history.length}
-            />
+            <div className='dialogue-tree__node-spacer'>
+              <div className={nodeWrapperClass}>
+                <NodeComponent
+                  key={index}
+                  {...node}
+                  changeNode={changeNode}
+                  customScripts={customScripts}
+                  customComponents={customComponents}
+                  active={active}
+                />
+              </div>
+            </div>
           )
         })}
       </div>

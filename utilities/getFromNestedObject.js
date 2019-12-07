@@ -1,10 +1,10 @@
 export default function getFromNestedObject (object, accessPath, defaultValue) {
-  if (!accessPath) return defaultValue
+  if (!object || !accessPath) return defaultValue
   const pathSegments = accessPath.split('.')
 
   const toReturn = pathSegments.reduce((acc, segment) => (
-    typeof acc === 'undefined' ? acc : acc[segment]
+    typeof acc === 'object' ? acc[segment] : undefined
   ), object)
 
-  return typeof toReturn === 'undefined' ? defaultValue : toReturn
+  return toReturn === undefined ? defaultValue : toReturn
 }

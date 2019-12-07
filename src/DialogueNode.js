@@ -14,15 +14,18 @@ export default function DialogueNode (props) {
     then
   } = props
   useEffect(() => {
-    if (script) getFromNestedObject(customScripts, script)()
+    if (!script) return
+
+    const scriptToRun = getFromNestedObject(customScripts, script)
+    if (scriptToRun) {
+      scriptToRun(props)
+    } else {
+      console.error(`DialogueTree: script missing in customScripts object: ${script}`)
+    }
   }, [])
 
-  const rootClassName = active
-    ? 'dialogue-node dialogue-node--current'
-    : 'dialogue-node'
-
   return (
-    <div className={rootClassName}>
+    <div className='dialogue-node'>
       {text}
       <DialogueNodeChoices
         active={active}

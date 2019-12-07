@@ -1,38 +1,51 @@
 .dialogue-tree {
-  box-sizing: border-box;
   height: 100%;
+  box-sizing: border-box;
   padding: 10px;
   background-color: #616163;
 }
 
 .dialogue-tree__inner {
   box-sizing: border-box;
-  height: 100%;
-  overflow-y: auto;
   padding: 10px;
   background-color: #929487;
 }
 
-.dialogue-node {
-  background-color: none;
-  border-radius: 5px;
-  overflow-y: auto;
-  padding: 10px;
+.dialogue-tree__node-spacer:not(:first-of-type) {
+  padding-top: 8px;
 }
 
-.dialogue-node--current {
-  background-color: white;
+.dialogue-tree__node-wrapper {
+  background-color: none;
+  border-radius: 8px;
+  overflow-y: auto;
+  padding: 12px;
 }
 
 .dialogue-node-choices {
-  margin-top: 20px;
+  margin-top: 12px;
+  margin-bottom: 4px;
 }
 
-.dialogue-node--current .dialogue-node-choices__choice {
+.dialogue-node-choices__choice {
+  padding: 4px;
+  border-radius: 4px;
+}
+
+/* last-of-type is current active node */
+.dialogue-tree__node-spacer:last-of-type .dialogue-tree__node-wrapper {
+  background-color: white;
+}
+
+.dialogue-tree__node-spacer:last-of-type .dialogue-node-choices__choice {
   list-style-type: circle; 
 }
 
-.dialogue-node--current .dialogue-node-choices__choice:hover {
+.dialogue-tree__node-spacer:last-of-type .dialogue-node-choices__choice:hover {
   list-style-type: disc; 
-  background-color: lightGrey; 
+  background-color: #eee; 
+}
+
+.dialogue-tree__node-spacer:last-of-type .dialogue-node-choices__choice:active {
+  background-color: #ccc; 
 }
