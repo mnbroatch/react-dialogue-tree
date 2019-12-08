@@ -3,7 +3,7 @@ import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 export default function DialogueNodeChoices ({
   active,
-  changeNode,
+  goToNode,
   choices,
   chosenChoice,
   customScripts,
@@ -26,7 +26,7 @@ export default function DialogueNodeChoices ({
           if (!active) return
           const scriptToRun = getFromNestedObject(customScripts, script)
           if (scriptToRun) scriptToRun()
-          changeNode(choice)
+          goToNode(choice)
         }
 
         return (
@@ -54,7 +54,7 @@ function getChoices (choices, chosenChoice, then) {
 
     //  We can't rely solely on absence of "then" property to disable
     //  choices, because a custom component might use that property to
-    //  call changeNode({ then }).
+    //  call goToNode({ then }).
     case (Array.isArray(choices) && choices.length === 0):
     case (!choices && !then):
       return null
