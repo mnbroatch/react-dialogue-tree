@@ -53,10 +53,9 @@ export default function DialogueTree ({
           //  Node spacer has top padding so there's some headroom
           //  when we scroll to the latest node automatically.
           return (
-            <div className='dialogue-tree__node-spacer'>
+            <div className='dialogue-tree__node-spacer' key={index}>
               <div className={nodeWrapperClass}>
                 <NodeComponent
-                  key={index}
                   {...node}
                   goToNode={goToNode}
                   customScripts={customScripts}
