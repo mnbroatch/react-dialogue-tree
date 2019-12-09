@@ -20,12 +20,11 @@ export default function DialogueNodeChoices ({
     <ul className='dialogue-node-choices'>
       {choices.map((choice, index) => {
         if (choice.hiddenWhen && customScripts[choice.hiddenWhen]()) return null
-        if (!active && choice.hideInHistory) return null
 
         const choiceCallback = () => {
           if (!active) return
-          const scriptToRun = getFromNestedObject(customScripts, script)
-          if (scriptToRun) scriptToRun()
+          const scriptToRun = getFromNestedObject(customScripts, choice.script)
+          if (scriptToRun) scriptToRun(choice)
           goToNode(choice)
         }
 

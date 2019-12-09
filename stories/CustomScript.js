@@ -7,20 +7,26 @@ const dialogue = {
     choices: [
       {
         text: 'Red',
-        script: 'setBackgroundColor',
+        script: 'changeBackgroundColor',
         color: '#D1462F',
         then: 'root'
       },
       {
         text: 'Yellow',
-        script: 'setBackgroundColor',
+        script: 'changeBackgroundColor',
         color: '#FCFDAF',
         then: 'root'
       },
       {
         text: 'Blue',
-        script: 'setBackgroundColor',
+        script: 'changeBackgroundColor',
         color: '#BFD7EA',
+        then: 'root'
+      },
+      {
+        text: 'White',
+        script: 'changeBackgroundColor',
+        color: '#FFF',
         then: 'root'
       }
     ]
@@ -28,17 +34,21 @@ const dialogue = {
 }
 
 export default () => {
-  const [backgroundColor, setBackgroundColor] = useState('yellow')
+  const [backgroundColor, setBackgroundColor] = useState('#FFF')
+  const changeBackgroundColor = useCallback((node) => {
+    setBackgroundColor(node.color)
+  }, [])
 
   return (
-    <div
-      className={'dialogue-tree-container'}
-      styles={{ backgroundColor }}
-    >
-      <DialogueTree
-        dialogue={dialogue}
-        customScripts={{ setBackgroundColor }}
-      />
+    <div style={{ backgroundColor, height: '100%' }}>
+      <div className={'dialogue-tree-container'}>
+
+        <DialogueTree
+          dialogue={dialogue}
+          customScripts={{ changeBackgroundColor }}
+        />
+
+      </div>
     </div>
   )
 }
