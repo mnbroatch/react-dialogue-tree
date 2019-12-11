@@ -1,33 +1,44 @@
-import React, { useState, useCallback } from 'react';
-import DialogueTree from '../src/index.js';
+import React, { useState, useCallback } from 'react'
+import DialogueTree from '../src/index.js'
 
 const dialogue = {
   root: {
+    text: 'This dialogue increments a counter every time you reach the chooseColor node. It updates the backgroundColor when you choose a color.',
+    then: 'chooseColor'
+  },
+  chooseColor: {
     text: 'What color background do you prefer?',
+    script: 'incrementCounter',
     choices: [
-      {
-        text: 'Red',
-        script: 'changeBackgroundColor',
-        color: '#D1462F',
-        then: 'root'
-      },
       {
         text: 'Yellow',
         script: 'changeBackgroundColor',
         color: '#FCFDAF',
-        then: 'root'
+        then: 'chooseColor'
       },
       {
         text: 'Blue',
         script: 'changeBackgroundColor',
         color: '#BFD7EA',
-        then: 'root'
+        then: 'chooseColor'
+      },
+      {
+        text: 'Red',
+        script: 'changeBackgroundColor',
+        color: '#D1462F',
+        then: {
+          text: 'Hmm, red doesn\'t work so well, does it?',
+          then: 'chooseColor'
+        }
       },
       {
         text: 'White',
         script: 'changeBackgroundColor',
         color: '#FFF',
-        then: 'root'
+        then: {
+          text: 'Back to the basics!',
+          then: 'chooseColor'
+        }
       }
     ]
   }
@@ -35,17 +46,29 @@ const dialogue = {
 
 export default () => {
   const [backgroundColor, setBackgroundColor] = useState('#FFF')
+  const [counter, setCounter] = useState(0)
+
   const changeBackgroundColor = useCallback((node) => {
     setBackgroundColor(node.color)
   }, [])
+
+  const incrementCounter = useCallback((node) => {
+    setCounter(counter + 1)
+  }, [counter])
 
   return (
     <div style={{ backgroundColor, height: '100%' }}>
       <div className={'dialogue-tree-container'}>
 
+        {counter > 0 && (
+          <div style={{ padding: 12, backgroundColor: '#eee' }}>
+            You've faced this decision {counter} times!
+          </div>
+        )}
+
         <DialogueTree
           dialogue={dialogue}
-          customScripts={{ changeBackgroundColor }}
+          customScripts={{ changeBackgroundColor, incrementCounter }}
         />
 
       </div>

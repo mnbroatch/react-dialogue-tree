@@ -37,7 +37,6 @@
     "babel-loader": "^8.0.6",
     "install": "^0.13.0",
     "markdown-to-jsx": "^6.10.3",
-    "npm": "^6.13.2",
     "raw-loader": "^4.0.0",
     "react": "^16.8.0",
     "rollup": "^1.27.8",

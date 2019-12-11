@@ -1,6 +1,10 @@
 /* https://coolors.co/616163-fddd9b-929487-a1b0ab-c3dac3 */
 
-html, body {
+html {
+  min-height: 100%;
+}
+
+body {
   height: 100%;
   margin: 0;
 }
@@ -18,8 +22,14 @@ html, body {
 
 .dialogue-tree-container {
   bottom: 10px;
-  height: 200px;
+  display: flex;
+  flex-direction: column;
+  height: 300px;
   left: 10px;
   position: fixed;
   right: 10px;
+}
+
+.dialogue-tree {
+  flex: 1;
 }
