@@ -1,5 +1,5 @@
 import React from 'react';
-import DialogueTree from '../src'
+import DialogueTree from 'react-dialogue-tree'
 import './styles.css'
 
 export { default as Basic } from './Basic.js';

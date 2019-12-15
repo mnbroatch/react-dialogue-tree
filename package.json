@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
     "@babel/preset-react": "^7.7.4",
     "@rollup/plugin-json": "^4.0.0",
     "@rollup/plugin-node-resolve": "^6.0.0",

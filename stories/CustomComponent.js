@@ -1,5 +1,5 @@
 import React from 'react';
-import DialogueTree from '../src'
+import DialogueTree from 'react-dialogue-tree'
 import SourceCode from './SourceCode.js'
 import sourceCode from '!!raw-loader!./CustomComponent.js';
 

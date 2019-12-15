@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import useInterval from 'react-useinterval'
-import DialogueTree, { DialogueNode } from '../src'
+import DialogueTree, { DialogueNode } from 'react-dialogue-tree'
 import SourceCode from './SourceCode.js';
 import sourceCode from '!!raw-loader!./DefaultCustomComponent.js'
 
@@ -43,10 +43,11 @@ export default () => (
         customComponents={{ default: DialogueNodeWithTypingAnimation }}
       />
 
-    </div>
   </div>
+</div>
 )
 
+// The guts of the typing animation
 function TypingAnimation ({ children, delay }) {
   if (typeof children !== 'string') return null
 
