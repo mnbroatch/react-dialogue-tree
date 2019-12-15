@@ -8,23 +8,23 @@ const dialogue = {
   },
   chooseColor: {
     text: 'What color background do you prefer?',
-    script: 'incrementCounter',
+    scripts: ['incrementCounter'],
     choices: [
       {
         text: 'Yellow',
-        script: 'changeBackgroundColor',
+        scripts: ['changeBackgroundColor'],
         color: '#FCFDAF',
         then: 'chooseColor'
       },
       {
         text: 'Blue',
-        script: 'changeBackgroundColor',
+        scripts: ['changeBackgroundColor'],
         color: '#BFD7EA',
         then: 'chooseColor'
       },
       {
         text: 'Red',
-        script: 'changeBackgroundColor',
+        scripts: ['changeBackgroundColor'],
         color: '#D1462F',
         then: {
           text: 'Hmm, red doesn\'t work so well, does it?',
@@ -33,7 +33,7 @@ const dialogue = {
       },
       {
         text: 'White',
-        script: 'changeBackgroundColor',
+        scripts: ['changeBackgroundColor'],
         color: '#FFF',
         then: {
           text: 'Back to the basics!',

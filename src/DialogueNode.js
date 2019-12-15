@@ -8,18 +8,16 @@ export default function DialogueNode (props) {
     choices,
     chosenChoice,
     customScripts,
-    script,
+    scripts,
     text,
     then
   } = props
   useEffect(() => {
-    if (!script) return
-
-    const scriptToRun = getFromNestedObject(customScripts, script)
-    if (scriptToRun) {
-      scriptToRun(props)
-    } else {
-      console.error(`DialogueTree: script missing in customScripts object: ${script}`)
+    if (scripts) {
+      scripts.forEach((scriptAccessPath) => {
+        const script = getFromNestedObject(customScripts, scriptAccessPath)
+        if (script) script(props)
+      })
     }
   }, [])
 

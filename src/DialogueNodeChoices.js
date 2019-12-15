@@ -7,7 +7,7 @@ export default function DialogueNodeChoices ({
   choices,
   chosenChoice,
   customScripts,
-  script,
+  scripts,
   text,
   then
 }) {
@@ -18,9 +18,15 @@ export default function DialogueNodeChoices ({
     <ul className='dialogue-node-choices'>
       {choicesToDisplay.map((choice, index) => {
         const choiceCallback = () => {
-          if (!!chosenChoice) return
-          const scriptToRun = getFromNestedObject(customScripts, choice.script)
-          if (scriptToRun) scriptToRun(choice)
+          if (chosenChoice) return //  We are in history
+
+          if (choice.scripts) {
+            choice.scripts.forEach((scriptAccessPath) => {
+              const script = getFromNestedObject(customScripts, scriptAccessPath)
+              if (script) script(choice)
+            })
+          }
+
           goToNode(choice)
         }
 
@@ -38,6 +44,8 @@ export default function DialogueNodeChoices ({
   )
 }
 
+// We don't always just show the choices provided. History is
+// displayed differently, and default node is added when needed.
 function getChoicesToDisplay (choices, chosenChoice, then) {
   if (!choices && !then) return [] // Last node in dialogue
 

@@ -19,6 +19,7 @@ How do I install it?
 
 `npm i -S react-dialogue-tree`
 
+
 How do I use it?
 ----------------
 
@@ -143,65 +144,70 @@ Remember that a dialogue node with a `then` but no `choices` property gets a def
 
 ### Styling
 
-For now, overwrite css classes yourself.
+For now, override css classes yourself.
 
 
 ### Advanced
 
-#### script
+#### custom scripts
+
+You can associate one or more scripts with a dialogue node or choice node.
+
+Scripts associated with a dialogue node are run when that node is arrived at. Scripts associated with a choice node are run when that choice is chosen.
 
 You can run custom functions either when a dialogue node is arrived at or a choice is chosen. These are supplied with a `customScripts` object.
+
+This dialogue loops on the root node, logging greetings to the console on each click:
 
     <DialogueTree
       dialogue={myDialogue}
       customScripts={{
-        logHello: () => { console.log('hello') },
-        logWorld: () => { console.log('world') }
+        greet: (node) => { console.log('Hello, `${node.name}.`') }
       }}
     />
 
-    /* myDialogue.json */ 
+    /* myDialogue */ 
 
     {
       "root": {
-        "text": "hello",
-        "script": "logHello",
+        "text": "You have a desire to say hello to everyone present.",
+        "scripts": ["logHello"],
         "choices": [
           {
-            "text": "world",
-            "then": "world",
-            "script": "logWorld"
+            "text": "Greet Mr. Peanutbutter",
+            "scripts": ["greet"],
+            "name": "Mister",
+            "then": "root"
           },
           {
-            "text": "moon",
-            "then": "moon"
+            "text": "Greet Mr. Horseman",
+            "scripts": ["greet"],
+            "name": "Bojack",
+            "then": "root"
+          },
+          {
+            "text": "Greet Ms. Nguyen",
+            "scripts": ["greet"],
+            "name": "Diane",
+            "then": "root"
           }
         ]
-      },
-      "world": {
-        "text": "Hello, world!"
-      },
-      "moon": {
-        "text": "Good night"
       }
     }
 
-As soon as the dialogue starts, the root node is arrived at. The root node has a `script` property that points to `logHello`, so that runs. If the user then picks the "world" choice, the `logWorld` script runs because of the choice node's `script` property.
-
-The customScripts object doesn't have to be flat; in the dialogue you can include the access path to the desired script, like so:
+**Note:** The customScripts object doesn't have to be flat; in the dialogue you can include the access path to the desired script, like so:
 
 
     const customScripts = {
       logs: {
-        hello: () => { console.log('hello') },
-        world: () => { console.log('world') }
+        hello: () => { console.log('hello') }
       }
     }
 
     const worldNode = {
       "text": "world",
       "then": "world",
-      "script": "logs.world"
+      "scripts": ["logs.hello"]
     }
 
 
@@ -209,6 +215,7 @@ The customScripts object doesn't have to be flat; in the dialogue you can includ
 
 Instead of a `text` property, a dialogue node can have a `component` property. Components are supplied in a customComponents object.
 
+This dialogue will show the arbitrarily-added "yell" value three times:
 
     <DialogueTree
       dialogue={myDialogue}
@@ -228,16 +235,13 @@ Instead of a `text` property, a dialogue node can have a `component` property. C
     }
 
 
-This dialogue will show the arbitrarily-added "yell" value three times.
-
-
 This custom component will be supplied all the properties of the dialogue node (`then`, `choices`, arbitrary custom properties, etc.), plus:
 
-**scripts** - The custom scripts object passed to DialogueTree (defaults to an empty object)
+**customScripts** - The custom scripts object passed to DialogueTree (defaults to an empty object)
 **goToNode** - If you're hiding the choices section (via an empty `choices` array in a dialogue node), you'll want a way to continue the dialogue. The **goToNode** function should be called with a choice node (an object with a `then` property pointing to the dialogue node to jump to).
-**isInHistory** - This boolean tells you whether the node is the current node or if it is being rendered in the dialogue history.
 **chosenChoice** - This is the choice node that was chosen when this dialogue node was the current node. This is how you determine whether a node is the current node or in the history-- only nodes in the history will have a chosenChoice.
 
+**component and customComponents**
 
 #### Start somewhere other than "root"
 
@@ -255,3 +259,5 @@ If you want the dialogue to start on a node other than "root", use the "startAt"
       dialogue={myDialogue}
       startAt={'myStartingNode'}
     />
+
+This is nice sometimes, semantically. It also allows a consuming component to dynamically choose the starting position.
