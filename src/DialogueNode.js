@@ -4,7 +4,6 @@ import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 export default function DialogueNode (props) {
   const {
-    active,
     goToNode,
     choices,
     chosenChoice,
@@ -28,7 +27,6 @@ export default function DialogueNode (props) {
     <div className='dialogue-node'>
       {text}
       <DialogueNodeChoices
-        active={active}
         choices={choices}
         chosenChoice={chosenChoice}
         goToNode={goToNode}

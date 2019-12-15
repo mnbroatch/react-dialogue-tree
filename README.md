@@ -1,5 +1,7 @@
 # React Dialogue Tree
 
+...If you want the dialogue to start on a node other than "root", use the "startAt" string prop to specify another root-level dialogue node (similar to using the 'then' property).
+
 What is it?
 -----------
 
@@ -225,5 +227,5 @@ This custom component will be supplied all the properties of the dialogue node (
 
 **scripts** - The custom scripts object passed to DialogueTree (defaults to an empty object)
 **goToNode** - If you're hiding the choices section (via an empty `choices` array in a dialogue node), you'll want a way to continue the dialogue. The **goToNode** function should be called with a choice node (an object with a `then` property pointing to the dialogue node to jump to).
-**active** - This boolean tells you whether the node is the current node or if it is being rendered in the dialogue history.
-**chosenChoice** - This is the choice node that was chosen when this dialogue node was active. If it is active now, this prop will be `undefined`.
+**isInHistory** - This boolean tells you whether the node is the current node or if it is being rendered in the dialogue history.
+**chosenChoice** - This is the choice node that was chosen when this dialogue node was the current node. If it is active now, this prop will be `undefined`.

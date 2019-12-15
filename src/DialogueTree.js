@@ -6,6 +6,7 @@ import './styles.css'
 
 export default function DialogueTree ({
   dialogue,
+  startAt = dialogue.root,
   customComponents = {},
   customScripts = {}
 }) {
@@ -15,11 +16,13 @@ export default function DialogueTree ({
   }
 
   const [ history, setHistory ] = useState([])
-  const [ currentNode, setCurrentNode ] = useState(dialogue.root)
+  const [ currentNode, setCurrentNode ] = useState(startAt)
   const innerRef = useRef()
 
   const goToNode = useCallback((choice) => {
     const newNode = findNode(dialogue, choice.then)
+    if (!newNode) console.error(`Tried going to this missing node: ${choice.then}`)
+
     setHistory([ ...history, { ...currentNode, chosenChoice: choice } ])
     setCurrentNode(newNode)
   })
@@ -44,9 +47,7 @@ export default function DialogueTree ({
             customComponents.default || DialogueNode
           )
 
-          const active = index === history.length
-
-          const nodeWrapperClass = active
+          const nodeWrapperClass = index === history.length
             ? 'dialogue-tree__node-wrapper dialogue-tree__node-wrapper--active'
             : 'dialogue-tree__node-wrapper'
 
@@ -60,7 +61,6 @@ export default function DialogueTree ({
                   goToNode={goToNode}
                   customScripts={customScripts}
                   customComponents={customComponents}
-                  active={active}
                 />
               </div>
             </div>

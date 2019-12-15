@@ -5,10 +5,23 @@
   background-color: #616163;
 }
 
+/*
+ * padding-bottom doesn't work on overflowing containers in edge and ff:
+ * https://github.com/w3c/csswg-drafts/issues/129#issue-156060453
+ *
+ * So, we steal the space from padding and give it to a pseudo-element.
+ * */
 .dialogue-tree__inner {
   box-sizing: border-box;
   padding: 10px;
+  padding-bottom: 0;
   background-color: #929487;
+}
+.dialogue-tree__inner:after {
+  content: "";
+  display: block;
+  height: 10px;
+  width: 100%;
 }
 
 .dialogue-tree__node-spacer:not(:first-of-type) {

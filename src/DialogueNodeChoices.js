@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react'
 import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
+// TODO: "Choice Has Been Clicked Before" indicator
 export default function DialogueNodeChoices ({
-  active,
   goToNode,
   choices,
   chosenChoice,
@@ -11,18 +11,14 @@ export default function DialogueNodeChoices ({
   text,
   then
 }) {
-  // TODO: "Choice Has Been Clicked Before" indicator
-
-  choices = getChoices(choices, chosenChoice, then)
-  if (!choices) return null
+  const choicesToDisplay = getChoicesToDisplay(choices, chosenChoice, then)
+  if (!choicesToDisplay.length) return null
 
   return (
     <ul className='dialogue-node-choices'>
-      {choices.map((choice, index) => {
-        if (choice.hiddenWhen && customScripts[choice.hiddenWhen]()) return null
-
+      {choicesToDisplay.map((choice, index) => {
         const choiceCallback = () => {
-          if (!active) return
+          if (!!chosenChoice) return
           const scriptToRun = getFromNestedObject(customScripts, choice.script)
           if (scriptToRun) scriptToRun(choice)
           goToNode(choice)
@@ -32,7 +28,7 @@ export default function DialogueNodeChoices ({
           <li
             key={index}
             className='dialogue-node-choices__choice'
-            onClick={active ? choiceCallback : undefined}
+            onClick={!chosenChoice ? choiceCallback : undefined}
           >
             {choice.text}
           </li>
@@ -42,22 +38,17 @@ export default function DialogueNodeChoices ({
   )
 }
 
-function getChoices (choices, chosenChoice, then) {
-  switch (true) {
-    case (!!chosenChoice):
-      return [chosenChoice]  // Only show chosen choice, if applicable
-    case (!choices && !!then):
-      // Construct default choice. Not in love with special flag for
-      // the "hide if in history" feature but I can live with it.
-      return [{ text: 'Continue', then, hideInHistory: true }]
+function getChoicesToDisplay (choices, chosenChoice, then) {
+  if (!choices && !then) return [] // Last node in dialogue
 
-    //  We can't rely solely on absence of "then" property to disable
-    //  choices, because a custom component might use that property to
-    //  call goToNode({ then }).
-    case (Array.isArray(choices) && choices.length === 0):
-    case (!choices && !then):
-      return null
-    default:
-      return choices
+  if (choices) {
+    // Empty array will explicitly mean no choices rendered.
+    if (choices.length === 0) return [] 
+    if (chosenChoice) return [chosenChoice]
+    return choices
   }
+  
+  return chosenChoice
+    ? [] // Don't clutter history with default choice
+    : [{ text: 'Continue', then }]
 }
