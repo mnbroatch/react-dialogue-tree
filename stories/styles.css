@@ -1,13 +1,12 @@
 /* https://coolors.co/616163-fddd9b-929487-a1b0ab-c3dac3 */
 
-
 /* There is a bizarre bug where removing this "html" selector removes the "html, body" selector. */
 html {
   height: 100%;
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
 }
 

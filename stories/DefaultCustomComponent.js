@@ -1,75 +1,63 @@
-import React from 'react';
-import Markdown from 'markdown-to-jsx';
-import DialogueTree, { DialogueNode } from '../src/index.js';
-
-const DialogueNodeWithMarkdown = (props) => (
-  <DialogueNode
-    {...props}
-    text={<Markdown>{props.text}</Markdown>}
-  />
-)
+import React, { useState, useEffect } from 'react';
+import useInterval from 'react-useinterval'
+import DialogueTree, { DialogueNode } from '../src'
+import SourceCode from './SourceCode.js';
+import sourceCode from '!!raw-loader!./DefaultCustomComponent.js'
 
 const dialogue = {
   root: {
-    text: `
-This dialogue uses the **default custom component** feature and [markdown-to-jsx](http://daringfireball.net/projects/markdown/) to interpret markdown in all nodes by default!
-
-It claims to be safe, but I would use it only on trusted input.
-    `,
+    text: 'This dialogue uses the "default custom component" feature to add a typing animation to every prompt!',
     then: {
-      text: `
-# Ain't that cool?
-
-Here is
-
-  - some
-  - **random**
-  - ~~formatting~~
-
-Too much *fun*!
-      `,
-      then: {
-        text: `
-OK, enough of that.
-
-Here's the code for the custom component:
-
-    import Markdown from 'markdown-to-jsx';
-    import { DialogueNode } from 'react-dialogue-tree';
-
-    const DialogueNodeWithMarkdown = (props) => (
-      <DialogueNode
-        {...props}
-        text={<Markdown>{props.text}</Markdown>}
-      />
-    )
-
-        `,
-        then: {
-          text: `
-And here's how you set it to be the default for this DialogueTree:
-
-    <div className={'dialogue-tree-container'}>
-      <DialogueTree
-        dialogue={dialogue}
-        customComponents={{
-          default: DialogueNodeWithMarkdown
-        }}
-      />
-    </div>
-
-          `
+      text: 'It works whether a node has choices or not!',
+      choices: [
+        {
+          text: 'Hooray! Again!',
+          then: 'root'
+        },
+        {
+          text: 'That\'s nice.',
+          then: {
+            text: 'It certainly is.'
+          }
         }
-      }
+      ]
     }
   }
 }
 
+// Our custom component. This is passed as the default to DialogueTree below.
+const DialogueNodeWithTypingAnimation = (props) => (
+  <DialogueNode
+    {...props}
+    text={<TypingAnimation delay={20}>{props.text}</TypingAnimation>}
+  />
+)
+
 export default () => (
-  <div className={'dialogue-tree-container'}>
-    <DialogueTree
-      dialogue={dialogue}
-      customComponents={{ default: DialogueNodeWithMarkdown }}
-    />
+  <div>
+    <SourceCode>{sourceCode}</SourceCode>
+    <div className={'dialogue-tree-container'}>
+
+      <DialogueTree
+        dialogue={dialogue}
+        customComponents={{ default: DialogueNodeWithTypingAnimation }}
+      />
+
+    </div>
   </div>
 )
+
+function TypingAnimation ({ children, delay }) {
+  if (typeof children !== 'string') return null
+
+  const [ charactersSoFar, setCharactersSoFar ] = useState(children[0])
+  const isFinished = charactersSoFar.length === children.length
+
+  useInterval(() => {
+    setCharactersSoFar(children.slice(0, charactersSoFar.length + 1))
+  }, isFinished ? null : delay)
+
+  useEffect(() => { setCharactersSoFar(children[0]) }, [children])
+
+  return charactersSoFar
+}

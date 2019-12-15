@@ -42,6 +42,8 @@
     "markdown-to-jsx": "^6.10.3",
     "raw-loader": "^4.0.0",
     "react": "^16.8.0",
+    "react-syntax-highlighter": "^11.0.2",
+    "react-useinterval": "^1.0.1",
     "rollup": "^1.27.8",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",

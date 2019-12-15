@@ -1,13 +1,7 @@
 import React from 'react';
-import DialogueTree from '../src/index.js';
-
-const ButtonDialogueNode = ({ goToNode, text, chosenChoice, then }) => (
-  <button
-    onClick={() => { if (!chosenChoice) goToNode({ then }) }}
-  >
-    {text}
-  </button>
-)
+import DialogueTree from '../src'
+import SourceCode from './SourceCode.js'
+import sourceCode from '!!raw-loader!./CustomComponent.js';
 
 const dialogue = {
   root: {
@@ -22,11 +16,25 @@ const dialogue = {
   }
 }
 
+// Our custom component. This is passed to DialogueTree below.
+const ButtonDialogueNode = ({ goToNode, text, chosenChoice, then }) => (
+  <button
+    onClick={chosenChoice ? undefined : () => { goToNode({ then }) }}
+  >
+    {text}
+  </button>
+)
+
 export default () => (
-  <div className={'dialogue-tree-container'}>
-    <DialogueTree
-      dialogue={dialogue}
-      customComponents={{ ButtonDialogueNode }}
-    />
+  <div>
+    <SourceCode>{sourceCode}</SourceCode>
+    <div className={'dialogue-tree-container'}>
+
+      <DialogueTree
+        dialogue={dialogue}
+        customComponents={{ ButtonDialogueNode }}
+      />
+
+    </div>
   </div>
 )

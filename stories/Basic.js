@@ -1,5 +1,7 @@
 import React from 'react';
-import DialogueTree from '../src/index.js';
+import DialogueTree from '../src'
+import SourceCode from './SourceCode.js'
+import sourceCode from '!!raw-loader!./Basic.js'
 
 const dialogue = {
   root: {
@@ -25,12 +27,17 @@ const dialogue = {
     }
   },
   end: {
-    text: 'Go ahead and check out the other stories under DialogueTree in the sidebar!'
+    text: 'Go ahead and check out the other more advanced stories under DialogueTree in the sidebar!'
   }
 }
 
 export default () => (
-  <div className={'dialogue-tree-container'}>
-    <DialogueTree dialogue={dialogue} />
+  <div>
+    <SourceCode>{sourceCode}</SourceCode>
+    <div className={'dialogue-tree-container'}>
+
+      <DialogueTree dialogue={dialogue} />
+
+    </div>
   </div>
 )
