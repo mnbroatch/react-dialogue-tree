@@ -1,9 +1,9 @@
 import React from 'react';
 import DialogueTree from '../src/index.js';
 
-const ButtonDialogueNode = ({ isInHistory, goToNode, text, then }) => (
+const ButtonDialogueNode = ({ goToNode, text, chosenChoice, then }) => (
   <button
-    onClick={() => { if (!isInHistory) goToNode({ then }) }}
+    onClick={() => { if (!chosenChoice) goToNode({ then }) }}
   >
     {text}
   </button>

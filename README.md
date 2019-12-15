@@ -1,7 +1,5 @@
 # React Dialogue Tree
 
-...If you want the dialogue to start on a node other than "root", use the "startAt" string prop to specify another root-level dialogue node (similar to using the 'then' property).
-
 What is it?
 -----------
 
@@ -34,10 +32,7 @@ The most important prop to this component is the `dialogue` prop. It is an objec
 
 A dialogue node represents one "stage" of the dialogue. Usually, a stage consists of a text prompt and one or more user choices.
 
-### Basic Usage
-
-
-##### text
+### Basic Usage - Dialogue Nodes
 
 Here is the simplest dialogue object possible. The dialogue object has one dialogue node at the path `root` of the tree:
 
@@ -49,29 +44,39 @@ Here is the simplest dialogue object possible. The dialogue object has one dialo
 
 The user will see the `text` "hello world", and that's the end of the dialogue.
 
-There must be a dialogue node at path `root`; this is where the dialogue starts.
+If you want the dialogue to start on a node other than "root", use the "startAt" string prop to specify another root-level dialogue node.
 
-`text` supports basic markdown syntax.
+    const myDialogue = {
+      "myStartingNode": {
+        "text": "hello world"
+      }
+    }
 
+    // ...
 
-##### then
+    <DialogueTree
+      dialogue={myDialogue}
+      startAt={'myStartingNode'}
+    />
 
-Here is another dialogue. Notice that the word "hello" uses markdown to display in bold.
+#### Moving from node to the next: `then`
+
+Here is another dialogue.
 
     {
       "root": {
-        "text": "**hello**",
+        "text": "hello",
         "then": {
           "text": "world"
         }
       }
     }
 
-Notice that the root dialogue node has a `then` property, with a value that is itself a dialogue node.
+The root dialogue node has a `then` property, with a value that is itself a dialogue node.
 
 Because there is a `then` but no `choices` property (more below), a single choice with the default text, "Continue", will be created.
 
-The user will see **"hello"**, with the default choice. That choice leads to the text "world" and the end of the dialogue.
+The user will see "hello", with the default choice. Choosing that choice moves to the next node with text "world" at the end of the dialogue.
 
 This is an equivalent way to write the above:
 
@@ -103,7 +108,7 @@ Loops are OK:
     }
 
 
-##### choices
+#### choices
 
 User choice is the reason to use a dialogue tree. This introduces **choice nodes**
 
@@ -135,12 +140,15 @@ Like dialogue nodes, choice nodes have `text` and `then` properties. The dialogu
 Remember that a dialogue node with a `then` but no `choices` property gets a default "Continue" choice. **If the `choices` property is an empty array, not even the default choice will appear.**
 
 
+
 ### Styling
+
+For now, overwrite css classes yourself.
 
 
 ### Advanced
 
-##### script
+#### script
 
 You can run custom functions either when a dialogue node is arrived at or a choice is chosen. These are supplied with a `customScripts` object.
 
@@ -197,7 +205,7 @@ The customScripts object doesn't have to be flat; in the dialogue you can includ
     }
 
 
-##### component
+#### component
 
 Instead of a `text` property, a dialogue node can have a `component` property. Components are supplied in a customComponents object.
 
@@ -228,4 +236,22 @@ This custom component will be supplied all the properties of the dialogue node (
 **scripts** - The custom scripts object passed to DialogueTree (defaults to an empty object)
 **goToNode** - If you're hiding the choices section (via an empty `choices` array in a dialogue node), you'll want a way to continue the dialogue. The **goToNode** function should be called with a choice node (an object with a `then` property pointing to the dialogue node to jump to).
 **isInHistory** - This boolean tells you whether the node is the current node or if it is being rendered in the dialogue history.
-**chosenChoice** - This is the choice node that was chosen when this dialogue node was the current node. If it is active now, this prop will be `undefined`.
+**chosenChoice** - This is the choice node that was chosen when this dialogue node was the current node. This is how you determine whether a node is the current node or in the history-- only nodes in the history will have a chosenChoice.
+
+
+#### Start somewhere other than "root"
+
+If you want the dialogue to start on a node other than "root", use the "startAt" string prop to specify another root-level dialogue node.
+
+    const myDialogue = {
+      "myStartingNode": {
+        "text": "hello world"
+      }
+    }
+
+    // ...
+
+    <DialogueTree
+      dialogue={myDialogue}
+      startAt={'myStartingNode'}
+    />
