@@ -8,7 +8,8 @@ export default function DialogueTree ({
   dialogue,
   startAt = dialogue.root,
   customComponents = {},
-  customScripts = {}
+  customScripts = {},
+  scrollSpeed = 8
 }) {
   if (!dialogue || !dialogue.root) {
     console.error('DialogueTree requires a "dialogue" object with a "root" property')
@@ -25,11 +26,22 @@ export default function DialogueTree ({
 
     setHistory([...history, { ...currentNode, chosenChoice: choice }])
     setCurrentNode(newNode)
-  })
+  }, [history, currentNode])
 
   useEffect(() => {
-    innerRef.current.lastChild.scrollIntoView({ behavior: 'smooth' })
-  })
+    const scrollEnd = innerRef.current.scrollHeight
+      - Math.max(
+        innerRef.current.lastChild.offsetHeight,
+        innerRef.current.offsetHeight
+      )
+
+    const animate = () => {
+      innerRef.current.scrollTop += scrollSpeed
+      if (innerRef.current.scrollTop < scrollEnd) requestAnimationFrame(animate)
+    }
+
+    requestAnimationFrame(animate)
+  }, [currentNode, innerRef.current && innerRef.current.lastChild])
 
   return (
     <div className='dialogue-tree'>
