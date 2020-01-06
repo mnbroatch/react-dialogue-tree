@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import DialogueTree from 'react-dialogue-tree'
 import SourceCode from './SourceCode.js'
 import sourceCode from '!!raw-loader!./CustomComponent.js';
@@ -17,9 +17,9 @@ const dialogue = {
 }
 
 // Our custom component. This is passed to DialogueTree below.
-const ButtonDialogueNode = ({ goToNode, text, chosenChoice, then }) => (
+const ButtonDialogueNode = ({ makeChoice, text, chosenChoice, then }) => (
   <button
-    onClick={chosenChoice ? undefined : () => { goToNode({ then }) }}
+    onClick={chosenChoice ? undefined : () => { makeChoice({ then }) }}
   >
     {text}
   </button>

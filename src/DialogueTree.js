@@ -1,34 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import DialogueNode from './DialogueNode.js'
 import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 import './styles.css'
 
 export default function DialogueTree ({
-  dialogue,
-  startAt = dialogue.root,
+  currentNode,
+  history,
+  makeChoice,
   customComponents = {},
   customScripts = {},
   scrollSpeed = 8
 }) {
-  if (!dialogue || !dialogue.root) {
-    console.error('DialogueTree requires a "dialogue" object with a "root" property')
-    return null
-  }
-
-  const [history, setHistory] = useState([])
-  const [currentNode, setCurrentNode] = useState(startAt)
   const innerRef = useRef()
 
-  const goToNode = useCallback((choice) => {
-    const newNode = findNode(dialogue, choice.then)
-    if (!newNode) console.error(`Tried going to this missing node: ${choice.then}`)
-
-    setHistory([...history, { ...currentNode, chosenChoice: choice }])
-    setCurrentNode(newNode)
-  }, [history, currentNode])
-
   useEffect(() => {
+    if (!innerRef.current || !innerRef.current.lastChild) return undefined
+
     const scrollEnd = innerRef.current.scrollHeight
       - Math.max(
         innerRef.current.lastChild.offsetHeight,
@@ -59,6 +47,7 @@ export default function DialogueTree ({
             customComponents.default || DialogueNode
           )
 
+          // can we just use last of type or something without adding class here?
           const nodeWrapperClass = index === history.length
             ? 'dialogue-tree__node-wrapper dialogue-tree__node-wrapper--active'
             : 'dialogue-tree__node-wrapper'
@@ -70,7 +59,7 @@ export default function DialogueTree ({
               <div className={nodeWrapperClass}>
                 <NodeComponent
                   {...node}
-                  goToNode={goToNode}
+                  makeChoice={makeChoice}
                   customScripts={customScripts}
                   customComponents={customComponents}
                 />
@@ -81,9 +70,4 @@ export default function DialogueTree ({
       </div>
     </div>
   )
-}
-
-function findNode (dialogue, newNodeOrId) {
-  if (typeof newNodeOrId === 'object') return newNodeOrId
-  return dialogue[newNodeOrId]
 }
