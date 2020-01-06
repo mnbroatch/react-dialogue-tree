@@ -15,15 +15,15 @@ export default function DialogueTree ({
     return null
   }
 
-  const [ history, setHistory ] = useState([])
-  const [ currentNode, setCurrentNode ] = useState(startAt)
+  const [history, setHistory] = useState([])
+  const [currentNode, setCurrentNode] = useState(startAt)
   const innerRef = useRef()
 
   const goToNode = useCallback((choice) => {
     const newNode = findNode(dialogue, choice.then)
     if (!newNode) console.error(`Tried going to this missing node: ${choice.then}`)
 
-    setHistory([ ...history, { ...currentNode, chosenChoice: choice } ])
+    setHistory([...history, { ...currentNode, chosenChoice: choice }])
     setCurrentNode(newNode)
   })
 
@@ -33,14 +33,14 @@ export default function DialogueTree ({
 
   return (
     <div className='dialogue-tree'>
-      <div className='dialogue-tree__inner' 
+      <div className='dialogue-tree__inner'
         ref={innerRef}
         style={{
           height: '100%',
           overflowY: 'auto'
         }}
       >
-        {[ ...history, currentNode ].map((node, index) => {
+        {[...history, currentNode].map((node, index) => {
           const NodeComponent = getFromNestedObject(
             customComponents,
             node.component,

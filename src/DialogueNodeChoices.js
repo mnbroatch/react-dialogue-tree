@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React from 'react'
 import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 // TODO: "Choice Has Been Clicked Before" indicator
@@ -51,11 +51,11 @@ function getChoicesToDisplay (choices, chosenChoice, then) {
 
   if (choices) {
     // Empty array will explicitly mean no choices rendered.
-    if (choices.length === 0) return [] 
+    if (choices.length === 0) return []
     if (chosenChoice) return [chosenChoice]
     return choices
   }
-  
+
   return chosenChoice
     ? [] // Don't clutter history with default choice
     : [{ text: 'Continue', then }]
