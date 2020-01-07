@@ -1,37 +1,31 @@
 /* https://coolors.co/616163-fddd9b-929487-a1b0ab-c3dac3 */
 
-/* There is a bizarre bug where removing this "html" selector removes the "html, body" selector. */
-html {
-  height: 100%;
-}
-
 html, body {
-  min-height: 100%;
   margin: 0;
-}
-
-#root {
-  height: 100%;
-}
-
-.welcome-dialogue-story {
-  height: 100%;
-  background-color: #FDDD9B;
-  box-sizing: border-box;
-  padding: 8px;
 }
 
 .dialogue-tree-container {
   bottom: 10px;
-  display: flex;
-  flex-direction: column;
   height: 300px;
   left: 10px;
   position: fixed;
   right: 10px;
 }
 
-.dialogue-tree {
+.dialogue-tree-container--disco-elysium {
+  height: auto;
+  left: auto;
+  top: 10px;
+  width: 350px;
+}
+
+.dialogue-tree-container--custom-script {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialogue-tree-container--custom-script .dialogue-tree {
   flex: 1;
   min-height: 0;
 }
+

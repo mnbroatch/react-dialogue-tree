@@ -59,9 +59,9 @@ export default () => {
   }, [count])
 
   return (
-    <div style={{ backgroundColor, height: '100%' }}>
+    <div style={{ backgroundColor, display: 'inline-block' }}>
       <SourceCode>{sourceCode}</SourceCode>
-      <div className={'dialogue-tree-container'}>
+      <div className={'dialogue-tree-container dialogue-tree-container--custom-script'}>
         {count > 0 && (
           <div style={{ padding: 12, backgroundColor: '#eee' }}>
             You've faced this decision {count} time{count > 1 && 's'}!
