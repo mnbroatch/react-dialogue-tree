@@ -5,26 +5,22 @@ export default function DialogueNode ({
   makeChoice,
   choices,
   chosenChoice,
-  then
+  then,
+  thenConditional
 }) {
   const choicesToDisplay = determineChoicesToDisplay(choices, chosenChoice, then)
 
   return (
     <div className='dialogue-node'>
       {text}
-      {choicesToDisplay.length && (
-        <ul className='dialogue-node-choices'>
+      {!!choicesToDisplay.length && (
+        <ul className='dialogue-node__choices'>
           {choicesToDisplay.map((choice, index) => {
-            const choiceCallback = () => {
-              //  if chosenChoice exists, we are in history
-              if (!chosenChoice) makeChoice(choice)
-            }
-
             return (
               <li
                 key={index}
-                className='dialogue-node-choices__choice'
-                onClick={!chosenChoice ? choiceCallback : undefined}
+                className='dialogue-node__choice'
+                onClick={!chosenChoice ? () => { makeChoice(choice) } : undefined}
               >
                 {choice.text}
               </li>
@@ -32,23 +28,25 @@ export default function DialogueNode ({
           })}
         </ul>
       )}
+
+      {!chosenChoice && !choices && (then || thenConditional) && (
+        <div
+          className='dialogue-node__default-choice'
+          onClick={!chosenChoice ? () => { makeChoice({ text: 'Continue', then, isDefault: true }) } : undefined}
+        >
+          Continue
+        </div>
+      )}
     </div>
   )
 }
 
-// We don't always just show the choices provided. History is
-// displayed differently, and default node is added when needed.
-function determineChoicesToDisplay (choices, chosenChoice, then) {
-  if (!choices && !then) return [] // Terminal node of dialogue
-
-  if (choices) {
-    // Empty array will explicitly mean no choices rendered.
-    if (choices.length === 0) return []
-    if (chosenChoice) return [chosenChoice]
-    return choices
+// We only show chosen choice in history (omitting default choices).
+function determineChoicesToDisplay (choices, chosenChoice) {
+  if (chosenChoice) {
+    // We know we are in history
+    return chosenChoice.isDefault ? [] : [chosenChoice]
   }
 
-  return chosenChoice
-    ? [] // Don't clutter history with default choice
-    : [{ text: 'Continue', then }]
+  return choices || []
 }

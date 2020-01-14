@@ -15,11 +15,10 @@ export default function DialogueTreeContainer ({
   }
 
   const [history, setHistory] = useState([])
-  const [currentNode, setCurrentNode] = useState(startAt)
+  const [currentNode, setCurrentNode] = useState(findNode(dialogue, startAt))
 
   const makeChoice = useCallback((choice) => {
-    const newNode = findNode(dialogue, choice.then)
-    if (!newNode) console.error(`Tried going to this missing node: ${choice.then}`)
+    const newNode = getNextNode(dialogue, choice, customScripts)
 
     runCustomScripts(choice, customScripts)
     runCustomScripts(newNode, customScripts)
@@ -30,15 +29,33 @@ export default function DialogueTreeContainer ({
 
   useEffect(() => { runCustomScripts(startAt, customScripts) }, [])
 
+  // Allows reuse of a set of choices in multiple nodes
+  const choices = findNode(dialogue, currentNode.choices)
+
   return (
     <DialogueTree
-      currentNode={currentNode}
+      currentNode={{ ...currentNode, choices }}
       history={history}
       makeChoice={makeChoice}
       customComponents={customComponents}
       customScripts={customScripts}
     />
   )
+}
+
+function getNextNode (dialogue, choice, customScripts) {
+  if (choice.thenConditional) {
+    console.log('choice', choice)
+    const clauseToUse = choice.thenConditional
+      .find((clause, index) =>
+        index === choice.thenConditional.length - 1
+        || clause.tests.every((test) => getFromNestedObject(customScripts, test)())
+      )
+
+    return findNode(dialogue, clauseToUse.then)
+  }
+
+  return findNode(dialogue, choice.then)
 }
 
 function findNode (dialogue, newNodeOrId) {

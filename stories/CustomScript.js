@@ -59,7 +59,7 @@ export default () => {
   }, [count])
 
   return (
-    <div style={{ backgroundColor, display: 'inline-block' }}>
+    <div style={{ backgroundColor, display: 'inline-block', minWidth: '100%' }}>
       <SourceCode>{sourceCode}</SourceCode>
       <div className={'dialogue-tree-container dialogue-tree-container--custom-script'}>
         {count > 0 && (

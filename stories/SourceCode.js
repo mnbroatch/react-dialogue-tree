@@ -1,11 +1,11 @@
 import React from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 
-export default props => (
+export default ({ customStyle = {}, children }) => (
   <SyntaxHighlighter
-    customStyle={{ backgroundColor: 'transparent', paddingBottom: 320, overflow: 'visible' }}
+    customStyle={{ backgroundColor: 'transparent', paddingBottom: 320, display: 'inline-block', ...customStyle }}
     language="jsx"
   >
-    {props.children}
+    {children}
   </SyntaxHighlighter>
 )
