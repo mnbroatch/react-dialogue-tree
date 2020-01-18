@@ -5,8 +5,7 @@ export default function DialogueNode ({
   makeChoice,
   choices,
   chosenChoice,
-  then,
-  thenConditional
+  then
 }) {
   const choicesToDisplay = determineChoicesToDisplay(choices, chosenChoice, then)
 
@@ -29,7 +28,7 @@ export default function DialogueNode ({
         </ul>
       )}
 
-      {!chosenChoice && !choices && (then || thenConditional) && (
+      {!chosenChoice && !choices && (
         <div
           className='dialogue-node__default-choice'
           onClick={!chosenChoice ? () => { makeChoice({ text: 'Continue', then, isDefault: true }) } : undefined}

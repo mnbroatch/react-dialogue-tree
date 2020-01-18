@@ -29,8 +29,9 @@ export default function DialogueTreeContainer ({
 
   useEffect(() => { runCustomScripts(startAt, customScripts) }, [])
 
-  // Allows reuse of a set of choices in multiple nodes
-  const choices = findNode(dialogue, currentNode.choices)
+  // Allows reuse of a set of choices across multiple nodes
+  const choicesNode = findNode(dialogue, currentNode.choices)
+  const choices = choicesNode && choicesNode.filter(choice => !choice.showIff || runCustomScript(choice.showIff, customScripts, currentNode))
 
   return (
     <DialogueTree
@@ -44,18 +45,16 @@ export default function DialogueTreeContainer ({
 }
 
 function getNextNode (dialogue, choice, customScripts) {
-  if (choice.thenConditional) {
-    console.log('choice', choice)
-    const clauseToUse = choice.thenConditional
-      .find((clause, index) =>
-        index === choice.thenConditional.length - 1
-        || clause.tests.every((test) => getFromNestedObject(customScripts, test)())
-      )
+  const newNode = findNode(dialogue, choice.then)
 
-    return findNode(dialogue, clauseToUse.then)
-  }
+  if (!newNode.conditional) return newNode
 
-  return findNode(dialogue, choice.then)
+  const clauseToUse = newNode.conditional
+    .find((clause, index) =>
+      index === newNode.conditional.length - 1
+      || clause.tests.every((accessPath) => !!runCustomScript(accessPath, customScripts, choice))
+    )
+  return findNode(dialogue, clauseToUse.then)
 }
 
 function findNode (dialogue, newNodeOrId) {
@@ -65,9 +64,17 @@ function findNode (dialogue, newNodeOrId) {
 
 function runCustomScripts (node, customScripts) {
   if (node.scripts) {
-    node.scripts.forEach((scriptAccessPath) => {
-      const script = getFromNestedObject(customScripts, scriptAccessPath)
-      if (script) script(node)
+    node.scripts.forEach((accessPath) => {
+      runCustomScript(accessPath, customScripts, node)
     })
   }
+}
+
+function runCustomScript (accessPath, customScripts, node) {
+  const isNegated = accessPath[0] === '!'
+  const script = isNegated
+    ? getFromNestedObject(customScripts, accessPath.slice(1))
+    : getFromNestedObject(customScripts, accessPath)
+
+  return script && (isNegated ? !script() : script())
 }

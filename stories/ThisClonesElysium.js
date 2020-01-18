@@ -1,49 +1,52 @@
-import React, { useState, useMemo, useContext } from 'react'
+import React, { useState, useReducer, useCallback, useMemo } from 'react'
 import getFromNestedObject from '../utilities/getFromNestedObject.js'
 import useInterval from 'react-useinterval'
 import DialogueTree, { DialogueNode as DefaultDialogueNode } from 'react-dialogue-tree'
 import SourceCode from './SourceCode.js';
 import sourceCode from '!!raw-loader!./ThisClonesElysium.js'
 
-const firstDialogue = {
-  root: {
-    character: 'Dark Room',
-    text: 'A bright prism of light beams through the dust-riddled darkness',
-    then: {
-      skillChecks: [
-        {
-          skill: 'Savvy',
-          test: 'tests.canSeeComputer',
-          pass: 'An iMac G4 from 2003. You admire its ironically edgy dome shape. Wiggling its adjustable monitor and arm, you are impressed that the motion is still fluid twenty years later.',
-        }
-      ],
-      choices: [
-        {
-          text: 'Try something',
-          then: 'root'
-        }
-      ]
-    }
-  }
-}
-
+// const firstDialogue = {
+//   root: {
+//     character: 'Dark Room',
+//     text: 'A bright prism of light beams through the dust-riddled darkness',
+//     then: {
+//       skillChecks: [
+//         {
+//           skill: 'Savvy',
+//           test: 'tests.canSeeComputer',
+//           pass: 'An iMac G4 from 2003. You admire its ironically edgy dome shape. Wiggling its adjustable monitor and arm, you are impressed that the motion is still fluid twenty years later.',
+//         }
+//       ],
+//       choices: [
+//         {
+//           text: 'Try something',
+//           then: 'root'
+//         }
+//       ]
+//     }
+//   }
+// }
+//
 
 /*
  *
- * Color of continue button with one skill check: matches skill?
+ * Color of continue button with one skill check: matches next-to-display skill check.
  *
  */
 
 
-const GameStateContext = React.createContext({})
-
 const DialogueNode = (props) => {
   const { customScripts, customComponents, makeChoice, ...node } = props
 
-  const gameState = useContext(GameStateContext)
+  const processedNode = useMemo(() => processSkillChecks(node, customScripts), [])
 
-  const [ processedNode, setProcessedNode ] = useState()
-  const memoizedValue = useMemo(() => setProcessedNode(processSkillChecks(node, customScripts)), [])
+  const makeChoiceWithActiveSkillCheck = useCallback((choice) => {
+    if (!choice.skillCheck) return makeChoice(choice)
+
+    const passed = performActiveSkillCheck(customScripts, choice.skillCheck)
+    const then = passed ? choice.skillCheck.pass : choice.skillCheck.fail
+    makeChoice({ ...choice, then })
+  }, [])
 
   const chosenChoice = node.chosenChoice && {
     ...node.chosenChoice,
@@ -58,7 +61,7 @@ const DialogueNode = (props) => {
       chosenChoice={chosenChoice}
       customScripts={customScripts}
       customComponents={customComponents}
-      makeChoice={makeChoice}
+      makeChoice={makeChoiceWithActiveSkillCheck}
       text={<TextWithCharacterLabel character={processedNode.character} text={processedNode.text} />}
     />
   )
@@ -86,7 +89,7 @@ const TextWithCharacterLabel = ({ character, text }) => {
 function processSkillChecks (node, customScripts) {
   const { skillChecks = [], ...nodeWithoutSkillChecks } = node
 
-  let processedNode = { ...node, then: null, thenConditional: null, choices: null }
+  let processedNode = { ...node, then: null, choices: null }
   let deepestNode = processedNode
   skillChecks.forEach((skillCheck) => {
     if (deepestNode.then) return
@@ -102,11 +105,14 @@ function processSkillChecks (node, customScripts) {
   })
 
   deepestNode.then = node.then
-  deepestNode.thenConditional = node.thenConditional
   deepestNode.choices = node.choices
-  console.log('node', node)
-  console.log('processedNode', processedNode)
+
   return processedNode
+}
+
+function performActiveSkillCheck (customScripts, skillCheck) {
+  return true
+  // return getFromNestedObject(customScripts, test)()
 }
 
 function performPassiveSkillCheck (customScripts, test) {
@@ -114,23 +120,50 @@ function performPassiveSkillCheck (customScripts, test) {
   // return getFromNestedObject(customScripts, test)()
 }
 
-export default () => {
-  const [ dialogue, setDialogue ] = useState(firstDialogue)
-  const [ gameState, setGameState ] = useState({
+function gameStateReducer (state, action) {
+  if (action.type === 'toggle') {
+    return { ...state, flags: { ...state.flags, [action.payload]: !state.flags[action.payload] } }
+  }
+}
+
+const initialState = {
+  skills: {
+    savoirFaire: 5,
+    interfacing: 5,
+    endurance: 5,
+    painThreshold: 5,
+    inlandEmpire: 5
+  },
+  flags: {
     fanIsOn: true,
     necktieIsOnFan: true,
+    hasNecktie: false,
     lightIsOn: false,
     youAreStillPhotosensitive: true
-  })
+  },
+  attemptedSkillChecks: new Map()
+}
+
+function isSkillCheckLocked (skillCheck, gameState) {
+  const attempt = gameState.attemptedSkillChecks.get(skillCheck) 
+  return attempt && attempt.value >= gameState.skills[skillCheck.skill]
+}
+
+export default () => {
+  const [ dialogue, setDialogue ] = useState(firstDialogue)
+  const [ gameState, dispatch ] = useReducer(gameStateReducer, initialState);
 
   const customScripts = {
-    tests: Object.entries(gameState).reduce((acc, [entryKey, entryValue]) => (
+    tests: Object.entries(gameState.flags).reduce((acc, [entryKey, entryValue]) => (
       { ...acc, [entryKey]: () => entryValue }
     ), []),
-    toggles: Object.entries(gameState).reduce((acc, [entryKey, entryValue]) => (
-      { ...acc, [entryKey]: () => { setGameState({ ...gameState, [entryKey]: !entryValue }) } }
+    toggles: Object.entries(gameState.flags).reduce((acc, [entryKey, entryValue]) => (
+      { ...acc, [entryKey]: () => { dispatch({ type: 'toggle', payload: entryKey }) } }
     ), [])
   }
+
+  customScripts.inlandEmpireIsAboveThree = function () { return gameState.skills.inlandEmpire > 3 }
+  customScripts.painThresholdIsAboveThree = function () { return gameState.skills.painThreshold > 3 }
 
   return (
     <div>
