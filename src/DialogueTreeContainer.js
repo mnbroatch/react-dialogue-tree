@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import DialogueTree from './DialogueTree.js'
-import getFromNestedObject from '../utilities/getFromNestedObject.js'
+import runCustomScript from './runCustomScript.js'
 
 export default function DialogueTreeContainer ({
   dialogue,
@@ -31,7 +31,7 @@ export default function DialogueTreeContainer ({
 
   // Allows reuse of a set of choices across multiple nodes
   const choicesNode = findNode(dialogue, currentNode.choices)
-  const choices = choicesNode && choicesNode.filter(choice => !choice.showIff || runCustomScript(choice.showIff, customScripts, currentNode))
+  const choices = choicesNode && choicesNode.filter(choice => !choice.hideIf || !runCustomScript(choice.hideIf, customScripts, currentNode))
 
   return (
     <DialogueTree
@@ -45,16 +45,19 @@ export default function DialogueTreeContainer ({
 }
 
 function getNextNode (dialogue, choice, customScripts) {
-  const newNode = findNode(dialogue, choice.then)
+  let newNode = findNode(dialogue, choice.then)
 
-  if (!newNode.conditional) return newNode
+  // Drill through nested conditional branches until we hit a concrete node
+  while (Array.isArray(newNode)) {
+    const clauseToUse = newNode
+      .find((clause, index) =>
+        index === newNode.length - 1
+        || clause.chooseIf.every((accessPathOrScriptObject) => !!runCustomScript(accessPathOrScriptObject, customScripts, choice))
+      )
+    newNode = (clauseToUse && findNode(dialogue, clauseToUse)) || { ...newNode, then: null }
+  }
 
-  const clauseToUse = newNode.conditional
-    .find((clause, index) =>
-      index === newNode.conditional.length - 1
-      || clause.tests.every((accessPath) => !!runCustomScript(accessPath, customScripts, choice))
-    )
-  return findNode(dialogue, clauseToUse.then)
+  return newNode
 }
 
 function findNode (dialogue, newNodeOrId) {
@@ -64,17 +67,8 @@ function findNode (dialogue, newNodeOrId) {
 
 function runCustomScripts (node, customScripts) {
   if (node.scripts) {
-    node.scripts.forEach((accessPath) => {
-      runCustomScript(accessPath, customScripts, node)
+    node.scripts.forEach((accessPathOrScriptObject) => {
+      runCustomScript(accessPathOrScriptObject, customScripts, node)
     })
   }
-}
-
-function runCustomScript (accessPath, customScripts, node) {
-  const isNegated = accessPath[0] === '!'
-  const script = isNegated
-    ? getFromNestedObject(customScripts, accessPath.slice(1))
-    : getFromNestedObject(customScripts, accessPath)
-
-  return script && (isNegated ? !script() : script())
 }

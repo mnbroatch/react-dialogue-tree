@@ -12,13 +12,6 @@ html, body {
   right: 10px;
 }
 
-.dialogue-tree-container--this-clones-elysium {
-  height: auto;
-  left: auto;
-  top: 10px;
-  width: 350px;
-}
-
 .dialogue-tree-container--custom-script {
   display: flex;
   flex-direction: column;
@@ -27,5 +20,18 @@ html, body {
 .dialogue-tree-container--custom-script .dialogue-tree {
   flex: 1;
   min-height: 0;
+}
+
+
+
+.dialogue-tree-container--this-clones-elysium {
+  height: auto;
+  left: auto;
+  top: 10px;
+  width: 350px;
+}
+
+.dialogue-tree-character {
+  text-transform: uppercase;
 }
 

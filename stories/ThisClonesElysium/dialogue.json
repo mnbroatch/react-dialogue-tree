@@ -1,0 +1,54 @@
+{
+  "root": {
+    "character": "You",
+    "text": "I think I don't wanna be a cop any more",
+    "then": {
+      "character": "Kim Kitsugari",
+      "text": "\"Get a hold of yourself.\" You feel the lieutenant pat you on your back, rhythmically.",
+      "then": {
+        "conditional": [
+          {
+            "script": '',
+            
+          }
+        ],
+        "text": "\"I've seen strong men turn themselves inside out for hours. You're facing tough odds here. Alcohol withdrawal makes it considerably harder.\"",
+        "passiveChecks": [
+          {
+            "tests": [
+              {
+                "accessPath": "skillCheck",
+                "skill": "physicalInstrument",
+                "difficulty": 11
+              }
+            ],
+            "then": {
+              "character": "Physical Instrument",
+              "text": "WHAT IS HAPPENING TO YOU?!?! Are you going to CRY now, son?",
+              "passiveChecks": [
+                {
+                  "tests": [
+                    {
+                      "accessPath": "skillCheck",
+                      "skill": "volition",
+                      "difficulty": 8
+                    }
+                  ],
+                  "then": {
+                    "character": "Physical Instrument",
+                    "text": "You heard the coach! This is weakness. It cannot go on much longer, or you will LOSE."
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "choices": [
+          {
+            "text": "\"Do it without me. I just can't keep it down.\""
+          }
+        ]
+      }
+    }
+  }
+}
