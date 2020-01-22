@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import getFromNestedObject from '../utilities/getFromNestedObject.js'
 import DialogueTree from './DialogueTree.js'
 import runCustomScript from './runCustomScript.js'
 
@@ -15,7 +16,7 @@ export default function DialogueTreeContainer ({
   }
 
   const [history, setHistory] = useState([])
-  const [currentNode, setCurrentNode] = useState(findNode(dialogue, startAt))
+  const [currentNode, setCurrentNode] = useState(resolveNodePath(dialogue, startAt))
 
   const makeChoice = useCallback((choice) => {
     const newNode = getNextNode(dialogue, choice, customScripts)
@@ -30,7 +31,7 @@ export default function DialogueTreeContainer ({
   useEffect(() => { runCustomScripts(startAt, customScripts) }, [])
 
   // Allows reuse of a set of choices across multiple nodes
-  const choicesNode = findNode(dialogue, currentNode.choices)
+  const choicesNode = resolveNodePath(dialogue, currentNode.choices)
   const choices = choicesNode && choicesNode.filter(choice => !choice.hideIf || !runCustomScript(choice.hideIf, customScripts, currentNode))
 
   return (
@@ -45,24 +46,37 @@ export default function DialogueTreeContainer ({
 }
 
 function getNextNode (dialogue, choice, customScripts) {
-  let newNode = findNode(dialogue, choice.then)
+  const maybeNewNode = resolveNodePath(dialogue, choice.next)
+  const newNode = Array.isArray(maybeNewNode)
+    ? resolveConditional(maybeNewNode, dialogue, choice, customScripts)
+    : maybeNewNode
 
-  // Drill through nested conditional branches until we hit a concrete node
-  while (Array.isArray(newNode)) {
-    const clauseToUse = newNode
-      .find((clause, index) =>
-        index === newNode.length - 1
-        || clause.chooseIf.every((accessPathOrScriptObject) => !!runCustomScript(accessPathOrScriptObject, customScripts, choice))
-      )
-    newNode = (clauseToUse && findNode(dialogue, clauseToUse)) || { ...newNode, then: null }
-  }
-
-  return newNode
+  return newNode || { ...newNode, next: null }
 }
 
-function findNode (dialogue, newNodeOrId) {
+function resolveConditional (conditional, dialogue, choice, customScripts) {
+  const clauseToUse = conditional
+    .find((clause, index) =>
+      index === conditional.length - 1
+      || testAntecedent(clause.if, customScripts, choice)
+    )
+  const newNode = (clauseToUse && resolveNodePath(dialogue, clauseToUse.then))
+  // Handle nested conditionals recursively
+  return Array.isArray(newNode)
+    ? resolveConditional(newNode, dialogue, choice, customScripts)
+    : newNode
+}
+
+function testAntecedent (antecedent, customScripts, choice) {
+  if (!antecedent) return false
+  return Array.isArray(antecedent.if)
+    ? antecedent.if.every((condition) => runCustomScript(condition, customScripts, choice))
+    : runCustomScript(antecedent.if, customScripts, choice)
+}
+
+function resolveNodePath (dialogue, newNodeOrId) {
   if (typeof newNodeOrId === 'object') return newNodeOrId
-  return dialogue[newNodeOrId]
+  return getFromNestedObject(dialogue, newNodeOrId)
 }
 
 function runCustomScripts (node, customScripts) {

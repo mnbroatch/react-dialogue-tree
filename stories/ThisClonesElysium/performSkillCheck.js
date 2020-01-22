@@ -4,8 +4,8 @@ export default function performSkillCheck (customScripts, skillCheck, gameState,
   let total = gameState.skills[skillCheck.skill]
   if (skillCheck.modifiers) {
     total += skillCheck.modifiers.reduce((acc, modifier) => (
-      modifier.chooseIf.every(test => runCustomScript(test, customScripts))
-        ? acc + modifier.value
+      modifier.if.every(test => runCustomScript(test, customScripts))
+        ? acc + modifier.values
         : acc
     ), 0)
   }
@@ -18,5 +18,6 @@ export default function performSkillCheck (customScripts, skillCheck, gameState,
   if (roll === 12) return true
   total += roll
 
+  console.log('total', total)
   return total >= skillCheck.difficulty
 }

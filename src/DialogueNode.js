@@ -5,9 +5,9 @@ export default function DialogueNode ({
   makeChoice,
   choices,
   chosenChoice,
-  then
+  next
 }) {
-  const choicesToDisplay = determineChoicesToDisplay(choices, chosenChoice, then)
+  const choicesToDisplay = determineChoicesToDisplay(choices, chosenChoice, next)
 
   return (
     <div className='dialogue-node'>
@@ -31,7 +31,7 @@ export default function DialogueNode ({
       {!chosenChoice && !choices && (
         <div
           className='dialogue-node__default-choice'
-          onClick={!chosenChoice ? () => { makeChoice({ text: 'Continue', then, isDefault: true }) } : undefined}
+          onClick={!chosenChoice ? () => { makeChoice({ text: 'Continue', next, isDefault: true }) } : undefined}
         >
           Continue
         </div>

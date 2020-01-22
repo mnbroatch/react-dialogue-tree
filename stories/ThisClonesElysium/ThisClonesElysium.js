@@ -57,8 +57,8 @@ const DialogueNode = (props) => {
     if (!choice.activeCheck) return makeChoice(choice)
 
     const passed = performSkillCheck(customScripts, choice.activeCheck, gameState, true)
-    const then = passed ? choice.activeCheck.pass : choice.activeCheck.fail
-    makeChoice({ ...choice, then })
+    const next = passed ? choice.activeCheck.pass : choice.activeCheck.fail
+    makeChoice({ ...choice, next })
   }, [])
 
   const chosenChoice = node.chosenChoice && {
@@ -95,22 +95,24 @@ const TextWithCharacterLabel = ({ character, text }) => {
 
 // Perform passive skill checks and convert meaningful ones into
 // a chain of dialogue nodes. The last node in the chain will inherit
-// the "choices" and "then" properties from the input node.
+// the "choices" and "next" properties from the input node.
 //
 // Will likely need to be handled statefully in DialogueNode component.
 function processPassiveChecks (node, customScripts, gameState) {
   if (!node.passiveChecks) return node
 
-  let processedNode = { ...node, then: null, passiveChecks: null }
+  let processedNode = { ...node, then: null, next: null, passiveChecks: null, choices: null }
   let deepestNode = processedNode
   node.passiveChecks.forEach((passiveCheck) => {
-    if (!performSkillCheck(customScripts, passiveCheck.chooseIf, gameState)) return
-    deepestNode.then = passiveCheck
-    deepestNode = passiveCheck
+    if (!performSkillCheck(customScripts, passiveCheck.if, gameState)) return
+    deepestNode.then = passiveCheck.then
+    deepestNode = passiveCheck.then
   })
 
-  deepestNode.then = node.then
-  deepestNode.choices = node.choices
+  if (!deepestNode.next && !deepestNode.choices) {
+    deepestNode.next = node.next
+    deepestNode.choices = node.choices
+  }
 
   return processedNode
 }
