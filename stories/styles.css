@@ -31,7 +31,14 @@ html, body {
   width: 350px;
 }
 
-.dialogue-tree-character {
+.dialogue-node__character {
+  text-transform: uppercase;
+}
+
+.dialogue-node__default-choice {
+  background-color: darkOrange;
+  padding: 10px 20px;
+  font-size: 1.5em;
   text-transform: uppercase;
 }
 

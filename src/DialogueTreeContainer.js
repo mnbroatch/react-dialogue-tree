@@ -32,7 +32,10 @@ export default function DialogueTreeContainer ({
 
   // Allows reuse of a set of choices across multiple nodes
   const choicesNode = resolveNodePath(dialogue, currentNode.choices)
-  const choices = choicesNode && choicesNode.filter(choice => !choice.hideIf || !runCustomScript(choice.hideIf, customScripts, currentNode))
+  const choices = choicesNode && choicesNode.filter(choice =>
+    !choice.hideIf
+    || !testAntecedent(choice.hideIf, customScripts, choice)
+  )
 
   return (
     <DialogueTree
@@ -67,11 +70,11 @@ function resolveConditional (conditional, dialogue, choice, customScripts) {
     : newNode
 }
 
-function testAntecedent (antecedent, customScripts, choice) {
+export function testAntecedent (antecedent, customScripts) {
   if (!antecedent) return false
-  return Array.isArray(antecedent.if)
-    ? antecedent.if.every((condition) => runCustomScript(condition, customScripts, choice))
-    : runCustomScript(antecedent.if, customScripts, choice)
+  return Array.isArray(antecedent)
+    ? antecedent.every((condition) => runCustomScript(condition, customScripts))
+    : runCustomScript(antecedent, customScripts)
 }
 
 function resolveNodePath (dialogue, newNodeOrId) {
@@ -82,7 +85,7 @@ function resolveNodePath (dialogue, newNodeOrId) {
 function runCustomScripts (node, customScripts) {
   if (node.scripts) {
     node.scripts.forEach((accessPathOrScriptObject) => {
-      runCustomScript(accessPathOrScriptObject, customScripts, node)
+      runCustomScript(accessPathOrScriptObject, customScripts)
     })
   }
 }

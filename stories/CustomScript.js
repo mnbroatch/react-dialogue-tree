@@ -6,7 +6,7 @@ import sourceCode from '!!raw-loader!./CustomScript.js'
 const dialogue = {
   root: {
     text: 'This dialogue increments a count every time you reach the chooseColor node. It updates the backgroundColor when you choose a color.',
-    then: 'chooseColor'
+    next: 'chooseColor'
   },
   chooseColor: {
     text: 'What color background do you prefer?',
@@ -16,30 +16,30 @@ const dialogue = {
         text: 'Yellow',
         scripts: ['changeBackgroundColor'],
         color: '#FCFDAF',
-        then: 'chooseColor'
+        next: 'chooseColor'
       },
       {
         text: 'Blue',
         scripts: ['changeBackgroundColor'],
         color: '#BFD7EA',
-        then: 'chooseColor'
+        next: 'chooseColor'
       },
       {
         text: 'Red',
         scripts: ['changeBackgroundColor'],
         color: '#D1462F',
-        then: {
+        next: {
           text: 'Hmm, red doesn\'t work so well, does it?',
-          then: 'chooseColor'
+          next: 'chooseColor'
         }
       },
       {
         text: 'White',
         scripts: ['changeBackgroundColor'],
         color: '#FFF',
-        then: {
+        next: {
           text: 'Back to the basics!',
-          then: 'chooseColor'
+          next: 'chooseColor'
         }
       }
     ]

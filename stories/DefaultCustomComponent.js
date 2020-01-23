@@ -7,16 +7,16 @@ import sourceCode from '!!raw-loader!./DefaultCustomComponent.js'
 const dialogue = {
   root: {
     text: 'This dialogue uses the "default custom component" feature to add a typing animation to every prompt!',
-    then: {
+    next: {
       text: 'It works whether a node has choices or not!',
       choices: [
         {
           text: 'Hooray! Again!',
-          then: 'root'
+          next: 'root'
         },
         {
           text: 'That\'s nice.',
-          then: {
+          next: {
             text: 'It certainly is.'
           }
         }

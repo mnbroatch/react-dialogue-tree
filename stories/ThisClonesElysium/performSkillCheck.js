@@ -1,23 +1,40 @@
-import { runCustomScript } from 'react-dialogue-tree'
+import { testAntecedent } from 'react-dialogue-tree'
 
 export default function performSkillCheck (customScripts, skillCheck, gameState, active) {
-  let total = gameState.skills[skillCheck.skill]
-  if (skillCheck.modifiers) {
-    total += skillCheck.modifiers.reduce((acc, modifier) => (
-      modifier.if.every(test => runCustomScript(test, customScripts))
-        ? acc + modifier.values
-        : acc
-    ), 0)
-  }
-
-  const roll = active
-    ? Math.floor(Math.random() * 6 + 1) + Math.floor(Math.random() * 6 + 1)
-    : 6 // Magic Passive Disco Number
+  const base = gameState.skills[skillCheck.skill]
+  const modifiersTotal = getModifiersTotal(skillCheck.modifiers, customScripts) || 0
+  const hiddenModifiersTotal = getModifiersTotal(skillCheck.hiddenModifiersTotal, customScripts) || 0
+  const roll = getRoll(active)
 
   if (roll === 2) return false
   if (roll === 12) return true
-  total += roll
 
-  console.log('total', total)
-  return total >= skillCheck.difficulty
+  const total = base + modifiersTotal + roll
+
+  return {
+    base,
+    hiddenModifiersTotal,
+    modifiersTotal,
+    passed: total >= skillCheck.difficulty,
+    roll,
+    total
+  }
+}
+
+function getModifiersTotal (modifiers, customScripts) {
+  if (!modifiers) return 0
+    
+  return modifiers.reduce((acc, modifier) => (
+    testAntecedent(modifier.if, customScripts)
+      ? acc + modifier.value
+      : acc
+  ), 0)
+}
+
+// I don't know how passive skill rolls work. As far as I know they're just
+// Magic Passive Disco Number 6
+function getRoll (active) {
+  return active
+    ? Math.floor(Math.random() * 6 + 1) + Math.floor(Math.random() * 6 + 1)
+    : 6 
 }

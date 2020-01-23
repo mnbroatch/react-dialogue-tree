@@ -6,21 +6,21 @@ import sourceCode from '!!raw-loader!./Basic.js'
 const dialogue = {
   root: {
     text: 'I am a very basic dialogue.',
-    then: {
+    next: {
       text: 'Probably not that interesting, right?',
       choices: [
         {
           text: 'Aw, don\'t say that! You\'re doing great!',
-          then: {
+          next: {
             text: ':)',
-            then: 'end'
+            next: 'end'
           }
         },
         {
           text: 'Yea, you\'re boring! You don\'t even use any advanced features!',
-          then: {
+          next: {
             text: ':(',
-            then: 'end'
+            next: 'end'
           }
         }
       ]

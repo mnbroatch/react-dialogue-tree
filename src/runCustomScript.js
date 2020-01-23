@@ -6,8 +6,8 @@ export default function runCustomScript (accessPathOrScriptObject, customScripts
     ? accessPathOrScriptObject
     : { scriptPath: accessPathOrScriptObject }
 
-  const { scriptPath, negate, ...rest } = scriptObject
+  const { scriptPath, not, ...rest } = scriptObject
 
   const script = getFromNestedObject(customScripts, scriptPath)
-  return script && (negate ? !script(rest) : script(rest))
+  return script && (not ? !script(rest) : script(rest))
 }

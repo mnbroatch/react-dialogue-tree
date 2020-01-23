@@ -12,7 +12,7 @@
         },
         "then": {
           "character": "Inland Empire",
-          "text": "Or has it been consigned there as punishment? You feel as though this creature is your *friend* and wantes to reattach itself to your neck. So that you may continue your adventures together in this strange world!"
+          "text": "Or has it been consigned there as punishment? You feel as though this creature is your *friend* and wants to reattach itself to your neck. So that you may continue your adventures together in this strange world!"
         }
       }
     ]
@@ -33,7 +33,7 @@
             "if": {
               "scriptPath": "getFlag",
               "flagName": "fanIsOn",
-              "negate": true
+              "not": true
             },
             "text": "Fan is turned off",
             "value": 3
@@ -55,7 +55,7 @@
             {
               "scriptPath": "getFlag",
               "flagName": "hasNecktie",
-              "negate": true
+              "not": true
             },
             {
               "scriptPath": "skillCheck",
@@ -84,7 +84,7 @@
             {
               "scriptPath": "getFlag",
               "flagName": "hasNecktie",
-              "negate": true
+              "not": true
             }
           ],
           "then": {
@@ -133,12 +133,12 @@
             {
               "scriptPath": "getFlag",
               "flagName": "hasOvercomePhotosensitivity",
-              "negate": true
+              "not": true
             },
             {
               "scriptPath": "getFlag",
               "flagName": "lightIsOn",
-              "negate": true
+              "not": true
             }
           ],
           "then": {
@@ -303,7 +303,7 @@
       "if": {
         "scriptPath": "getFlag",
         "flagName": "hasFailedToGrabNecktie",
-        "negate": true
+        "not": true
       },
       "then": {
         "character": "Savoir Faire",

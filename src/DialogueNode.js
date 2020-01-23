@@ -28,7 +28,7 @@ export default function DialogueNode ({
         </ul>
       )}
 
-      {!chosenChoice && !choices && (
+      {next && !chosenChoice && !choices && (
         <div
           className='dialogue-node__default-choice'
           onClick={!chosenChoice ? () => { makeChoice({ text: 'Continue', next, isDefault: true }) } : undefined}
