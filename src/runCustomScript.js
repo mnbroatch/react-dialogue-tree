@@ -1,13 +1,14 @@
 import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
-export default function runCustomScript (accessPathOrScriptObject, customScripts) {
-  //  Normalize input accounting for string convenience syntax
-  const scriptObject = typeof accessPathOrScriptObject === 'object'
-    ? accessPathOrScriptObject
-    : { scriptPath: accessPathOrScriptObject }
+// Call to a script can be expressed as a string or object.
+// Object allows script to be run with parameters.
+export default function runCustomScript (scriptCall, customScripts) {
+  const scriptObject = typeof scriptCall === 'object'
+    ? scriptCall
+    : { test: scriptCall }
 
-  const { scriptPath, not, ...rest } = scriptObject
+  const { test, ...rest } = scriptObject
 
-  const script = getFromNestedObject(customScripts, scriptPath)
-  return script && (not ? !script(rest) : script(rest))
+  const script = getFromNestedObject(customScripts, test)
+  return script && script(rest)
 }

@@ -1,0 +1,32 @@
+{
+  "fakeSkill": {
+    "displayName": "Fake Skill",
+    "color": "white",
+    "value": 1
+  },
+  "savoirFaire": {
+    "displayName": "Savoir Faire",
+    "color": "gold",
+    "value": 1
+  },
+  "interfacing": {
+    "displayName": "Interfacing",
+    "color": "gold",
+    "value": 10
+  },
+  "endurance": {
+    "displayName": "Endurance",
+    "color": "red",
+    "value": 10
+  },
+  "painThreshold": {
+    "displayName": "Pain Threshold",
+    "color": "red",
+    "value": 1
+  },
+  "inlandEmpire": {
+    "displayName": "Inland Empire",
+    "color": "purple",
+    "value": 10
+  }
+}

@@ -1,18 +1,29 @@
 {
   "root": {
-    "character": "Ceiling Fan",
+    "character": "ceilingFan",
     "text": "This fan has two chain pull switches -- one ends in a tiny fan, the other in a light bulb. A truly horrific necktie has somehow attached itself to one of the blades.",
     "choices": "ceilingFanChoices",
     "passiveChecks": [
       {
         "if": {
-          "scriptPath": "skillCheck",
+          "test": "skillCheck",
           "skill": "inlandEmpire",
           "difficulty": 10
         },
         "then": {
-          "character": "Inland Empire",
+          "character": "inlandEmpire",
           "text": "Or has it been consigned there as punishment? You feel as though this creature is your *friend* and wants to reattach itself to your neck. So that you may continue your adventures together in this strange world!"
+        }
+      },
+      {
+        "if": {
+          "test": "skillCheck",
+          "skill": "fakeSkill",
+          "difficulty": 0
+        },
+        "then": {
+          "character": "fakeSkill",
+          "text": "This should show!"
         }
       }
     ]
@@ -21,442 +32,363 @@
     {
       "text": "Grab the tie.",
       "hideIf": {
-        "scriptPath": "getFlag",
-        "flagName": "hasNecktie"
+        "test": "getProperty",
+        "propertyName": "hasNecktie"
       },
       "activeCheck": {
-        "color": "white",
-        "skill": "savoirFaire",
-        "difficulty": 100,
-        "modifiers": [
-          {
-            "if": {
-              "scriptPath": "getFlag",
-              "flagName": "fanIsOn",
-              "not": true
-            },
-            "text": "Fan is turned off",
-            "value": 3
-          }
-        ],
-        "pass": "grabTiePass",
-        "fail": "grabTieFail"
+        "if": {
+          "test": "skillCheck",
+          "skill": "savoirFaire",
+          "difficulty": 10,
+          "modifiers": [
+            {
+              "if": {
+                "test": "not",
+                "if": {
+                  "test": "getProperty",
+                  "propertyName": "fanIsOn"
+                }
+              },
+              "text": "Fan is turned off",
+              "value": 3
+            }
+          ]
+        },
+        "then": "grabTiePass",
+        "else": {
+          "if": {
+            "test": "getProperty",
+            "propertyName": "previouslyFailedToGrabNecktie"
+          },
+          "then": "grabTieFailAgain",
+          "else": "grabTieFailFirstTime"
+        }
       }
     },
     {
       "text": "Pull on the fan.",
-      "next": [
-        {
-          "if": [
-            {
-              "scriptPath": "getFlag",
-              "flagName": "fanIsOn"
-            },
-            {
-              "scriptPath": "getFlag",
-              "flagName": "hasNecktie",
-              "not": true
-            },
-            {
-              "scriptPath": "skillCheck",
-              "skill": "inlandEmpire",
-              "difficulty": 10
-            }
-          ],
-          "then": {
-            "character": "Ceiling Fan",
-            "text": "The blades come squeaking to a halt. It should be easier to reach the tie now.",
-            "scripts": [
-              {
-                "scriptPath": "toggleFlag",
-                "flagName": "fanIsOn"
-              }
-            ],
-            "choices": "ceilingFanChoices"
-          }
+      "next": {
+        "if": {
+          "test": "getProperty",
+          "propertyName": "fanIsOn"
         },
-        {
-          "if": [
-            {
-              "scriptPath": "getFlag",
-              "flagName": "fanIsOn"
-            },
-            {
-              "scriptPath": "getFlag",
-              "flagName": "hasNecktie",
-              "not": true
-            }
-          ],
-          "then": {
-            "character": "Ceiling Fan",
-            "text": "The blades come squeaking to a halt. It should be easier to reach the tie now.",
-            "scripts": [
-              {
-                "scriptPath": "toggleFlag",
-                "flagName": "fanIsOn"
-              }
-            ],
-            "choices": "ceilingFanChoices"
-          }
-        },
-        {
-          "if": {
-            "scriptPath": "getFlag",
-            "flagName": "fanIsOn"
-          },
-          "then": {
-            "character": "Ceiling Fan",
-            "text": "The blades come squeaking to a halt.",
-            "scripts": [
-              {
-                "scriptPath": "toggleFlag",
-                "flagName": "fanIsOn"
-              }
-            ],
-            "choices": "ceilingFanChoices"
-          }
-        },
-        {
-          "then": {
-            "character": "Ceiling Fan",
-            "text": "The switch must be broken, because nothing happens. The air in the room is starting to feel like vaporized urine.",
-            "choices": "ceilingFanChoices"
-          }
+        "then": "pullFanWhileOn",
+        "else": {
+          "character": "ceilingFan",
+          "text": "The switch must be broken, because nothing happens. The air in the room is starting to feel like vaporized urine.",
+          "choices": "ceilingFanChoices"
         }
-      ]
+      }
     },
     {
       "text": "Pull on the light bulb.",
-      "next": [
-        {
-          "if": [
-            {
-              "scriptPath": "getFlag",
-              "flagName": "hasOvercomePhotosensitivity",
-              "not": true
-            },
-            {
-              "scriptPath": "getFlag",
-              "flagName": "lightIsOn",
-              "not": true
-            }
-          ],
-          "then": {
-            "character": "Ceiling Fan",
-            "text": "A terrible mistake! Turn the lights off IMMEDIATELY! You can practically feel the photons burning a hole in your brain.",
-            "scripts": [
-              {
-                "scriptPath": "toggleFlag",
-                "flagName": "lightIsOn"
-              }
-            ],
-            "passiveChecks": [
-              {
-                "if": {
-                  "scriptPath": "skillCheck",
-                  "skill": "painThreshold",
-                  "difficulty": 10
-                },
-                "then": {
-                  "character": "Pain Threshold",
-                  "text": "It's just a little hangover-induced photosensitivity. Don't over-react."
-                }
-              }
-            ],
-            "choices": [
-              {
-                "text": "Bring it on.",
-                "next": [
-                  {
-                    "if": {
-                      "scriptPath": "skillCheck",
-                      "skill": "painThreshold",
-                      "difficulty": 10
-                    },
-                    "then": {
-                      "character": "Pain Threshold",
-                      "text": "Little black spots dance on your retinas. It's almost pleasurable.",
-                      "scripts": [
-                        {
-                          "scriptPath": "toggleFlag",
-                          "flagName": "hasOvercomePhotosensitivity"
-                        }
-                      ],
-                      "choices": "ceilingFanChoices"
-                    }
-                  },
-                  {
-                    "character": "Pain Threshold",
-                    "text": "Your eyes burn with photosensitivity. It's not good.",
-                    "scripts": [
-                      "loseHealth",
-                      {
-                        "scriptPath": "toggleFlag",
-                        "flagName": "hasOvercomePhotosensitivity"
-                      }
-                    ],
-                    "choices": "ceilingFanChoices"
-                  }
-                ]
-              },
-              {
-                "text": "Pull again to turn the lights off.",
-                "next": {
-                  "character": "Ceiling Fan",
-                  "text": "The lights are off.",
-                  "scripts": [
-                    {
-                      "scriptPath": "toggleFlag",
-                      "flagName": "lightIsOn"
-                    }
-                  ],
-                  "choices": "ceilingFanChoices"
-                }
-              }
-            ]
-          }
+      "next": {
+        "if": {
+          "test": "getProperty",
+          "propertyName": "isPhotosensitive"
         },
-        {
-          "if": {
-            "scriptPath": "getFlag",
-            "flagName": "lightIsOn"
-          },
-          "then": {
-            "character": "Ceiling Fan",
-            "text": "The lights are off again.",
-            "scripts": [
-              {
-                "scriptPath": "toggleFlag",
-                "flagName": "lightIsOn"
-              }
-            ],
-            "choices": "ceilingFanChoices"
-          }
-        },
-        {
-          "then": {
-            "character": "Ceiling Fan",
-            "text": "The lights are on.",
-            "scripts": [
-              {
-                "scriptPath": "toggleFlag",
-                "flagName": "lightIsOn"
-              }
-            ],
-            "choices": "ceilingFanChoices"
-          }
-        }
-      ]
+        "then": "pullLightWhilePhotosensitive",
+        "else": "pullLightWhileNotPhotosensitive"
+      }
     },
     {
       "text": "[Leave]",
+      "next": { "scripts": [ "endDialogue" ] }
+    }
+  ],
+  "grabTiePass": {
+    "if": {
+      "test": "skillCheck",
+      "skill": "inlandEmpire",
+      "difficulty": 10
+    },
+    "then": {
+      "character": "savoirFaire",
+      "text": "You swoop up and catch the tie... snap! It's released from the blade. WARNING! WARNING! The necktie is no longer contained.",
+      "scripts": [
+        {
+          "test": "toggleProperty",
+          "propertyName": "hasNecktie"
+        }
+      ],
       "next": {
-        "scripts": [
-          "endDialogue"
-        ]
-      }
-    }
-  ],
-  "grabTiePass": [
-    {
-      "if": {
-        "scriptPath": "skillCheck",
-        "skill": "inlandEmpire",
-        "difficulty": 10
-      },
-      "then": {
-        "character": "Savoir Faire",
-        "text": "You swoop up and catch the tie... snap! It's released from the blade. WARNING! WARNING! The necktie is no longer contained.",
-        "scripts": [
-          {
-            "scriptPath": "toggleFlag",
-            "flagName": "hasNecktie"
-          }
-        ],
-        "next": {
-          "character": "Ceiling Fan",
-          "text": "What you have in your hand is a truly hideous necktie, with four or five different patterns. The knot reminds you of a noose.",
-          "choices": "ceilingFanChoices"
-        }
+        "character": "ceilingFan",
+        "text": "What you have in your hand is a truly hideous necktie, with four or five different patterns. The knot reminds you of a noose.",
+        "choices": "ceilingFanChoices"
       }
     },
-    {
-      "then": {
-        "character": "Savoir Faire",
-        "text": "You swoop up and catch the tie... Snap! It's released from the blade.",
-        "scripts": [
-          {
-            "scriptPath": "toggleFlag",
-            "flagName": "hasNecktie"
-          }
-        ],
+    "else": {
+      "character": "savoirFaire",
+      "text": "You swoop up and catch the tie... Snap! It's released from the blade.",
+      "scripts": [
+        {
+          "test": "toggleProperty",
+          "propertyName": "hasNecktie"
+        }
+      ],
+      "next": {
+        "character": "ceilingFan",
+        "text": "What you have in your hand is a truly hideous necktie, with four or five different patterns. The knot reminds you of a noose.",
+        "choices": "ceilingFanChoices"
+      }
+    }
+  },
+  "pullFanWhileOn": {
+    "if": {
+      "test": "getProperty",
+      "propertyName": "hasNecktie"
+    },
+    "then": {
+      "character": "ceilingFan",
+      "text": "The blades come squeaking to a halt.",
+      "scripts": [
+        {
+          "test": "toggleProperty",
+          "propertyName": "fanIsOn"
+        }
+      ],
+      "choices": "ceilingFanChoices"
+    },
+    "else": {
+      "character": "ceilingFan",
+      "text": "The blades come squeaking to a halt. It should be easier to reach the tie now.",
+      "scripts": [
+        {
+          "test": "toggleProperty",
+          "propertyName": "fanIsOn"
+        }
+      ],
+      "choices": "ceilingFanChoices"
+    }
+  },
+  "pullLightWhilePhotosensitive": {
+    "character": "ceilingFan",
+    "text": "A terrible mistake! Turn the lights off IMMEDIATELY! You can practically feel the photons burning a hole in your brain.",
+    "scripts": [
+      {
+        "test": "toggleProperty",
+        "propertyName": "lightIsOn"
+      }
+    ],
+    "passiveChecks": [
+      {
+        "if": {
+          "test": "skillCheck",
+          "skill": "painThreshold",
+          "difficulty": 10
+        },
+        "then": {
+          "character": "painThreshold",
+          "text": "It's just a little hangover-induced photosensitivity. Don't over-react."
+        }
+      }
+    ],
+    "choices": [
+      {
+        "text": "Bring it on.",
         "next": {
-          "character": "Ceiling Fan",
-          "text": "What you have in your hand is a truly hideous necktie, with four or five different patterns. The knot reminds you of a noose.",
+          "if": {
+            "test": "skillCheck",
+            "skill": "painThreshold",
+            "difficulty": 10
+          },
+          "then": {
+            "character": "painThreshold",
+            "text": "Little black spots dance on your retinas. It's almost pleasurable.",
+            "scripts": [
+              {
+                "test": "toggleProperty",
+                "propertyName": "isPhotosensitive"
+              }
+            ],
+            "choices": "ceilingFanChoices"
+          },
+          "else": {
+            "character": "painThreshold",
+            "text": "Your eyes burn with photosensitivity. It's not good.",
+            "scripts": [
+              "loseHealth",
+              {
+                "test": "toggleProperty",
+                "propertyName": "isPhotosensitive"
+              }
+            ],
+            "choices": "ceilingFanChoices"
+          }
+        }
+      },
+      {
+        "text": "Pull again to turn the lights off.",
+        "next": {
+          "character": "ceilingFan",
+          "text": "The lights are off.",
+          "scripts": [
+            {
+              "test": "toggleProperty",
+              "propertyName": "lightIsOn"
+            }
+          ],
           "choices": "ceilingFanChoices"
         }
       }
+    ]
+  },
+  "pullLightWhileNotPhotosensitive": {
+    "if": {
+      "test": "getProperty",
+      "propertyName": "lightIsOn"
+    },
+    "then": {
+      "character": "ceilingFan",
+      "text": "The lights are off again.",
+      "scripts": [
+        {
+          "test": "toggleProperty",
+          "propertyName": "lightIsOn"
+        }
+      ],
+      "choices": "ceilingFanChoices"
+    },
+    "else": {
+      "character": "ceilingFan",
+      "text": "The lights are on.",
+      "scripts": [
+        {
+          "test": "toggleProperty",
+          "propertyName": "lightIsOn"
+        }
+      ],
+      "choices": "ceilingFanChoices"
     }
-  ],
-  "grabTieFail": [
-    {
-      "if": {
-        "scriptPath": "getFlag",
-        "flagName": "hasFailedToGrabNecktie",
-        "not": true
-      },
-      "then": {
-        "character": "Savoir Faire",
-        "scripts": [
-          {
-            "scriptPath": "toggleFlag",
-            "flagName": "hasFailedToGrabNecktie"
-          }
-        ],
-        "text": "You reach out to grab the tie... but what's this? Diffuse, radiating chest pain! Doom comes over you.",
-        "passiveChecks": [
-          {
-            "if": {
-              "scriptPath": "skillCheck",
-              "skill": "painThreshold",
-              "difficulty": 12
+  },
+  "grabTieFailFirstTime": {
+    "character": "savoirFaire",
+    "scripts": [
+      {
+        "test": "toggleProperty",
+        "propertyName": "previouslyFailedToGrabNecktie"
+      }
+    ],
+    "text": "You reach out to grab the tie... but what's this? Diffuse, radiating chest pain! Doom comes over you.",
+    "passiveChecks": [
+      {
+        "if": {
+          "test": "skillCheck",
+          "skill": "painThreshold",
+          "difficulty": 12
+        },
+        "then": {
+          "character": "painThreshold",
+          "text": "You can take it. Just breathe in slowly.",
+          "choices": [
+            {
+              "text": "Grab your chest",
+              "next": "notARealHeartAttack"
             },
-            "then": {
-              "character": "Pain Threshold",
-              "text": "You can take it. Just breathe in slowly.",
-              "choices": [
-                {
-                  "text": "Grab your chest",
-                  "next": {
-                    "character": "Ceiling Fan",
-                    "text": "This is not a *real* heart attack. This is a joke. It's probably just your lungs or your oesophagus. The oesophagus does practically nothing.",
-                    "choices": "ceilingFanChoices"
-                  }
-                },
-                {
-                  "text": "Breathe in calmly.",
-                  "next": {
-                    "character": "Ceiling Fan",
-                    "text": "This is not a *real* heart attack. This is a joke. It's probably just your lungs or your oesophagus. The oesophagus does practically nothing.",
-                    "choices": "ceilingFanChoices"
-                  }
-                }
-              ]
+            {
+              "text": "Breathe in calmly.",
+              "next": "notARealHeartAttack"
             }
-          }
-        ],
-        "choices": [
-          {
-            "text": "Grab your chest",
+          ]
+        }
+      }
+    ],
+    "choices": [
+      {
+        "text": "Grab your chest",
+        "next": {
+          "character": "ceilingFan",
+          "text": "This is bad. Feels like sharp stones grinding in your chest and keeping you from moving.",
+          "scripts": [ "loseHealth" ],
+          "next": {
+            "text": "For quite a long time.",
             "next": {
-              "character": "Ceiling Fan",
-              "text": "This is bad. Feels like sharp stones grinding in your chest and keeping you from moving.",
-              "scripts": [
-                "loseHealth"
-              ],
+              "text": "Still ongoing. Now is a good time to start worrying.",
               "next": {
-                "text": "For quite a long time.",
-                "next": {
-                  "text": "Still ongoing. Now is a good time to start worrying.",
-                  "next": [
-                    {
-                      "if": {
-                        "scriptPath": "getFlag",
-                        "flagName": "fanIsOn"
-                      },
-                      "then": {
-                        "text": "Finally the pressure recedes. You find yourself covered in cold sweat and trying not to move -- hoping it will keep you from dying.",
-                        "scripts": [
-                          "gainHealth"
-                        ],
-                        "choices": "ceilingFanChoices"
-                      }
+                "text": "Finally the pressure recedes. You find yourself covered in cold sweat and trying not to move -- hoping it will keep you from dying.",
+                "scripts": [ "gainHealth" ],
+                "choices": "ceilingFanChoices",
+                "passiveChecks": [
+                  {
+                    "if": {
+                      "test": "skillCheck",
+                      "skill": "interfacing",
+                      "difficulty": 10
                     },
-                    {
-                      "then": {
-                        "text": "Finally the pressure recedes. You find yourself covered in cold sweat and trying not to move -- hoping it will keep you from dying.",
-                        "scripts": [
-                          "gainHealth"
-                        ],
-                        "choices": "ceilingFanChoices",
-                        "passiveChecks": [
-                          {
-                            "if": {
-                              "scriptPath": "skillCheck",
-                              "skill": "interfacing",
-                              "difficulty": 10
-                            },
-                            "then": {
-                              "character": "Interfacing",
-                              "text": "You know what you should do? You should stop the fan and then try again, it'll get easier"
-                            }
+                    "then": {
+                      "character": "interfacing",
+                      "text": "You know what you should do? You should stop the fan and then try again, it'll get easier",
+                      "passiveChecks": [
+                        {
+                          "if": {
+                            "test": "skillCheck",
+                            "skill": "endurance",
+                            "difficulty": 8
                           },
-                          {
-                            "if": {
-                              "scriptPath": "skillCheck",
-                              "skill": "endurance",
-                              "difficulty": 8
-                            },
-                            "then": {
-                              "character": "Endurance",
-                              "text": "Do it -- *if you want to die,* the stabbing pain in your chest is telling you. You're hanging on by a thread here..."
-                            }
+                          "then": {
+                            "character": "endurance",
+                            "text": "Do it -- *if you want to die,* the stabbing pain in your chest is telling you. You're hanging on by a thread here..."
                           }
-                        ]
-                      }
+                        }
+                      ]
                     }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "then": {
-        "character": "Savoir Faire",
-        "text": "Oh no, it's happening again. You didn't catch it and now there's numbness in your left arm, plus half your chest.",
-        "passiveChecks": [
-          {
-            "if": {
-              "scriptPath": "skillCheck",
-              "skill": "painThreshold",
-              "difficulty": 12
-            },
-            "then": {
-              "character": "Inland Empire",
-              "text": "You can take this one too. Just breathe in slowly.",
-              "choices": [
-                {
-                  "text": "Grab your arm.",
-                  "next": {
-                    "character": "Ceiling Fan",
-                    "text": "None of these is a real heart attack. This is such a joke. You should probably just exercise more.",
-                    "choices": "ceilingFanChoices"
                   }
-                }
-              ]
-            }
-          }
-        ],
-        "choices": [
-          {
-            "text": "Grab your arm.",
-            "next": {
-              "character": "Ceiling Fan",
-              "text": "It's even worse this time. Maybe you should stop trying to catch the tie?",
-              "next": {
-                "text": "Still happening. Definitely worse than the last time.",
-                "next": {
-                  "text": "Finally the stabbing recedes. You could try doing it again to see how painful it gets -- but you would probably die.",
-                  "choices": "ceilingFanChoices"
-                }
+                ]
               }
             }
           }
-        ]
+        }
       }
-    }
-  ]
+    ]
+  },
+  "grabTieFailAgain": {
+    "character": "savoirFaire",
+    "text": "Oh no, it's happening again. You didn't catch it and now there's numbness in your left arm, plus half your chest.",
+    "passiveChecks": [
+      {
+        "if": {
+          "test": "skillCheck",
+          "skill": "painThreshold",
+          "difficulty": 12
+        },
+        "then": {
+          "character": "inlandEmpire",
+          "text": "You can take this one too. Just breathe in slowly."
+        }
+      }
+    ],
+    "choices": [
+      {
+        "text": "Grab your arm.",
+        "next": {
+          "if": {
+            "test": "skillCheck",
+            "skill": "painThreshold",
+            "difficulty": 12
+          },
+          "then": {
+            "character": "ceilingFan",
+            "text": "None of these is a real heart attack. This is such a joke. You should probably just exercise more.",
+            "choices": "ceilingFanChoices"
+          },
+          "else": {
+            "character": "ceilingFan",
+            "text": "It's even worse this time. Maybe you should stop trying to catch the tie?",
+            "next": {
+              "text": "Still happening. Definitely worse than the last time.",
+              "next": {
+                "text": "Finally the stabbing recedes. You could try doing it again to see how painful it gets -- but you would probably die.",
+                "choices": "ceilingFanChoices"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "notARealHeartAttack": {
+    "character": "ceilingFan",
+    "text": "This is not a *real* heart attack. This is a joke. It's probably just your lungs or your oesophagus. The oesophagus does practically nothing.",
+    "choices": "ceilingFanChoices"
+  }
 }

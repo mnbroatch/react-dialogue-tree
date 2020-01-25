@@ -1,9 +1,8 @@
-import { testAntecedent } from 'react-dialogue-tree'
+import { runCustomScript } from 'react-dialogue-tree'
 
-export default function performSkillCheck (customScripts, skillCheck, gameState, active) {
-  const base = gameState.skills[skillCheck.skill]
+export default function performSkillCheck (customScripts, skillCheck, skills, active) {
+  const base = skills[skillCheck.skill].value
   const modifiersTotal = getModifiersTotal(skillCheck.modifiers, customScripts) || 0
-  const hiddenModifiersTotal = getModifiersTotal(skillCheck.hiddenModifiersTotal, customScripts) || 0
   const roll = getRoll(active)
 
   if (roll === 2) return false
@@ -13,19 +12,17 @@ export default function performSkillCheck (customScripts, skillCheck, gameState,
 
   return {
     base,
-    hiddenModifiersTotal,
     modifiersTotal,
+    // passed: false,
     passed: total >= skillCheck.difficulty,
     roll,
     total
   }
 }
 
-function getModifiersTotal (modifiers, customScripts) {
-  if (!modifiers) return 0
-    
+function getModifiersTotal (modifiers = [], customScripts) {
   return modifiers.reduce((acc, modifier) => (
-    testAntecedent(modifier.if, customScripts)
+    runCustomScript(modifier.if, customScripts)
       ? acc + modifier.value
       : acc
   ), 0)

@@ -15,7 +15,7 @@ export default function DialogueTree ({
   const innerRef = useRef()
 
   useEffect(() => {
-    if (!innerRef.current || !innerRef.current.lastChild) return undefined
+    if (!innerRef.current || !innerRef.current.lastChild) return
 
     const scrollEnd = innerRef.current.scrollHeight
       - Math.max(

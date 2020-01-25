@@ -16,10 +16,10 @@ export default function DialogueTreeContainer ({
   }
 
   const [history, setHistory] = useState([])
-  const [currentNode, setCurrentNode] = useState(resolveNodePath(dialogue, startAt))
+  const [currentNode, setCurrentNode] = useState(resolveNode(dialogue, startAt, customScripts))
 
   const makeChoice = useCallback((choice) => {
-    const newNode = getNextNode(dialogue, choice, customScripts)
+    const newNode = resolveNode(dialogue, choice.next, customScripts)
 
     runCustomScripts(choice, customScripts)
     runCustomScripts(newNode, customScripts)
@@ -31,11 +31,13 @@ export default function DialogueTreeContainer ({
   useEffect(() => { runCustomScripts(startAt, customScripts) }, [])
 
   // Allows reuse of a set of choices across multiple nodes
-  const choicesNode = resolveNodePath(dialogue, currentNode.choices)
+  const choicesNode = resolveNode(dialogue, currentNode.choices, customScripts)
   const choices = choicesNode && choicesNode.filter(choice =>
     !choice.hideIf
-    || !testAntecedent(choice.hideIf, customScripts, choice)
+    || !runCustomScript(choice.hideIf, customScripts)
   )
+
+  const not = (scriptCall) => !runCustomScript(scriptCall.if, customScripts)
 
   return (
     <DialogueTree
@@ -43,49 +45,45 @@ export default function DialogueTreeContainer ({
       history={history}
       makeChoice={makeChoice}
       customComponents={customComponents}
-      customScripts={customScripts}
+      customScripts={{ ...customScripts, not }}
     />
   )
 }
 
-function getNextNode (dialogue, choice, customScripts) {
-  const maybeNewNode = resolveNodePath(dialogue, choice.next)
-  const newNode = Array.isArray(maybeNewNode)
-    ? resolveConditional(maybeNewNode, dialogue, choice, customScripts)
-    : maybeNewNode
+function resolveConditionalNode (dialogue, node, customScripts) {
+  if (!node.if) return node
 
-  return newNode || { ...newNode, next: null }
+  return runCustomScript(node.if, customScripts)
+    ? resolveConditionalNode(dialogue, node.then, customScripts)
+    : resolveConditionalNode(dialogue, node.else, customScripts)
 }
 
-function resolveConditional (conditional, dialogue, choice, customScripts) {
-  const clauseToUse = conditional
-    .find((clause, index) =>
-      index === conditional.length - 1
-      || testAntecedent(clause.if, customScripts, choice)
+function resolveNode (dialogue, node, customScripts) {
+  if (!node) return node
+  let resolvedNode = node
+
+  // Loop is because conditional node could resolve to a string
+  while (typeof resolvedNode === 'string' || resolvedNode.if) {
+    resolvedNode = resolveNodePath(dialogue, resolvedNode)
+    resolvedNode = resolveConditionalNode(
+      dialogue,
+      resolvedNode,
+      customScripts
     )
-  const newNode = (clauseToUse && resolveNodePath(dialogue, clauseToUse.then))
-  // Handle nested conditionals recursively
-  return Array.isArray(newNode)
-    ? resolveConditional(newNode, dialogue, choice, customScripts)
-    : newNode
+  }
+
+  return resolvedNode
 }
 
-export function testAntecedent (antecedent, customScripts) {
-  if (!antecedent) return false
-  return Array.isArray(antecedent)
-    ? antecedent.every((condition) => runCustomScript(condition, customScripts))
-    : runCustomScript(antecedent, customScripts)
-}
-
-function resolveNodePath (dialogue, newNodeOrId) {
-  if (typeof newNodeOrId === 'object') return newNodeOrId
-  return getFromNestedObject(dialogue, newNodeOrId)
+function resolveNodePath (dialogue, nodeOrPath) {
+  if (typeof nodeOrPath === 'object') return nodeOrPath
+  return getFromNestedObject(dialogue, nodeOrPath)
 }
 
 function runCustomScripts (node, customScripts) {
   if (node.scripts) {
-    node.scripts.forEach((accessPathOrScriptObject) => {
-      runCustomScript(accessPathOrScriptObject, customScripts)
+    node.scripts.forEach((scriptCall) => {
+      runCustomScript(scriptCall, customScripts)
     })
   }
 }
