@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import DialogueNode from './DialogueNode.js'
+import ChatScroller from './ChatScroller.js'
 import getFromNestedObject from '../utilities/getFromNestedObject.js'
 
 import './styles.css'
@@ -9,63 +10,31 @@ export default function DialogueTree ({
   history,
   makeChoice,
   customComponents = {},
-  customScripts = {},
   scrollSpeed = 8
 }) {
-  const innerRef = useRef()
-
-  useEffect(() => {
-    if (!innerRef.current || !innerRef.current.lastChild) return
-
-    const scrollEnd = innerRef.current.scrollHeight
-      - Math.max(
-        innerRef.current.lastChild.offsetHeight,
-        innerRef.current.offsetHeight
-      )
-
-    const animate = () => {
-      innerRef.current.scrollTop += scrollSpeed
-      if (innerRef.current.scrollTop < scrollEnd) requestAnimationFrame(animate)
-    }
-
-    requestAnimationFrame(animate)
-  }, [currentNode, innerRef.current && innerRef.current.lastChild])
-
   return (
     <div className='dialogue-tree'>
-      <div className='dialogue-tree__inner'
-        ref={innerRef}
-        style={{
-          height: '100%',
-          overflowY: 'auto'
-        }}
-      >
+      <ChatScroller scrollSpeed={8}>
         {[...history, currentNode].map((node, index) => {
           const NodeComponent = getFromNestedObject(
             customComponents,
-            node.component,
-            customComponents.default || DialogueNode
+            node.component
           )
-
-          // can we just use last of type or something without adding class here?
-          const nodeWrapperClass = index === history.length
-            ? 'dialogue-tree__node-wrapper dialogue-tree__node-wrapper--active'
-            : 'dialogue-tree__node-wrapper'
+            || customComponents.default
+            || DialogueNode
 
           return (
             <div className='dialogue-tree__node-spacer' key={index}>
-              <div className={nodeWrapperClass}>
+              <div className='dialogue-tree__node-wrapper'>
                 <NodeComponent
                   {...node}
                   makeChoice={makeChoice}
-                  customScripts={customScripts}
-                  customComponents={customComponents}
                 />
               </div>
             </div>
           )
         })}
-      </div>
+      </ChatScroller>
     </div>
   )
 }

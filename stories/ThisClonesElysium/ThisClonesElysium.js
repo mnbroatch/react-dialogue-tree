@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
-import ThisClonesElysiumBase from './ThisClonesElysiumBase.js'
+import GameStateContext from './GameStateContext.js'
+import DEDialogueTree from './DEDialogueTree.js'
+import DialogueTree  from 'react-dialogue-tree'
+import DialogueNode from './DialogueNode.js'
+
 import dialogue from './ceilingFanDialogue.json'
 import characters from './ceilingFanDialogueCharacters.json'
 import skills from './ceilingFanDialogueSkills.json'
@@ -13,12 +17,17 @@ export default () => {
     toggleProperty: ({ propertyName }) => setGameState(prevState => ({ ...prevState, [propertyName]: !prevState[propertyName] }))
   }
 
+  const treeEngine = new DEDialogueTree(dialogue, customScripts, skills)
+
   return (
-    <ThisClonesElysiumBase
-      dialogue={dialogue}
-      characters={characters}
-      skills={skills}
-      customScripts={customScripts}
-    />
+    <div className={'dialogue-tree-container dialogue-tree-container--this-clones-elysium'}>
+      <GameStateContext.Provider value={{ characters }}>
+        <DialogueTree
+          dialogue={dialogue}
+          customComponents={{ default: DialogueNode }}
+          treeEngine={treeEngine}
+        />
+      </GameStateContext.Provider>
+    </div>
   )
 }

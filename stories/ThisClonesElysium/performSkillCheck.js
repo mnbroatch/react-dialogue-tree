@@ -1,8 +1,6 @@
-import { runCustomScript } from 'react-dialogue-tree'
-
-export default function performSkillCheck (customScripts, skillCheck, skills, active) {
+export default function performSkillCheck (skillCheck, skills, active) {
   const base = skills[skillCheck.skill].value
-  const modifiersTotal = getModifiersTotal(skillCheck.modifiers, customScripts) || 0
+  const modifiersTotal = getModifiersTotal(skillCheck.modifiers) || 0
   const roll = getRoll(active)
 
   if (roll === 2) return false
@@ -20,9 +18,9 @@ export default function performSkillCheck (customScripts, skillCheck, skills, ac
   }
 }
 
-function getModifiersTotal (modifiers = [], customScripts) {
+function getModifiersTotal (modifiers = []) {
   return modifiers.reduce((acc, modifier) => (
-    runCustomScript(modifier.if, customScripts)
+    this.runCustomScript(modifier.if)
       ? acc + modifier.value
       : acc
   ), 0)

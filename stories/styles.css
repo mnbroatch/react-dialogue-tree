@@ -35,7 +35,7 @@ html, body {
   text-transform: uppercase;
 }
 
-.dialogue-node__default-choice {
+.dialogue-node__choice--default {
   background-color: darkOrange;
   padding: 10px 20px;
   font-size: 1.5em;

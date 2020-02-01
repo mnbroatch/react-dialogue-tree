@@ -1,17 +1,11 @@
-.dialogue-tree {
+.chat-scroller {
   height: 100%;
   box-sizing: border-box;
   border: 10px solid #616163;
   background-color: #929487;
 }
 
-/*
- * padding-bottom doesn't work on overflowing containers in edge and ff:
- * https://github.com/w3c/csswg-drafts/issues/129#issue-156060453
- *
- * So, we steal the space from padding and give it to a pseudo-element.
- * */
-.dialogue-tree__inner {
+.chat-scroller {
   box-sizing: border-box;
 }
 

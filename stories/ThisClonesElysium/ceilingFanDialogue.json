@@ -7,6 +7,96 @@
       {
         "if": {
           "test": "skillCheck",
+          "skill": "fakeSkill",
+          "difficulty": 0
+        },
+        "then": {
+          "character": "fakeSkill",
+          "text": "This should show!",
+          "next": {
+            "text": "Going back to skillChecks now...",
+            "choices": [
+              {
+                "text": "Now?",
+                "next": {
+                  "text": "Yea.",
+                  "next": {
+                    "text": "I certainly am."
+                  },
+                  "passiveChecks": [
+                    {
+                      "if": {
+                        "test": "skillCheck",
+                        "skill": "fakeSkill",
+                        "difficulty": 0
+                      },
+                      "then": {
+                        "character": "fakeSkill",
+                        "text": "I am not the final test."
+                      }
+                    },
+                    {
+                      "if": {
+                        "test": "skillCheck",
+                        "skill": "fakeSkill",
+                        "difficulty": 0
+                      },
+                      "then": {
+                        "character": "fakeSkill",
+                        "text": "Nor am I the final test.",
+                        "passiveChecks": [
+                          {
+                            "if": {
+                              "test": "skillCheck",
+                              "skill": "fakeSkill",
+                              "difficulty": 0
+                            },
+                            "then": {
+                              "character": "fakeSkill",
+                              "text": "But wait:"
+                            }
+                          },
+                          {
+                            "if": {
+                              "test": "skillCheck",
+                              "skill": "fakeSkill",
+                              "difficulty": 0
+                            },
+                            "then": {
+                              "character": "fakeSkill",
+                              "text": "I am the final test!"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "if": {
+                        "test": "skillCheck",
+                        "skill": "fakeSkill",
+                        "difficulty": 0
+                      },
+                      "then": {
+                        "character": "fakeSkill",
+                        "text": "Or am I?"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "text": "Do it.",
+                "next": {
+                  "text": "Will do."
+                }
+              }
+            ]
+          }
+        }
+      },
+      {
+        "if": {
+          "test": "skillCheck",
           "skill": "inlandEmpire",
           "difficulty": 10
         },
@@ -14,21 +104,16 @@
           "character": "inlandEmpire",
           "text": "Or has it been consigned there as punishment? You feel as though this creature is your *friend* and wants to reattach itself to your neck. So that you may continue your adventures together in this strange world!"
         }
-      },
-      {
-        "if": {
-          "test": "skillCheck",
-          "skill": "fakeSkill",
-          "difficulty": 0
-        },
-        "then": {
-          "character": "fakeSkill",
-          "text": "This should show!"
-        }
       }
     ]
   },
   "ceilingFanChoices": [
+    {
+      "text": "Dead end",
+      "next": {
+        "text": "Stop!"
+      }
+    },
     {
       "text": "Grab the tie.",
       "hideIf": {
