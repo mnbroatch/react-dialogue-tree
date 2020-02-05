@@ -1,11 +1,7 @@
 - then without if
-- double check 2 path long passive skill then 
 - check active non skill checks still work
 
-- explore DE for examples of going on a chain originating from a passive check and continuing with the passive check.
-
-- double check continue button color at low pain threshold on first attempt
-- missing branch at second attempt "grab your arm" (sibling)
+- continue button color
 
 - numbered choices
 
@@ -16,19 +12,16 @@
 
 - general styling
 
-- text at bottom (possible?)
+- move text toward bottom (possible?)
 - gaining items, exp, et cetera in dialogue (?)
 
 - Tests
 - Docs
 
+- Game state changing while in the middle of chain of passive skill checks?
+
 Known Limitations:
   - Does not yet support active skill modifiers that cannot unlock white checks (ie, bonus from items).
-  - Game state changing while in the middle of chain of passive skill checks will not affect subsequent checks in that chain.
-  - A node arrived at from a passive check cannot branch (or even continue with a "next" node) without losing reference to the parent node (and one's place in the passive check chain).
   - No gold shop choices
 
 get onto my website
-
-
-high logic after getting tie (second attempt only?)

@@ -26,7 +26,9 @@ export default class DialogueTree {
   resolveDialogueNode (node) {
     let resolvedNode = this.treeEngine.resolveDialogueNode(node)
 
-    if (resolvedNode.passiveChecks && resolvedNode.passiveChecks.length) {
+    if (resolvedNode.choices && !resolvedNode.passiveChecks) return resolvedNode
+
+    if (resolvedNode.passiveChecks) {
       this.passiveCheckStack.unshift({
         rootChoices: resolvedNode.choices,
         remaining: [ ...resolvedNode.passiveChecks ]
@@ -34,25 +36,25 @@ export default class DialogueTree {
     }
 
     let currentPassiveCheck
-    let next = resolvedNode.next
-    let choices = resolvedNode.choices
-    if (resolvedNode.passiveChecks || (this.passiveCheckStack.length && !next && !choices)) {
-      for (let i = 0, len = this.passiveCheckStack.length; i < len; i++) {
-        currentPassiveCheck = this.passiveCheckStack[i]
-        for (let j = 0, len = currentPassiveCheck.remaining.length; j < len; j++) {
-          const skillCheck = currentPassiveCheck.remaining.shift()
-          const maybeNext = this.resolvePassiveCheck(skillCheck)
-          if (maybeNext) {
-            next = maybeNext
-            choices = null
-            break
-          }
+    let next
+    let choices
+    while (this.passiveCheckStack.length && !next && !choices) {
+      currentPassiveCheck = this.passiveCheckStack[0]
+      while (currentPassiveCheck.remaining.length && !next) {
+        const skillCheck = currentPassiveCheck.remaining.shift()
+        const maybeNext = this.resolvePassiveCheck(skillCheck)
+        if (maybeNext) {
+          next = maybeNext
+          choices = null
         }
-        if (next) break
+      }
+
+      if (!next) {
+        choices = currentPassiveCheck.rootChoices
+        this.passiveCheckStack.shift()
       }
     }
-    if (!next && !choices && currentPassiveCheck.rootChoices) choices = currentPassiveCheck.rootChoices
-
+    
     return this.treeEngine.resolveDialogueNode({ ...resolvedNode, next, choices })
   }
 
@@ -107,7 +109,7 @@ export default class DialogueTree {
   }
 
   resolvePassiveCheck (skillCheck) {
-    const { passed } = this.performSkillCheck(skillCheck.if)
+    const passed = this.runCustomScript(skillCheck.if)
 
     if (passed && skillCheck.then) return skillCheck.then
     if (!passed && skillCheck.else) return skillCheck.else
