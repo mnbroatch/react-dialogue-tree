@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import GameStateContext from './GameStateContext.js'
 import DEDialogueTree from './DEDialogueTree.js'
-import DialogueTree  from 'react-dialogue-tree'
+import DialogueTree from 'react-dialogue-tree'
 import DialogueNode from './DialogueNode.js'
 
-import dialogue from './ceilingFanDialogue.json'
+import dialogue from './dialogue.json'
 import characters from './ceilingFanDialogueCharacters.json'
 import skills from './ceilingFanDialogueSkills.json'
 import initialState from './ceilingFanDialogueInitialState.json'
 
-export default () => {
-  const [ gameState, setGameState ] = useState(initialState)
+export default function Blah () {
+  const [gameState, setGameState] = useState(initialState)
 
   const customScripts = {
     getProperty: ({ propertyName }) => gameState[propertyName],
