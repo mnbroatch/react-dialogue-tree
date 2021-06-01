@@ -13,13 +13,14 @@ export default function DialogueNode ({ makeChoice, ...node }) {
   return (
     <div className='dialogue-node'>
       {character &&
-      <><span
-        style={{ color: character.color }}
-        className='dialogue-node__character'>
-        {character.name}
-      </span> - </>
+        <><span
+          style={{ color: character.color }}
+          className='dialogue-node__character'>
+          {character.name}
+        </span> - </>
       }
       {node.text}
+
       {choices && choices.map((choice, index) => {
         if (choice.isDefault && isHistory) return null
 

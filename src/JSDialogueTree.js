@@ -3,10 +3,12 @@ import getFromNestedObject from '../utilities/getFromNestedObject.js'
 export default class DialogueTree {
   constructor (
     dialogue = {},
-    customScripts = {}
+    customScripts = {},
+    defaultChoiceText = 'Continue'
   ) {
     this.dialogue = dialogue
     this.customScripts = customScripts
+    this.defaultChoiceText = defaultChoiceText
   }
 
   resolveNode (node) {
@@ -36,7 +38,7 @@ export default class DialogueTree {
     if (!resolvedNode.choices && resolvedNode.next) {
       resolvedNode = {
         ...resolvedNode,
-        choices: [{ next: resolvedNode.next, isDefault: true }]
+        choices: [{ next: resolvedNode.next, text: this.defaultChoiceText, isDefault: true }]
       }
     }
 

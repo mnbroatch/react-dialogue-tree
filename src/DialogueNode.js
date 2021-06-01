@@ -15,10 +15,15 @@ export default function DialogueNode ({
       {!!choicesToDisplay.length && (
         <ul className='dialogue-node__choices'>
           {choicesToDisplay.map((choice, index) => {
+            const className = [
+              'dialogue-node__choice',
+              choice.isDefault && 'dialogue-node__default-choice'
+            ].filter(Boolean)
+
             return (
               <li
                 key={index}
-                className='dialogue-node__choice'
+                className={className}
                 onClick={!chosenChoice ? () => { makeChoice(choice) } : undefined}
               >
                 {choice.text}
@@ -26,15 +31,6 @@ export default function DialogueNode ({
             )
           })}
         </ul>
-      )}
-
-      {next && !chosenChoice && !choices && (
-        <div
-          className='dialogue-node__default-choice'
-          onClick={!chosenChoice ? () => { makeChoice({ text: 'Continue', next, isDefault: true }) } : undefined}
-        >
-          Continue
-        </div>
       )}
     </div>
   )

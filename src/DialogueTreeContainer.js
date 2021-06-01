@@ -11,7 +11,10 @@ export default function DialogueTreeContainer ({
   treeEngine = new JSDialogueTree(dialogue, customScripts)
 }) {
   const [history, setHistory] = useState([])
-  const [currentNode, setCurrentNode] = useState(() => treeEngine.resolveDialogueNode(startAt || 'root'))
+
+  const [currentNode, setCurrentNode] = useState(() => {
+    return treeEngine.resolveDialogueNode(startAt || 'root')
+  })
 
   const makeChoice = useCallback((choice) => {
     const newNode = treeEngine.makeChoice(choice)

@@ -12,8 +12,7 @@ export default class DialogueTree {
         ...customScripts,
         skillCheck: scriptCall => this.performSkillCheck(scriptCall).passed,
         not: scriptCall => !this.runCustomScript(scriptCall.if)
-      },
-      skills
+      }
     )
 
     this.skills = skills
@@ -54,7 +53,7 @@ export default class DialogueTree {
         this.passiveCheckStack.shift()
       }
     }
-    
+
     return this.treeEngine.resolveDialogueNode({ ...resolvedNode, next, choices })
   }
 
@@ -62,10 +61,10 @@ export default class DialogueTree {
     this.treeEngine.runCustomScripts(choice)
 
     if (choice.activeCheck) {
-      const { base, modifiersTotal, passed } = this.performSkillCheck(choice.activeCheck.if, true)
-      this.attemptedActiveChecks.set(choice.activeCheck.if, base + modifiersTotal)
+      const { base, modifiersTotal, passed } = this.performSkillCheck(choice.activeCheck, true)
+      this.attemptedActiveChecks.set(choice.activeCheck, base + modifiersTotal)
 
-      const next = passed ? choice.activeCheck.then : choice.activeCheck.else
+      const next = passed ? choice.activeCheck.pass : choice.activeCheck.fail
       return this.resolveDialogueNode(next)
     }
 
