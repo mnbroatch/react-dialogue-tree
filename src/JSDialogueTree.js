@@ -1,92 +1,50 @@
-import getFromNestedObject from '../utilities/getFromNestedObject.js'
-
 export default class DialogueTree {
   constructor (
-    dialogue = {},
-    customScripts = {},
-    defaultChoiceText = 'Continue'
   ) {
-    this.dialogue = dialogue
-    this.customScripts = customScripts
-    this.defaultChoiceText = defaultChoiceText
+    this.convertYarn = convertYarn
   }
+}
 
-  resolveNode (node) {
-    if (!node) return node
-
-    let resolvedNode = node
-    while (typeof resolvedNode === 'string' || resolvedNode.if) {
-      resolvedNode = this.resolveNodePath(resolvedNode)
-      resolvedNode = this.resolveConditionalNode(resolvedNode)
-    }
-
-    return resolvedNode
-  }
-
-  // Todo: check runCustomScripts timing
-  resolveDialogueNode (node) {
-    let resolvedNode = this.resolveNode(node)
-    this.runCustomScripts(resolvedNode)
-
-    if (resolvedNode.choices) {
-      resolvedNode = {
-        ...resolvedNode,
-        choices: this.resolveChoicesNode(resolvedNode.choices)
+// Yoinked from YarnEditor source
+function convertYarn (content) {
+  const objects = []
+  var lines = content.split(/\r?\n/)
+  var obj = null
+  var readingBody = false
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim() === '===') {
+      readingBody = false
+      if (obj != null) {
+        objects.push(obj)
+        obj = null
+      }
+    } else if (readingBody) {
+      obj.body += lines[i] + '\n'
+    } else {
+      if (lines[i].indexOf('title:') > -1) {
+        if (obj == null) obj = {}
+        obj.title = lines[i].substr(7, lines[i].length - 7)
+      } else if (lines[i].indexOf('position:') > -1) {
+        if (obj == null) obj = {}
+        var xy = lines[i].substr(9, lines[i].length - 9).split(',')
+        obj.position = { x: Number(xy[0].trim()), y: Number(xy[1].trim()) }
+      } else if (lines[i].indexOf('colorID:') > -1) {
+        if (obj == null) obj = {}
+        obj.colorID = Number(
+          lines[i].substr(9, lines[i].length - 9).trim()
+        )
+      } else if (lines[i].indexOf('tags:') > -1) {
+        if (obj == null) obj = {}
+        obj.tags = lines[i].substr(6, lines[i].length - 6)
+      } else if (lines[i].trim() === '---') {
+        readingBody = true
+        obj.body = ''
       }
     }
-
-    if (!resolvedNode.choices && resolvedNode.next) {
-      resolvedNode = {
-        ...resolvedNode,
-        choices: [{ next: resolvedNode.next, text: this.defaultChoiceText, isDefault: true }]
-      }
-    }
-
-    return resolvedNode
+  }
+  if (obj != null) {
+    objects.push(obj)
   }
 
-  resolveConditionalNode (node) {
-    if (!node.if) return node
-
-    return this.runCustomScript(node.if)
-      ? this.resolveConditionalNode(node.then)
-      : this.resolveConditionalNode(node.else)
-  }
-
-  // Resolving choices separately allows reuse of a set of
-  // choices across multiple nodes.
-  resolveChoicesNode (node) {
-    const choicesNode = this.resolveNode(node)
-    return choicesNode && choicesNode.filter(choice =>
-      !choice.hideIf || !this.runCustomScript(choice.hideIf)
-    )
-  }
-
-  resolveNodePath (nodeOrPath) {
-    if (typeof nodeOrPath === 'object') return nodeOrPath
-    return getFromNestedObject(this.dialogue, nodeOrPath)
-  }
-
-  runCustomScripts (node) {
-    if (node && node.scripts) {
-      node.scripts.forEach((scriptCall) => {
-        this.runCustomScript(scriptCall)
-      })
-    }
-  }
-
-  runCustomScript (scriptCall) {
-    // Normalize shorthand where scriptCall is a string
-    const scriptCallObject = typeof scriptCall === 'object'
-      ? scriptCall
-      : { test: scriptCall }
-
-    const script = getFromNestedObject(this.customScripts, scriptCallObject.test)
-    return script && script(scriptCallObject, this)
-  }
-
-  makeChoice (choice) {
-    this.runCustomScripts(choice)
-    return this.resolveDialogueNode(choice.next)
-  }
+  return objects
 }
