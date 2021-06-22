@@ -3,7 +3,7 @@ import DialogueTree from 'react-dialogue-tree'
 import SourceCode from './SourceCode.js'
 import sourceCode from '!!raw-loader!./Basic.js'
 
-const dialogue = `title: Sally
+const dialogue = `title: Start
 ---
 Sally: Test
 
@@ -12,7 +12,7 @@ Sally: Test
 -> I'm good.
     Sally: Let me know!
 
-Player: Next
+Player: Hi
 
 <<if visited("Sally") is false>>
     Player: Hey, Sally.

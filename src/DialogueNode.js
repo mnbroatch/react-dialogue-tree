@@ -1,47 +1,37 @@
 import React from 'react'
 
 export default function DialogueNode ({
-  text,
-  makeChoice,
-  choices,
-  chosenChoice,
-  next
+  node: {
+    text, options, chosenOption
+  },
+  advance
 }) {
-  const choicesToDisplay = determineChoicesToDisplay(choices, chosenChoice, next)
+  let optionItems
+  if (options) {
+    optionItems = options.map((option, index) => (
+      <li
+        key={index}
+        className='dialogue-node__option'
+        onClick={!chosenOption ? () => { advance(option) } : undefined}
+      >
+        {option}
+      </li>
+    ))
+  } else {
+    optionItems = <li
+      className='dialogue-node__option'
+      onClick={!chosenOption ? () => { advance() } : undefined}
+    >
+            Next
+    </li>
+  }
 
   return (
     <div className='dialogue-node'>
       {text}
-      {!!choicesToDisplay.length && (
-        <ul className='dialogue-node__choices'>
-          {choicesToDisplay.map((choice, index) => {
-            const className = [
-              'dialogue-node__choice',
-              choice.isDefault && 'dialogue-node__default-choice'
-            ].filter(Boolean)
-
-            return (
-              <li
-                key={index}
-                className={className}
-                onClick={!chosenChoice ? () => { makeChoice(choice) } : undefined}
-              >
-                {choice.text}
-              </li>
-            )
-          })}
-        </ul>
-      )}
+      <ul className='dialogue-node__options'>
+        { optionItems }
+      </ul>
     </div>
   )
-}
-
-// We only show chosen choice in history (omitting default choices).
-function determineChoicesToDisplay (choices, chosenChoice) {
-  if (chosenChoice) {
-    // We know we are in history
-    return chosenChoice.isDefault ? [] : [chosenChoice]
-  }
-
-  return choices || []
 }

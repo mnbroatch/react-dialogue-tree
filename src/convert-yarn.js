@@ -1,12 +1,5 @@
-export default class DialogueTree {
-  constructor (
-  ) {
-    this.convertYarn = convertYarn
-  }
-}
-
 // Yoinked from YarnEditor source
-function convertYarn (content) {
+export default function convertYarn (content) {
   const objects = []
   var lines = content.split(/\r?\n/)
   var obj = null
@@ -15,6 +8,7 @@ function convertYarn (content) {
     if (lines[i].trim() === '===') {
       readingBody = false
       if (obj != null) {
+        if (!obj.tags) obj.tags = ''
         objects.push(obj)
         obj = null
       }
@@ -43,8 +37,8 @@ function convertYarn (content) {
     }
   }
   if (obj != null) {
+    if (!obj.tags) obj.tags = ''
     objects.push(obj)
   }
-
   return objects
 }

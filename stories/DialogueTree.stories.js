@@ -1,13 +1,8 @@
 import React from 'react'
-import DialogueTree from 'react-dialogue-tree'
+import DialogueTree from '../src/DialogueTree'
 import './styles.css'
 
 export { default as Basic } from './Basic.js'
-export { default as CustomScript } from './CustomScript.js'
-export { default as CustomComponent } from './CustomComponent.js'
-export { default as DefaultCustomComponent } from './DefaultCustomComponent.js'
-export { default as ThisClonesElysium } from './ThisClonesElysium/ThisClonesElysium.js'
-export { default as TestDialogue } from './ThisClonesElysium/TestDialogue.js'
 
 export default {
   title: 'DialogueTree',

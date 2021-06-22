@@ -12,27 +12,8 @@ html, body {
   right: 10px;
 }
 
-.dialogue-tree-container--custom-script {
-  display: flex;
-  flex-direction: column;
-}
-
-.dialogue-tree-container--custom-script .dialogue-tree {
-  flex: 1;
-  min-height: 0;
-}
-
-
-
-.dialogue-tree-container--this-clones-elysium {
-  height: auto;
-  left: auto;
-  top: 10px;
-  width: 350px;
-}
-
-.dialogue-node__character {
-  text-transform: uppercase;
+.dialogue-tree-container .dialogue-tree {
+  height: 100%;
 }
 
 .dialogue-node__choice--default {

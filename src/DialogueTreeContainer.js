@@ -1,24 +1,31 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import DialogueTree from './DialogueTree.js'
-import JSDialogueTree from './JSDialogueTree.js'
+import Dominatrix from './Dominatrix.js'
+import cloneDeep from 'lodash/cloneDeep'
 
 export default function DialogueTreeContainer ({
   dialogue,
-  startAt,
-  customComponents,
-  customScripts,
-  scrollSpeed,
-  treeEngine = new JSDialogueTree(dialogue, customScripts)
+  startAt = 'Start',
+  functions,
+  variableStorage
 }) {
+  const dominatrix = useMemo(() => new Dominatrix(
+    dialogue,
+    startAt,
+    functions,
+    variableStorage
+  ), [])
+
+  const [currentNode, setCurrentNode] = useState(dominatrix.currentNode)
+
   const [history, setHistory] = useState([])
 
-  const [currentNode, setCurrentNode] = useState(() => {
-    return treeEngine.resolveDialogueNode(startAt || 'root')
-  })
-
-  const makeChoice = useCallback((choice) => {
-    const newNode = treeEngine.makeChoice(choice)
-    setHistory([...history, { ...currentNode, chosenChoice: choice }])
+  const advance = useCallback((option) => {
+    const newNode = cloneDeep(dominatrix.advance(option))
+    // const oldNode = cloneDeep(currentNode)
+    const oldNode = JSON.parse(JSON.stringify(currentNode))
+    console.log('oldNode', oldNode)
+    setHistory([...history, { ...oldNode, chosenOption: option }])
     setCurrentNode(newNode)
   }, [history, currentNode])
 
@@ -26,8 +33,7 @@ export default function DialogueTreeContainer ({
     <DialogueTree
       currentNode={currentNode}
       history={history}
-      makeChoice={makeChoice}
-      customComponents={customComponents}
+      advance={advance}
     />
   )
 }
