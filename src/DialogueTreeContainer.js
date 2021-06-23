@@ -24,7 +24,6 @@ export default function DialogueTreeContainer ({
     const newNode = cloneDeep(dominatrix.advance(option))
     // const oldNode = cloneDeep(currentNode)
     const oldNode = JSON.parse(JSON.stringify(currentNode))
-    console.log('oldNode', oldNode)
     setHistory([...history, { ...oldNode, chosenOption: option }])
     setCurrentNode(newNode)
   }, [history, currentNode])

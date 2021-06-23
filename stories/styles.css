@@ -4,6 +4,16 @@ html, body {
   margin: 0;
 }
 
+.story {
+  overflow-x: hidden;
+}
+
+.source-code {
+  display: inline-block !important;
+  padding-bottom: 320px !important;
+  background-color: transparent !important;
+}
+
 .dialogue-tree-container {
   bottom: 10px;
   height: 300px;

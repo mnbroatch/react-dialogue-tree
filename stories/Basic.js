@@ -1,16 +1,22 @@
 import React from 'react'
 import DialogueTree from 'react-dialogue-tree'
-import SourceCode from './SourceCode.js'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import sourceCode from '!!raw-loader!./Basic.js'
 
 const dialogue = `title: Start
 ---
-Sally: Test
+Sally: Test 
 
 -> No, thanks.
     Sally: Aw, ok!
 -> I'm good.
     Sally: Let me know!
+
+<<if hello("") is 123>>
+    alskdjalskdj
+<<else>>
+    baslkdjas
+<<endif>>
 
 Player: Hi
 
@@ -57,11 +63,21 @@ Sally: Yeah. Don't do it again.
 ===`
 
 export default () => (
-  <div>
-    <SourceCode>{sourceCode}</SourceCode>
-    <div className={'dialogue-tree-container'}>
+  <div className="story">
+    <SyntaxHighlighter
+      language="jsx"
+      className="source-code"
+    >
+      {sourceCode}
+    </SyntaxHighlighter>
 
-      <DialogueTree dialogue={dialogue} />
+    <div className="dialogue-tree-container">
+      <DialogueTree
+        dialogue={dialogue}
+        functions={{
+          hello: function () { console.log('asd'); return 123 }
+        }}
+      />
 
     </div>
   </div>

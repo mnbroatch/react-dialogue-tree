@@ -29,7 +29,6 @@ export default class Dominatrix {
 
   advance (option) {
     if (this.currentNode instanceof bondage.OptionsResult && option) {
-      console.log('this.currentNode.options.indexOf(option)', this.currentNode.options.indexOf(option))
       this.currentNode.select(
         this.currentNode.options.indexOf(option)
       )
