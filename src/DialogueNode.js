@@ -12,7 +12,7 @@ export default function DialogueNode ({
       <li
         key={index}
         className='dialogue-node__option'
-        onClick={!chosenOption ? () => { advance(option) } : undefined}
+        onClick={!chosenOption ? () => { advance(index) } : undefined}
       >
         {option}
       </li>

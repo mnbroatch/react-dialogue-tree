@@ -4,12 +4,18 @@ import bondage from 'bondage'
 import convertYarn from './convert-yarn'
 
 export default class Dominatrix {
-  constructor (
+  constructor ({
     dialogue,
     startAt,
     functions,
-    variableStorage = new Map()
-  ) {
+    variableStorage = new Map(),
+    combineTextAndOptionNodes,
+    handleCommandResult = () => {}
+  }) {
+    this.handleCommandResult = handleCommandResult
+    this.combineTextAndOptionNodes = combineTextAndOptionNodes
+
+    this.bondage = bondage
     const runner = new bondage.Runner()
     runner.load(
       typeof dialogue === 'string'
@@ -17,29 +23,68 @@ export default class Dominatrix {
         : dialogue
     )
     runner.setVariableStorage(variableStorage)
+    this.generator = runner.run(startAt)
+
+    // We need to look ahead in order to provide a node with
+    // options + text. Looking ahead can trigger a function call
+    // earlier than we would like, so we need to queue it.
+    this.functionCallQueue = []
     if (functions) {
       Object.entries(functions).forEach(([name, func]) => {
-        runner.registerFunction(name, func)
+        runner.registerFunction(
+          name,
+          (...args) => {
+            this.functionCallQueue.unshift(() => func(...args))
+          }
+        )
       })
     }
-    this.generator = runner.run(startAt)
-    this.currentNode = this.generator.next().value
-    this.bondage = bondage
+
+    // If we look ahead and see a text node, we need to handle it
+    // next time advance() is called (instead of advancing the generator).
+    this.bufferedNode = null
+
+    this.advance()
   }
 
-  advance (option) {
-    if (this.currentNode instanceof bondage.OptionsResult && option) {
-      this.currentNode.select(
-        this.currentNode.options.indexOf(option)
-      )
+  advance (optionIndex) {
+    if (typeof optionIndex !== 'undefined') {
+      this.currentNode.select(optionIndex)
     }
 
-    if (this.currentNode instanceof bondage.CommandResult) {
-      // gotta figure this out still
+    if (this.bufferedNode) {
+      this.currentNode = this.bufferedNode
+      this.bufferedNode = null
+    } else {
+      this.currentNode = this.generator.next().value
     }
 
-    this.currentNode = this.generator.next().value
-    console.log('this.currentNode ', this.currentNode)
+    if (
+      this.combineTextAndOptionNodes
+      && this.currentNode instanceof bondage.TextResult
+    ) {
+      this.currentNode = this.resolveTextNode()
+    } else if (this.currentNode instanceof bondage.CommandResult) {
+      this.handleCommandResult()
+    }
+
+    this.functionCallQueue.forEach((func) => { func() })
     return this.currentNode
+  }
+
+  resolveTextNode () {
+    let next = this.generator.next().value
+    console.log('next', next)
+    while (next) {
+      if (next instanceof bondage.OptionsResult) {
+        return { ...this.currentNode, ...next, select: next.select }
+      } else if (next instanceof bondage.TextResult) {
+        this.bufferedNode = next
+        return this.currentNode
+      } else if (next instanceof bondage.CommandResult) {
+        this.handleCommandResult()
+        next = this.generator.next().value
+      }
+    }
   }
 }

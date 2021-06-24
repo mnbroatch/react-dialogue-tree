@@ -7,14 +7,15 @@ export default function DialogueTreeContainer ({
   dialogue,
   startAt = 'Start',
   functions,
-  variableStorage
+  variableStorage,
 }) {
-  const dominatrix = useMemo(() => new Dominatrix(
+  const dominatrix = useMemo(() => new Dominatrix({
     dialogue,
     startAt,
     functions,
-    variableStorage
-  ), [])
+    variableStorage,
+    combineTextAndOptionNodes: true
+  }), [])
 
   const [currentNode, setCurrentNode] = useState(dominatrix.currentNode)
 
