@@ -6,23 +6,26 @@ export default function DialogueNode ({
   },
   advance
 }) {
+  const isHistory = typeof chosenOption !== 'undefined'
   let optionItems
   if (options) {
-    optionItems = options.map((option, index) => (
-      <li
-        key={index}
-        className='dialogue-node__option'
-        onClick={!chosenOption ? () => { advance(index) } : undefined}
-      >
-        {option}
-      </li>
-    ))
+    optionItems = options
+      .filter((option, index) => !isHistory || index === chosenOption)
+      .map((option, index) => (
+        <li
+          key={index}
+          className='dialogue-node__option'
+          onClick={!isHistory ? () => { advance(index) } : undefined }
+        >
+          {option}
+        </li>
+      ))
   } else {
     optionItems = <li
       className='dialogue-node__option'
-      onClick={!chosenOption ? () => { advance() } : undefined}
+      onClick={!isHistory ? () => { advance() } : undefined }
     >
-            Next
+      { !isHistory && 'Next' }
     </li>
   }
 

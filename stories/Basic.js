@@ -1,11 +1,11 @@
 import React from 'react'
-import DialogueTree from 'react-dialogue-tree'
+import DialogueTree from '../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import sourceCode from '!!raw-loader!./Basic.js'
 
 const dialogue = `title: Start
 ---
-Sally: Test 
+Sally: Test
 
 -> No, thanks.
     Sally: Aw, ok!

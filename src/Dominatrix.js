@@ -10,11 +10,12 @@ export default class Dominatrix {
     functions,
     variableStorage = new Map(),
     combineTextAndOptionNodes,
-    handleCommandResult = () => {}
+    handleCommandResult = () => {},
+    onConversationEnd = () => {}
   }) {
     this.handleCommandResult = handleCommandResult
+    this.onConversationEnd = onConversationEnd
     this.combineTextAndOptionNodes = combineTextAndOptionNodes
-
     this.bondage = bondage
     const runner = new bondage.Runner()
     runner.load(
@@ -48,7 +49,11 @@ export default class Dominatrix {
   }
 
   advance (optionIndex) {
-    if (typeof optionIndex !== 'undefined') {
+    if (
+      typeof optionIndex !== 'undefined'
+      && this.currentNode
+      && this.currentNode.select
+    ) {
       this.currentNode.select(optionIndex)
     }
 
@@ -69,15 +74,15 @@ export default class Dominatrix {
     }
 
     this.functionCallQueue.forEach((func) => { func() })
+    if (!this.currentNode) this.onConversationEnd()
     return this.currentNode
   }
 
   resolveTextNode () {
     let next = this.generator.next().value
-    console.log('next', next)
     while (next) {
       if (next instanceof bondage.OptionsResult) {
-        return { ...this.currentNode, ...next, select: next.select }
+        return { ...this.currentNode, ...next, select: next.select.bind(next) }
       } else if (next instanceof bondage.TextResult) {
         this.bufferedNode = next
         return this.currentNode

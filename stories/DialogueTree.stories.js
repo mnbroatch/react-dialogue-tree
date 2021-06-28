@@ -2,6 +2,7 @@ import React from 'react'
 import DialogueTree from '../src/DialogueTree'
 import './styles.css'
 
+export { default as Test } from './Test.js'
 export { default as Basic } from './Basic.js'
 
 export default {
