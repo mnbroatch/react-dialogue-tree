@@ -11,10 +11,10 @@ export default class Dominatrix {
     variableStorage = new Map(),
     combineTextAndOptionNodes,
     handleCommandResult = () => {},
-    onConversationEnd = () => {}
+    onDialogueEnd = () => {}
   }) {
     this.handleCommandResult = handleCommandResult
-    this.onConversationEnd = onConversationEnd
+    this.onDialogueEnd = onDialogueEnd
     this.combineTextAndOptionNodes = combineTextAndOptionNodes
     this.bondage = bondage
     const runner = new bondage.Runner()
@@ -74,7 +74,7 @@ export default class Dominatrix {
     }
 
     this.functionCallQueue.forEach((func) => { func() })
-    if (!this.currentNode) this.onConversationEnd()
+    if (!this.currentNode) this.onDialogueEnd()
     return this.currentNode
   }
 
@@ -91,5 +91,6 @@ export default class Dominatrix {
         next = this.generator.next().value
       }
     }
+    return this.currentNode
   }
 }

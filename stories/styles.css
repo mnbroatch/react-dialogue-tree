@@ -33,3 +33,11 @@ html, body {
   text-transform: uppercase;
 }
 
+.reset-button {
+  bottom: 10px;
+  height: 300px;
+  left: 10px;
+  position: fixed;
+  right: 10px;
+}
+

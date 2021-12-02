@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import DialogueTree from '../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import sourceCode from '!!raw-loader!./Test.js'
@@ -6,15 +6,28 @@ import sourceCode from '!!raw-loader!./Test.js'
 const dialogue = `
 title: Start
 ---
-<<if visited("Start")>>
-Welcome to the Test conversation!
-<<else>>
+<<if $visited_start is true>>
 Let's do something else!
+<<else>>
+Welcome to the Test conversation!
+<<set $visited_start to true>>
 <<endif>>
 Which feature should we use?
 [[Shortcuts|Shortcuts]]
 [[Conditionals|Conditionals]]
-[[ConditionalOptions|ConditionalOptions]]
+[[Conditional Options|ConditionalOptions]]
+[[Conditional Shortcut Options|ConditionalShortcutOptions]]
+[[Dialogue End|End]]
+===
+
+
+title: End
+---
+Are you sure?
+-> No, I don't want to lose everything!
+  [[Start]]
+-> Yea, I wanted to start over anyway.
+  If this text isn't here, the dialogue crashes.
 ===
 
 
@@ -40,7 +53,7 @@ OK, let's see a conditional
 Ooh, looks like $some_variable is true!
 [[Start]]
 <<else>>
-Hmm, looks like $some_variable is false... I'm gonna set it to true real quick.
+Hmm, looks like $some_variable is false... I'm gonna set it to true real quick and rerun this node.
 <<set $some_variable to true>>
 [[Conditionals]]
 <<endif>>
@@ -49,17 +62,38 @@ Hmm, looks like $some_variable is false... I'm gonna set it to true real quick.
 
 title: ConditionalOptions
 ---
-So how's the weather been?
-[[Actually, I'm not sure yet...|Start]]
-<<if $robot_head_0_done is 1>>
-[[Hotter than blazes!|Start]]
-<<else>>
-[[Rabbit Head|Start]]
-<<endif>>
+Would you like to revisit any nodes?
+-> Shortcuts <<if visited("Shortcuts")>>
+  a
+  [[Shortcuts]]
+-> I haven't seen any others! <<if not visited("Shortcuts") and not visited("Conditionals") and not visited("ConditionalShortcutOptions")>>
+  Oh, ok. Back to the start with ye!
+  [[Start]]
+-> Not really <<if visited("Shortcuts") or visited("Conditionals") or visited("ConditionalShortcutOptions")>>
+  OK
+  [[Start]]
+asdasd
+===
+
+
+title: ConditionalShortcutOptions
+---
+What's the best feature you've seen so far?
+-> Conditionals! <<if visited("Conditionals")>>
+  Nice.
+-> ConditionalOptions! <<if visited("ConditionalOptions")>>
+  Nice.
+-> Shortcuts! <<if visited("Shortcuts")>>
+  Nice.
+-> I haven't seen any others <<if not visited("Shortcuts") and not visited("Conditionals") and not visited("ConditionalOptions")>>
+  Nice.
+If this text isn't here, the dialogue crashes :(.
+[[Start]]
 ===
 `
 
 export default function TestDialogueTree () {
+  const [isOpen, setIsOpen] = useState(true)
   return (
     <div className="story">
       <SyntaxHighlighter
@@ -70,13 +104,19 @@ export default function TestDialogueTree () {
       </SyntaxHighlighter>
 
       <div className="dialogue-tree-container">
-        <DialogueTree
-          dialogue={dialogue}
-          startAt="Start"
-          functions={{
-            hello: function () { console.log('asd'); return 123 }
-          }}
-        />
+        {isOpen
+          ? <DialogueTree
+              dialogue={dialogue}
+              startAt="Start"
+              onDialogueEnd={() => { setIsOpen(false) }}
+            />
+          : <button
+              className="reset-button"
+              onClick={() => { setIsOpen(true) }}
+            >
+              Reset
+            </button>
+      }
       </div>
     </div>
   )

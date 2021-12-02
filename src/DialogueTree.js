@@ -7,7 +7,8 @@ import './styles.css'
 export default function DialogueTree ({
   currentNode,
   history,
-  advance
+  advance,
+  defaultOption,
 }) {
   const nodes = currentNode ? [...history, currentNode] : history
   return (
@@ -19,6 +20,7 @@ export default function DialogueTree ({
               <DialogueNode
                 node={node}
                 advance={advance}
+                defaultOption={defaultOption}
               />
             </div>
           </div>

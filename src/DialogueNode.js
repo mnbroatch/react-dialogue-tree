@@ -1,12 +1,16 @@
 import React from 'react'
 
 export default function DialogueNode ({
+  node,
   node: {
-    text, options, chosenOption
+    text, options, chosenOption,
   },
+  defaultOption,
   advance
 }) {
   const isHistory = typeof chosenOption !== 'undefined'
+  console.log('node', node)
+  console.log('isHistory', isHistory)
   let optionItems
   if (options) {
     optionItems = options
@@ -21,11 +25,11 @@ export default function DialogueNode ({
         </li>
       ))
   } else {
-    optionItems = <li
-      className='dialogue-node__option'
+    optionItems = !isHistory && <li
+      className='dialogue-node__option dialogue-node__option--default'
       onClick={!isHistory ? () => { advance() } : undefined }
     >
-      { !isHistory && 'Next' }
+      { defaultOption }
     </li>
   }
 
