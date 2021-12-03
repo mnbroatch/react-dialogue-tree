@@ -1,14 +1,21 @@
+# Limitations of Bondage.js
+
+Some limitations of
+
+
 # Limitations
 
 Most limitations of Dominatrix are going to be limitations of the underlying bondage library (it is, after all, much more complex than this one).
 
-Currently I am using an improved fork found at: 
+Currently I am using an improved fork found at: TODO
 
-This section does not endeavor to be an exhaustive list of issues with bondage (try, you know, their issues page), but a couple gotchas that you'll find right off the bat are:
+This section does not endeavor to be an exhaustive list of issues with bondage.js (try, you know, their issues page), but a couple gotchas that you'll find right off the bat are:
 
 - No {$inline} expressions
 
 - No #line: tags
+
+- No arbitrary:metadata
 
 - Indentation breaks conditional options
 

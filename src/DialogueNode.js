@@ -3,14 +3,12 @@ import React from 'react'
 export default function DialogueNode ({
   node,
   node: {
-    text, options, chosenOption,
+    text, options, chosenOption, isDialogueEnd
   },
   defaultOption,
   advance
 }) {
   const isHistory = typeof chosenOption !== 'undefined'
-  console.log('node', node)
-  console.log('isHistory', isHistory)
   let optionItems
   if (options) {
     optionItems = options
@@ -25,7 +23,7 @@ export default function DialogueNode ({
         </li>
       ))
   } else {
-    optionItems = !isHistory && <li
+    optionItems = !isDialogueEnd && !isHistory && <li
       className='dialogue-node__option dialogue-node__option--default'
       onClick={!isHistory ? () => { advance() } : undefined }
     >
@@ -36,9 +34,13 @@ export default function DialogueNode ({
   return (
     <div className='dialogue-node'>
       {text}
-      <ul className='dialogue-node__options'>
-        { optionItems }
-      </ul>
+      {
+        optionItems && (
+          <ul className='dialogue-node__options'>
+            { optionItems }
+          </ul>
+        )
+      }
     </div>
   )
 }

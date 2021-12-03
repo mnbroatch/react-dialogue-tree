@@ -57,6 +57,7 @@
     "source-loader": ""
   },
   "dependencies": {
-    "bondage": "./lib/bondage-2.2.0.tgz"
+    "bondage": "./lib/bondage-2.2.0.tgz",
+    "yarn-editor-web": "github:YarnSpinnerTool/YarnEditor"
   }
 }
