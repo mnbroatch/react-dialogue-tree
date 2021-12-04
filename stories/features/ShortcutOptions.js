@@ -3,15 +3,19 @@ import DialogueTree from '../../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import sourceCode from '!!raw-loader!./Basic.js'
 
-const dialogue = `title:Start
-tags:cool stuff
+const dialogue = `title: Start
 ---
-a
-c
+Pick an option
+-> One
+  Fun.
+-> Two
+  Oh, you.
+-> Three
+  Hee hee.
+-> Four
+  More, more!
 ===`
 
-// I am a line
-// I am a second line
 export default () => (
   <div className="story">
     <SyntaxHighlighter

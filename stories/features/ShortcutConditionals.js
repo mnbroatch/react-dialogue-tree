@@ -4,14 +4,20 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import sourceCode from '!!raw-loader!./Basic.js'
 
 const dialogue = `title:Start
-tags:cool stuff
 ---
-a
-c
+You cannot win.
+-> Win <<if false is true>>
+  oh
+-> Lose
+  oh
+
+You can win.
+-> Win <<if true is true>>
+  oh
+-> Lose
+  oh
 ===`
 
-// I am a line
-// I am a second line
 export default () => (
   <div className="story">
     <SyntaxHighlighter

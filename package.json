@@ -35,7 +35,7 @@
     "@rollup/plugin-babel": "",
     "@rollup/plugin-commonjs": "",
     "@rollup/plugin-json": "",
-    "@rollup/plugin-node-resolve": "",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "@storybook/addon-controls": "",
     "@storybook/react": "",
     "babel-loader": "",
@@ -51,7 +51,7 @@
     "raw-loader": "",
     "react-syntax-highlighter": "",
     "react-useinterval": "",
-    "rollup": "",
+    "rollup": "^2.52.3",
     "rollup-plugin-postcss": "",
     "rollup-plugin-terser": "",
     "source-loader": ""

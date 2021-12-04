@@ -18,7 +18,6 @@ export default class Dominatrix {
     this.combineTextAndOptionNodes = combineTextAndOptionNodes
     this.bondage = bondage
     const runner = new bondage.Runner()
-    console.log('convertYarn(dialogue)', convertYarn(dialogue))
     runner.load(
       typeof dialogue === 'string'
         ? convertYarn(dialogue)

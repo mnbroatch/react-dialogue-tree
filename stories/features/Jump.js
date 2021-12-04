@@ -4,14 +4,16 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import sourceCode from '!!raw-loader!./Basic.js'
 
 const dialogue = `title:Start
-tags:cool stuff
 ---
-a
-c
+I am a line in a node
+[[Second]]
+===
+
+title:Second
+---
+I am a line in another node
 ===`
 
-// I am a line
-// I am a second line
 export default () => (
   <div className="story">
     <SyntaxHighlighter
