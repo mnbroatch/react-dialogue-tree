@@ -5,8 +5,9 @@ import sourceCode from '!!raw-loader!./Basic.js'
 
 const dialogue = `title:Start
 ---
-I am a line
-I am a second line
+About to send a command!
+<<someCommand $a "I'm an arg!">>
+Command sent!
 ===`
 
 export default () => (
@@ -19,7 +20,11 @@ export default () => (
     </SyntaxHighlighter>
 
     <div className="dialogue-tree-container">
-      <DialogueTree dialogue={dialogue} />
+      <DialogueTree
+        dialogue={dialogue}
+        handleCommand={result => alert ('command:\n' + JSON.stringify(result, null, 2))}
+        variableStorage={new Map(Object.entries({ a: 1 }))}
+      />
     </div>
   </div>
 )

@@ -1,14 +1,11 @@
 import React from 'react'
 import DialogueTree from '../../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import sourceCode from '!!raw-loader!./Basic.js'
+import sourceCode from '!!raw-loader!./InlineExpressions.js'
 
-const dialogue = `title: Start
-otherMetaData: thing
+const dialogue = `title:Start
 ---
-I am a node
-
-I am a second node
+1 + 1 is {1 + 1}  and that's cool
 ===`
 
 export default () => (
@@ -21,13 +18,7 @@ export default () => (
     </SyntaxHighlighter>
 
     <div className="dialogue-tree-container">
-      <DialogueTree
-        dialogue={dialogue}
-        functions={{
-          hello: function () { console.log('asd'); return 123 }
-        }}
-      />
-
+      <DialogueTree dialogue={dialogue} />
     </div>
   </div>
 )

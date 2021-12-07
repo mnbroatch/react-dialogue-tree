@@ -7,13 +7,16 @@ export default class Dominatrix {
   constructor ({
     dialogue,
     startAt,
-    functions,
+    combineTextAndOptionNodes = true,
     variableStorage = new Map(),
-    combineTextAndOptionNodes,
-    handleCommandResult = () => {},
+    functions = {},
+    handleCommand = () => {},
     onDialogueEnd = () => {}
   }) {
-    this.handleCommandResult = handleCommandResult
+    // temporary? https://github.com/alforno/bondage.js/issues/1
+    variableStorage.display = variableStorage.get
+
+    this.handleCommand = handleCommand
     this.onDialogueEnd = onDialogueEnd
     this.combineTextAndOptionNodes = combineTextAndOptionNodes
     this.bondage = bondage
@@ -24,23 +27,12 @@ export default class Dominatrix {
         : dialogue
     )
     runner.setVariableStorage(variableStorage)
+    Object.entries(functions)
+      .forEach((entry) => { runner.registerFunction(...entry) })
     this.generator = runner.run(startAt)
 
-    // We need to look ahead in order to provide a node with
-    // options + text. Looking ahead can trigger a function call
-    // earlier than we would like, so we need to queue it.
+    // We need to look ahead in order to merge options + text results.
     this.bufferedNode = null
-    this.functionCallQueue = []
-    if (functions) {
-      Object.entries(functions).forEach(([name, func]) => {
-        runner.registerFunction(
-          name,
-          (...args) => {
-            this.functionCallQueue.unshift(() => func(...args))
-          }
-        )
-      })
-    }
 
     this.advance()
   }
@@ -55,33 +47,30 @@ export default class Dominatrix {
     }
 
     let next = this.bufferedNode || this.generator.next().value
+    let buffered = null
 
     while (next instanceof bondage.CommandResult) {
-      this.handleCommandResult()
+      this.handleCommand(next)
       next = this.generator.next().value
     }
 
-    this.functionCallQueue.forEach((func) => { func() })
-
-    // Lookahead for text + options, and for end of dialogue
-    let buffered
-    buffered = this.generator.next().value
-    if (
-      this.combineTextAndOptionNodes
-      && next instanceof bondage.TextResult
-      && buffered instanceof bondage.OptionsResult
-    ) {
-      next = { ...next, ...buffered, select: buffered.select.bind(buffered) }
-      buffered = null
-    } else if (!buffered && !(next instanceof bondage.OptionsResult)) {
-      next = { ...next, isDialogueEnd: true }
-      this.onDialogueEnd()
+    // Lookahead for combining text + options, and for end of dialogue.
+    // Can't look ahead of option nodes (what would you look ahead at?)
+    if (!(next instanceof bondage.OptionsResult)) {
+      buffered = this.generator.next().value
+      if (
+        this.combineTextAndOptionNodes
+        && buffered instanceof bondage.OptionsResult
+      ) {
+        next = { ...next, ...buffered, select: buffered.select.bind(buffered) }
+        buffered = null
+      } else if (!buffered) {
+        next = { ...next, isDialogueEnd: true }
+      }
     }
 
     this.currentNode = next
     this.bufferedNode = buffered
-
-    if (!buffered) this.onDialogueEnd()
-    return this.currentNode
+    if (this.currentNode.isDialogueEnd) this.onDialogueEnd()
   }
 }

@@ -1,12 +1,14 @@
 import React from 'react'
 import DialogueTree from '../../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import sourceCode from '!!raw-loader!./Basic.js'
+import sourceCode from '!!raw-loader!./Functions.js'
 
 const dialogue = `title:Start
 ---
-I am a line
-I am a second line
+<<set $apples to 4>>
+You have {$apples}  apples. You gain one!
+<<set $apples to addOne($apples)>>
+You now have {$apples}  apples.
 ===`
 
 export default () => (
@@ -19,7 +21,13 @@ export default () => (
     </SyntaxHighlighter>
 
     <div className="dialogue-tree-container">
-      <DialogueTree dialogue={dialogue} />
+      <DialogueTree
+        dialogue={dialogue}
+        functions={{
+          addOne: num => +num + 1,
+          returnOne: () => 1,
+        }}
+      />
     </div>
   </div>
 )

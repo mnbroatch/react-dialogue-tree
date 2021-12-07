@@ -1,12 +1,13 @@
 import React from 'react'
 import DialogueTree from '../../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import sourceCode from '!!raw-loader!./Basic.js'
+import sourceCode from '!!raw-loader!./Variables.js'
 
 const dialogue = `title:Start
 ---
-I am a line
-I am a second line
+The value of variable $a is {$a}
+<<set $a to 3>>
+Now the value of variable $a has changed to {$a}!
 ===`
 
 export default () => (
@@ -19,7 +20,10 @@ export default () => (
     </SyntaxHighlighter>
 
     <div className="dialogue-tree-container">
-      <DialogueTree dialogue={dialogue} />
+      <DialogueTree
+        dialogue={dialogue}
+        variableStorage={new Map(Object.entries({ a: 1 }))}
+      />
     </div>
   </div>
 )

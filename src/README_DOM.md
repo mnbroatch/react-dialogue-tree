@@ -1,21 +1,76 @@
-# Limitations of Bondage.js
+to try:
 
-Some limitations of
+Options node ending dialogue
+  - Broken already. Not possible with normal options (they require a node), and shortcut options break with nothing after them.
 
 
-# Limitations
 
-Most limitations of Dominatrix are going to be limitations of the underlying bondage library (it is, after all, much more complex than this one).
 
-Currently I am using an improved fork found at: TODO
+# What is Dominatrix?
 
-This section does not endeavor to be an exhaustive list of issues with bondage.js (try, you know, their issues page), but a couple gotchas that you'll find right off the bat are:
+Dominatrix is a quality-of-life wrapper around bondage.js, a javascript parser for the [Yarn language](https://yarnspinner.dev/).
 
-- No {$inline} expressions
+Yarn is a language for writing dialogue trees.
 
-- No #line: tags
+The added quality-of-life features are:
+  - Support yarn format (as a string, rather than a )
+  - 
+  - Run a command handler function on generic commands
+  - Lookahead to return text and subsequent options block together (on by default)
 
+
+# What does using alforno's branch get us?
+
+Dominatrix is a wrapper around a specific [forked version of bondage.js](https://github.com/alforno/bondage.js).
+
+Development around the [original project](https://github.com/hylyh/bondage.js) has slowed and this forked version supports a very important feature: Inline expressions. Some caveats are detailed below.
+
+
+# What limitations still remain?
+
+Most limitations of Dominatrix are going to be limitations of the underlying bondage.js library (it is, after all, much more complex than this one). Here is a non-exhaustive list of bugs and unsupported yarn features in the version of bondage.js being used:
+
+- No #hashtags
+- No [format functions]
 - No arbitrary:metadata
+- No \\{escaping\\} curly brackets
+- No { functions() in inline expressions }.
+  - Set function call() to a variable inside a command instead  
+
+- Inline expressions eat subsequent space characters. So,
+
+```javascript
+You have to add an {"extra"}  space yourself.
+```
+
+- Shortcut options without a followup are broken. So,
+
+```javascript
+This
+-> Will
+  Work
+-> Just
+  Fine
+```
+but
+
+```javascript
+This
+-> Will
+-> Not
+  Work
+
+```
+
+and 
+
+```javascript
+This
+-> Will
+  Not
+-> Work
+```
+
 
 - Indentation breaks conditional options
 
@@ -30,37 +85,7 @@ do this:
 
 ```javascript
 <<if $thing is true>>
-[[Don't do this|SomeNode]]
+[[Do this|SomeNode]]
 <<endif>>
-```
-
-- Indentation on shortcuts is too restrictive:
-
-working:
-
-```javascript
-OK, let's see a shortcut
--> No! Never!
-  Haha, made you shortcut
--> Woohoo! When can we start?
-  We're already done!
-  -> Aw, come on, one more!
-    OK, one more nested shortcut, just for you <3.
-  -> Good enough!
-    Glad you liked it!
-```
-
-not working:
-
-```javascript
-OK, let's see a shortcut
-  -> No! Never!
-    Haha, made you shortcut
-  -> Woohoo! When can we start?
-    We're already done!
-      -> Aw, come on, one more!
-        OK, one more nested shortcut, just for you <3.
-      -> Good enough!
-        Glad you liked it!
 ```
 

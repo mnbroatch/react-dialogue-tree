@@ -4,7 +4,6 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import sourceCode from '!!raw-loader!./Options.js'
 
 const dialogue = `title:Start
-tags:cool stuff
 ---
 Red or Blue?
 [[Red|Red]]

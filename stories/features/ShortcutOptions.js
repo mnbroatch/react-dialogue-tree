@@ -1,19 +1,23 @@
 import React from 'react'
 import DialogueTree from '../../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import sourceCode from '!!raw-loader!./Basic.js'
+import sourceCode from '!!raw-loader!./ShortcutOptions.js'
 
 const dialogue = `title: Start
 ---
 Pick an option
 -> One
-  Fun.
+  Fun. Once more!
+  -> Red
+    That's what I said!
+  -> Blue
+    Says you!
 -> Two
-  Oh, you.
--> Three
-  Hee hee.
--> Four
-  More, more!
+  Oh, you. Once more!
+  -> Up
+    Yup!
+  -> Down
+    What a clown!
 ===`
 
 export default () => (

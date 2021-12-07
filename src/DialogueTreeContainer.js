@@ -8,6 +8,8 @@ export default function DialogueTreeContainer ({
   startAt = 'Start',
   functions,
   variableStorage,
+  handleCommand,
+  combineTextAndOptionNodes,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
 }) {
@@ -16,7 +18,8 @@ export default function DialogueTreeContainer ({
     startAt,
     functions,
     variableStorage,
-    combineTextAndOptionNodes: true,
+    handleCommand,
+    combineTextAndOptionNodes,
     onDialogueEnd
   }), [])
 
@@ -25,11 +28,11 @@ export default function DialogueTreeContainer ({
   const [history, setHistory] = useState([])
 
   const advance = useCallback((optionIndex) => {
-    const newNode = cloneDeep(dominatrix.advance(optionIndex))
-    const oldNode = cloneDeep(currentNode)
+    dominatrix.advance(optionIndex)
+    const newNode = dominatrix.currentNode
     if (newNode) {
-      setHistory([...history, { ...oldNode, chosenOption: optionIndex || 0 }])
-      setCurrentNode(newNode)
+      setHistory([...history, { ...cloneDeep(currentNode), chosenOption: optionIndex || 0 }])
+      setCurrentNode(cloneDeep(newNode))
     }
   }, [currentNode])
 
