@@ -54,10 +54,13 @@
     "rollup": "^2.52.3",
     "rollup-plugin-postcss": "",
     "rollup-plugin-terser": "",
-    "source-loader": ""
+    "source-loader": "",
+    "storybook": "^6.4.8"
   },
   "dependencies": {
     "bondage": "./lib/bondage-2.2.0.tgz",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "yarn-editor-web": "github:YarnSpinnerTool/YarnEditor"
   }
 }
