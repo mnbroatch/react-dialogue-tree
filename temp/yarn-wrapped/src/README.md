@@ -1,34 +1,27 @@
-to try:
+# What is YarnWrapped?
 
-Options node ending dialogue
-  - Broken already. Not possible with normal options (they require a node), and shortcut options break with nothing after them.
-
-
-
-
-# What is Dominatrix?
-
-Dominatrix is a quality-of-life wrapper around bondage.js, a javascript parser for the [Yarn language](https://yarnspinner.dev/).
+YarnWrapped is a quality-of-life wrapper around bondage.js, a javascript parser for the [Yarn language](https://yarnspinner.dev/).
 
 Yarn is a language for writing dialogue trees.
 
 The added quality-of-life features are:
-  - Support yarn format (as a string, rather than a )
-  - 
-  - Run a command handler function on generic commands
-  - Lookahead to return text and subsequent options block together (on by default)
+  - Support yarn format (text string rather than a json)
+  - Run a custom command handler function when generic commands are encountered
+  - A lookahead which enables:
+    - return text and subsequent options block together (optional, on by default)
+    - include an `isDialogueEnd` property with the last node in a dialogue
 
 
-# What does using alforno's branch get us?
+# What version of bondage.js does this use?
 
-Dominatrix is a wrapper around a specific [forked version of bondage.js](https://github.com/alforno/bondage.js).
+YarnWrapped is a wrapper around a specific [forked version of bondage.js](https://github.com/alforno/bondage.js).
 
 Development around the [original project](https://github.com/hylyh/bondage.js) has slowed and this forked version supports a very important feature: Inline expressions. Some caveats are detailed below.
 
 
 # What limitations still remain?
 
-Most limitations of Dominatrix are going to be limitations of the underlying bondage.js library (it is, after all, much more complex than this one). Here is a non-exhaustive list of bugs and unsupported yarn features in the version of bondage.js being used:
+Most limitations of YarnWrapped are going to be limitations of the underlying bondage.js library (it is, after all, much more complex than this one). Here is a non-exhaustive list of bugs and unsupported yarn features in the version of bondage.js being used:
 
 - No #hashtags
 - No [format functions]

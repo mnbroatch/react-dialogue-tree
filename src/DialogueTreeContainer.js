@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import DialogueTree from './DialogueTree.js'
-import Dominatrix from './Dominatrix.js'
+import YarnWrapped from 'yarn-wrapped'
 import cloneDeep from 'lodash/cloneDeep'
 
 export default function DialogueTreeContainer ({
@@ -13,7 +13,7 @@ export default function DialogueTreeContainer ({
   onDialogueEnd = () => {},
   defaultOption = 'Next',
 }) {
-  const dominatrix = useMemo(() => new Dominatrix({
+  const runner = useMemo(() => new YarnWrapped({
     dialogue,
     startAt,
     functions,
@@ -23,13 +23,13 @@ export default function DialogueTreeContainer ({
     onDialogueEnd
   }), [])
 
-  const [currentNode, setCurrentNode] = useState(dominatrix.currentNode)
+  const [currentNode, setCurrentNode] = useState(runner.currentNode)
 
   const [history, setHistory] = useState([])
 
   const advance = useCallback((optionIndex) => {
-    dominatrix.advance(optionIndex)
-    const newNode = dominatrix.currentNode
+    runner.advance(optionIndex)
+    const newNode = runner.currentNode
     if (newNode) {
       setHistory([...history, { ...cloneDeep(currentNode), chosenOption: optionIndex || 0 }])
       setCurrentNode(cloneDeep(newNode))

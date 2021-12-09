@@ -3,37 +3,38 @@
 import bondage from 'bondage'
 import convertYarn from './convert-yarn'
 
-export default class Dominatrix {
+export default class YarnWrapped {
   constructor ({
     dialogue,
     startAt,
     combineTextAndOptionNodes = true,
-    variableStorage = new Map(),
-    functions = {},
-    handleCommand = () => {},
-    onDialogueEnd = () => {}
+    variableStorage,
+    functions,
+    handleCommand,
+    onDialogueEnd
   }) {
-    // temporary? https://github.com/alforno/bondage.js/issues/1
-    variableStorage.display = variableStorage.get
-
     this.handleCommand = handleCommand
     this.onDialogueEnd = onDialogueEnd
     this.combineTextAndOptionNodes = combineTextAndOptionNodes
     this.bondage = bondage
+
     const runner = new bondage.Runner()
     runner.load(
       typeof dialogue === 'string'
         ? convertYarn(dialogue)
         : dialogue
     )
-    runner.setVariableStorage(variableStorage)
-    Object.entries(functions)
-      .forEach((entry) => { runner.registerFunction(...entry) })
+    if (variableStorage) {
+      variableStorage.display ||= variableStorage.get
+      runner.setVariableStorage(variableStorage)
+    }
+    if (functions) {
+      Object.entries(functions).forEach((entry) => {
+        runner.registerFunction(...entry)
+      })
+    }
     this.generator = runner.run(startAt)
-
-    // We need to look ahead in order to merge options + text results.
     this.bufferedNode = null
-
     this.advance()
   }
 
@@ -50,7 +51,7 @@ export default class Dominatrix {
     let buffered = null
 
     while (next instanceof bondage.CommandResult) {
-      this.handleCommand(next)
+      this.handleCommand?.(next)
       next = this.generator.next().value
     }
 
@@ -71,6 +72,6 @@ export default class Dominatrix {
 
     this.currentNode = next
     this.bufferedNode = buffered
-    if (this.currentNode.isDialogueEnd) this.onDialogueEnd()
+    if (this.currentNode.isDialogueEnd) this.onDialogueEnd?.()
   }
 }
