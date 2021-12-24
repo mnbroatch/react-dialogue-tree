@@ -8,7 +8,7 @@ const dialogue = `title:Start
 <<set $apples to 4>>
 You have {$apples}  apples. You gain one!
 <<set $apples to addOne($apples)>>
-You now have {$apples}  apples.
+You now have {$apples} apples.
 ===`
 
 export default () => (

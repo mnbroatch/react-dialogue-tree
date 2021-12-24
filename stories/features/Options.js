@@ -6,8 +6,10 @@ import sourceCode from '!!raw-loader!./Options.js'
 const dialogue = `title:Start
 ---
 Red or Blue?
-[[Red|Red]]
-[[Blue|Blue]]
+-> Red
+  <<jump Red>>
+-> Blue
+  <<jump Blue>>
 ===
 
 title:Red

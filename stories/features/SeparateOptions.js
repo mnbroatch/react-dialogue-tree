@@ -6,8 +6,10 @@ import sourceCode from '!!raw-loader!./SeparateOptions.js'
 const dialogue = `title:Start
 ---
 What color? Hit "Next" to see the choices.
-[[Red|Red]]
-[[Blue|Blue]]
+-> Red
+  <<jump Red>>
+-> Blue
+  <<jump Blue>>
 ===
 
 title:Red

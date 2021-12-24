@@ -1,12 +1,12 @@
 import React from 'react'
 import DialogueTree from '../../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import sourceCode from '!!raw-loader!./Basic.js'
+import sourceCode from '!!raw-loader!./Jumps.js'
 
 const dialogue = `title:Start
 ---
 I am a line in a node
-[[Second]]
+<<jump Second>>
 ===
 
 title:Second

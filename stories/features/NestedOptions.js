@@ -1,21 +1,23 @@
 import React from 'react'
 import DialogueTree from '../../src/DialogueTreeContainer'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import sourceCode from '!!raw-loader!./Basic.js'
+import sourceCode from '!!raw-loader!./NestedOptions.js'
 
-const dialogue = `title:Start
+const dialogue = `title: Start
 ---
-You cannot win.
--> Win <<if false is true>>
-  oh
--> Lose
-  oh
-
-You can win.
--> Win <<if true is true>>
-  oh
--> Lose
-  oh
+Pick an option
+-> One
+  Fun. Once more!
+  -> Red
+    That's what I said!
+  -> Blue
+    Says you!
+-> Two
+  Oh, you. Once more!
+  -> Up
+    Yup!
+  -> Down
+    What a clown!
 ===`
 
 export default () => (

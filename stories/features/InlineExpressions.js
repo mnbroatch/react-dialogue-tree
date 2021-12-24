@@ -5,7 +5,7 @@ import sourceCode from '!!raw-loader!./InlineExpressions.js'
 
 const dialogue = `title:Start
 ---
-1 + 1 is {1 + 1}  and that's cool
+1 + 1 is {1 + 1} and that's cool
 ===`
 
 export default () => (

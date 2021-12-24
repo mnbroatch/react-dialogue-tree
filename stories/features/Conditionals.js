@@ -27,7 +27,7 @@ How many are there?
   That's wrong!
 <<endif>>
 
-[[Start]]
+<<jump Start>>
 ===`
 
 export default () => (
