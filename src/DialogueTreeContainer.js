@@ -20,7 +20,7 @@ export default function DialogueTreeContainer ({
     variableStorage,
     handleCommand,
     combineTextAndOptionsResults
-  }), [])
+  }), [dialogue, combineTextAndOptionsResults, handleCommand])
 
   const [currentResult, setCurrentResult] = useState(runner.currentResult)
 
@@ -35,7 +35,7 @@ export default function DialogueTreeContainer ({
     } else {
       onDialogueEnd()
     }
-  }, [currentResult])
+  }, [currentResult, runner])
 
   return (
     <DialogueTree
