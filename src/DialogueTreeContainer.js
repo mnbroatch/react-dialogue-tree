@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import DialogueTree from './DialogueTree.js'
 import YarnBound from 'yarn-bound'
 import cloneDeep from 'lodash/cloneDeep'
@@ -21,6 +21,11 @@ export default function DialogueTreeContainer ({
     handleCommand,
     combineTextAndOptionsResults
   }), [dialogue, combineTextAndOptionsResults, handleCommand])
+
+  useEffect(() => {
+    setHistory([])
+    setCurrentResult(runner.currentResult)
+  }, [runner])
 
   const [currentResult, setCurrentResult] = useState(runner.currentResult)
 
