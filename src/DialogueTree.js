@@ -5,12 +5,12 @@ import ChatScroller from './ChatScroller.js'
 import './styles.css'
 
 export default function DialogueTree ({
-  currentNode,
+  currentResult,
   history,
   advance,
   defaultOption,
 }) {
-  const nodes = currentNode ? [...history, currentNode] : history
+  const nodes = currentResult ? [...history, currentResult] : history
   return (
     <div className='dialogue-tree'>
       <ChatScroller scrollSpeed={8}>

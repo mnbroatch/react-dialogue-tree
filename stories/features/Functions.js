@@ -6,7 +6,7 @@ import sourceCode from '!!raw-loader!./Functions.js'
 const dialogue = `title:Start
 ---
 <<set $apples to 4>>
-You have {$apples}  apples. You gain one!
+You have {$apples} apples. You gain one!
 <<set $apples to addOne($apples)>>
 You now have {$apples} apples.
 ===`

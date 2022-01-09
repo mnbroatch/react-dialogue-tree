@@ -16,10 +16,13 @@ export default function DialogueNode ({
       .map((option, index) => (
         <li
           key={index}
-          className='dialogue-node__option'
-          onClick={!isHistory ? () => { advance(index) } : undefined }
+          className={[
+            'dialogue-node__option',
+            !option.isAvailable && 'dialogue-node__option--disabled'
+          ].filter(Boolean).join(' ')}
+          onClick={!isHistory && option.isAvailable ? () => { advance(index) } : undefined }
         >
-          {option}
+          {option.text}
         </li>
       ))
   } else {

@@ -7,6 +7,7 @@ const dialogue = `title:Start
 ---
 I am a line in a node
 <<jump Second>>
+I should be ignored
 ===
 
 title:Second

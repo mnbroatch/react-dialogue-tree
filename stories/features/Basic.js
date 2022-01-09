@@ -7,6 +7,11 @@ const dialogue = `title:Start
 ---
 I am a line
 I am a second line
+I am a third line
+I am a fourth line
+I am a fifth line
+I am a sixth line
+I am the last line!
 ===`
 
 export default () => (

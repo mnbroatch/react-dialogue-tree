@@ -6,7 +6,7 @@ import sourceCode from '!!raw-loader!./Commands.js'
 const dialogue = `title:Start
 ---
 About to send a command!
-<<someCommand $a "I'm an arg!">>
+<<doSomething>>
 Command sent!
 ===`
 const handleCommand = result => alert('command:\n' + JSON.stringify(result, null, 2))

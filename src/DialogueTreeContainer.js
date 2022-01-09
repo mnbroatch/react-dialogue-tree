@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react'
 import DialogueTree from './DialogueTree.js'
-import YarnWrapped from 'yarn-wrapped'
+import YarnBound from 'yarn-bound'
 import cloneDeep from 'lodash/cloneDeep'
 
 export default function DialogueTreeContainer ({
@@ -9,36 +9,37 @@ export default function DialogueTreeContainer ({
   functions,
   variableStorage,
   handleCommand,
-  combineTextAndOptionNodes,
+  combineTextAndOptionsResults,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
 }) {
-  const runner = useMemo(() => new YarnWrapped({
+  const runner = useMemo(() => new YarnBound({
     dialogue,
     startAt,
     functions,
     variableStorage,
     handleCommand,
-    combineTextAndOptionNodes,
-    onDialogueEnd
+    combineTextAndOptionsResults
   }), [])
 
-  const [currentNode, setCurrentNode] = useState(runner.currentNode)
+  const [currentResult, setCurrentResult] = useState(runner.currentResult)
 
   const [history, setHistory] = useState([])
 
   const advance = useCallback((optionIndex) => {
     runner.advance(optionIndex)
-    const newNode = runner.currentNode
-    if (newNode) {
-      setHistory([...history, { ...cloneDeep(currentNode), chosenOption: optionIndex || 0 }])
-      setCurrentNode(cloneDeep(newNode))
+    const newResult = runner.currentResult
+    if (newResult) {
+      setHistory([...history, { ...cloneDeep(currentResult), chosenOption: optionIndex || 0 }])
+      setCurrentResult(cloneDeep(newResult))
+    } else {
+      onDialogueEnd()
     }
-  }, [currentNode])
+  }, [currentResult])
 
   return (
     <DialogueTree
-      currentNode={currentNode}
+      currentResult={currentResult}
       history={history}
       advance={advance}
       defaultOption={defaultOption}

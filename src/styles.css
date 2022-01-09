@@ -30,7 +30,11 @@
   border-radius: 4px;
 }
 
-/* last-of-type is current active node */
+.dialogue-node__option--disabled {
+  color: grey;
+}
+
+/* The node matching `last-of-type` is the current active node */
 .dialogue-tree__node-spacer:last-of-type .dialogue-tree__node-wrapper {
   background-color: white;
 }

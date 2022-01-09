@@ -1,6 +1,6 @@
 {
   "name": "react-dialogue-tree",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Flexible Dialogue Tree for React",
   "main": "dist/react-dialogue-tree.min.js",
   "files": [
@@ -60,11 +60,8 @@
     "storybook": "^6.4.8"
   },
   "dependencies": {
+    "yarn-bound": "^0.0.10",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "yarn-wrapped": "file:./lib/yarn-wrapped-1.0.0.tgz"
-  },
-  "bundleDependencies": [
-    "yarn-wrapped"
-  ]
+    "react-dom": "^17.0.2"
+  }
 }
