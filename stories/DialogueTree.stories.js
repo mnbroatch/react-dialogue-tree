@@ -5,18 +5,24 @@ import './styles.css'
 const dialogue = `title: Start
 ---
 I am a line
-I am a second line
-I am a third line
-I am a fourth line
-I am a fifth line
-I am a sixth line
-I am the last line!
+-> I am an option
+  I am the line after the first option!
+-> I am a second option
+  I am the line after the second option!
+-> I am a disabled option<<if false is true>>
+  X
+I am another line. Today's date is {getTodaysDate()}
 ===`
 
 export default {
   title: 'DialogueTree',
   component: DialogueTree,
-  args: { dialogue },
+  args: {
+    dialogue,
+    functions: {
+      getTodaysDate: () => new Date()
+    }
+  },
   argTypes: {
     dialogue: {
       control: 'text'

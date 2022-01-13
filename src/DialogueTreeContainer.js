@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
+import useForceUpdate from './use-force-update'
 import DialogueTree from './DialogueTree.js'
 import YarnBound from 'yarn-bound'
-import cloneDeep from 'lodash/cloneDeep'
 
 export default function DialogueTreeContainer ({
   dialogue,
@@ -20,32 +20,29 @@ export default function DialogueTreeContainer ({
     variableStorage,
     handleCommand,
     combineTextAndOptionsResults
-  }), [dialogue, combineTextAndOptionsResults, handleCommand])
+  }), [dialogue])
 
   useEffect(() => {
-    setHistory([])
-    setCurrentResult(runner.currentResult)
-  }, [runner])
+    runner.combineTextAndOptionsResults = combineTextAndOptionsResults
+    runner.handleCommand = handleCommand
+    runner.variableStorage = variableStorage
+  }, [combineTextAndOptionsResults, handleCommand, variableStorage])
 
-  const [currentResult, setCurrentResult] = useState(runner.currentResult)
-
-  const [history, setHistory] = useState([])
+  const forceUpdate = useForceUpdate()
 
   const advance = useCallback((optionIndex) => {
     runner.advance(optionIndex)
-    const newResult = runner.currentResult
-    if (newResult) {
-      setHistory([...history, { ...cloneDeep(currentResult), chosenOption: optionIndex || 0 }])
-      setCurrentResult(cloneDeep(newResult))
-    } else {
+    console.log('runner.currentResult', runner.currentResult)
+    forceUpdate()
+    if (runner.currentResult.isDialogueEnd) {
       onDialogueEnd()
     }
-  }, [currentResult, runner])
+  }, [runner])
 
   return (
     <DialogueTree
-      currentResult={currentResult}
-      history={history}
+      currentResult={runner.currentResult}
+      history={runner.history}
       advance={advance}
       defaultOption={defaultOption}
     />

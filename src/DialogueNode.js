@@ -3,16 +3,17 @@ import React from 'react'
 export default function DialogueNode ({
   node,
   node: {
-    text, options, chosenOption, isDialogueEnd
+    text, options, selected, isDialogueEnd
   },
   defaultOption,
   advance
 }) {
-  const isHistory = typeof chosenOption !== 'undefined'
+  const isHistory = typeof selected !== 'undefined'
+  console.log('history', history)
   let optionItems
   if (options) {
     optionItems = options
-      .filter((option, index) => !isHistory || index === chosenOption)
+      .filter((option, index) => !isHistory || index === selected)
       .map((option, index) => (
         <li
           key={index}
