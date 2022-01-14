@@ -1,12 +1,8 @@
 {
   "name": "react-dialogue-tree",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "description": "Flexible Dialogue Tree for React",
   "main": "src/index.js",
-  "files": [
-    "dist/react-dialogue-tree.min.js",
-    "dist/react-dialogue-tree.min.css"
-  ],
   "scripts": {
     "start": "start-storybook",
     "test": "jest --verbose false",
