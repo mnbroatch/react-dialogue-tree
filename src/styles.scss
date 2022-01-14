@@ -1,0 +1,55 @@
+.dialogue-tree {
+  .chat-scroller {
+    height: 100%;
+    box-sizing: border-box;
+    border: 10px solid #616163;
+    background-color: #929487;
+  }
+
+  .chat-scroller {
+    box-sizing: border-box;
+  }
+
+  .dialogue-tree__node-spacer {
+    padding: 8px;
+  }
+
+  .dialogue-tree__node-wrapper {
+    background-color: none;
+    border-radius: 8px;
+    overflow-y: auto;
+    padding: 12px;
+  }
+
+  .dialogue-node-choices {
+    margin-top: 12px;
+    margin-bottom: 4px;
+  }
+
+  .dialogue-node-choices__choice {
+    padding: 4px;
+    border-radius: 4px;
+  }
+
+  .dialogue-node__option--disabled {
+    color: grey;
+  }
+
+  .dialogue-tree__node-spacer:last-of-type .dialogue-tree__node-wrapper {
+    /* The node matching `last-of-type` is the current active node */
+    background-color: white;
+  }
+
+  .dialogue-tree__node-spacer:last-of-type .dialogue-node-choices__choice {
+    list-style-type: circle; 
+  }
+
+  .dialogue-tree__node-spacer:last-of-type .dialogue-node-choices__choice:hover {
+    list-style-type: disc; 
+    background-color: #eee; 
+  }
+
+  .dialogue-tree__node-spacer:last-of-type .dialogue-node-choices__choice:active {
+    background-color: #ccc; 
+  }
+}

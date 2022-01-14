@@ -6,10 +6,9 @@ export default function DialogueNode ({
     text, options, selected, isDialogueEnd
   },
   defaultOption,
+  isHistory,
   advance
 }) {
-  const isHistory = typeof selected !== 'undefined'
-  console.log('history', history)
   let optionItems
   if (options) {
     optionItems = options

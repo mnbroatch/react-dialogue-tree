@@ -1,6 +1,6 @@
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
-import postcss from 'rollup-plugin-postcss'
+import scss from 'rollup-plugin-scss'
 
 const config = {
   input: 'src/index.js',
@@ -9,12 +9,14 @@ const config = {
     format: 'umd',
     name: 'react-dialogue-tree',
     globals: {
-      react: "React"
+      react: 'React'
     }
   },
   plugins: [
-    babel({ exclude: "node_modules/**" }),
-    postcss({ plugins: [] }),
+    babel({
+      exclude: /node_modules\/(?!yarn-bound|@mnbroatch).+/
+    }),
+    scss({ outputStyle: 'compressed' }),
     terser()
   ]
 }

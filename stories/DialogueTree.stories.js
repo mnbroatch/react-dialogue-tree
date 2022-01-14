@@ -1,5 +1,5 @@
 import React from 'react'
-import DialogueTree from '../src/DialogueTreeContainer'
+import DialogueTree from '../src/index'
 import './styles.css'
 
 const dialogue = `title: Start

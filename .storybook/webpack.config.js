@@ -5,6 +5,9 @@ module.exports = ({ config, mode }) => {
     ? path.resolve(__dirname, '../dist/react-dialogue-tree.min.js')
     : path.resolve(__dirname, '../src/index.js')
 
-  config.node = { fs: 'empty' }
+  config.resolve.fallback = {
+    fs: false,
+    path: false,
+  }
   return config
 }

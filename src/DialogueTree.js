@@ -2,8 +2,6 @@ import React from 'react'
 import DialogueNode from './DialogueNode.js'
 import ChatScroller from './ChatScroller.js'
 
-import './styles.css'
-
 export default function DialogueTree ({
   currentResult,
   history,
@@ -21,6 +19,7 @@ export default function DialogueTree ({
                 node={node}
                 advance={advance}
                 defaultOption={defaultOption}
+                isHistory={history.includes(node)}
               />
             </div>
           </div>

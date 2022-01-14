@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 import useForceUpdate from './use-force-update'
 import DialogueTree from './DialogueTree.js'
-import YarnBound from 'yarn-bound'
+import YarnBound from 'yarn-bound/src/index'
 
 export default function DialogueTreeContainer ({
   dialogue,
@@ -9,7 +9,7 @@ export default function DialogueTreeContainer ({
   functions,
   variableStorage,
   handleCommand,
-  combineTextAndOptionsResults,
+  combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
 }) {
@@ -32,7 +32,6 @@ export default function DialogueTreeContainer ({
 
   const advance = useCallback((optionIndex) => {
     runner.advance(optionIndex)
-    console.log('runner.currentResult', runner.currentResult)
     forceUpdate()
     if (runner.currentResult.isDialogueEnd) {
       onDialogueEnd()
@@ -41,6 +40,7 @@ export default function DialogueTreeContainer ({
 
   return (
     <DialogueTree
+      className='mnbroatch-react-dialogue-tree'
       currentResult={runner.currentResult}
       history={runner.history}
       advance={advance}
