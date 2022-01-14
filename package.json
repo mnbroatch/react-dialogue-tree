@@ -1,13 +1,13 @@
 {
   "name": "react-dialogue-tree",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "description": "Flexible Dialogue Tree for React",
-  "main": "src/index.js",
+  "main": "dist/react-dialogue-tree.js",
   "scripts": {
     "start": "start-storybook",
     "test": "jest --verbose false",
     "test:coverage": "jest --coverage --verbose false",
-    "build": "rollup -c -o dist/react-dialogue-tree.min.js",
+    "build": "rollup -c",
     "storybook": "start-storybook",
     "prepare": "npm run build"
   },
@@ -58,7 +58,7 @@
     "raw-loader": "",
     "react-syntax-highlighter": "",
     "react-useinterval": "",
-    "rollup": "^2.52.3",
+    "rollup": "^2.63.0",
     "rollup-plugin-scss": "^3.0.0",
     "rollup-plugin-terser": "",
     "sass-loader": "^12.4.0",
