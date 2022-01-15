@@ -8,10 +8,11 @@ export default function DialogueTreeContainer ({
   startAt = 'Start',
   functions,
   variableStorage,
-  handleCommand,
+  handleCommand = () => {},
   combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
+  finalOption = 'End',
 }) {
   const runner = useMemo(() => new YarnBound({
     dialogue,
@@ -33,7 +34,7 @@ export default function DialogueTreeContainer ({
   const advance = useCallback((optionIndex) => {
     runner.advance(optionIndex)
     forceUpdate()
-    if (runner.currentResult.isDialogueEnd) {
+    if (!runner.currentResult) {
       onDialogueEnd()
     }
   }, [runner])
@@ -45,6 +46,7 @@ export default function DialogueTreeContainer ({
       history={runner.history}
       advance={advance}
       defaultOption={defaultOption}
+      finalOption={finalOption}
     />
   )
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1642230225120" clover="3.2.0">
+  <project timestamp="1642230225120" name="All files">
+    <metrics statements="33" coveredstatements="31" conditionals="35" coveredconditionals="31" methods="18" coveredmethods="17" elements="86" coveredelements="79" complexity="0" loc="33" ncloc="33" packages="1" files="5" classes="5"/>
+    <file name="ChatScroller.js" path="/home/matt/Programming/react-dialogue-tree/src/ChatScroller.js">
+      <metrics statements="9" coveredstatements="7" conditionals="7" coveredconditionals="3" methods="3" coveredmethods="2"/>
+      <line num="4" count="8" type="stmt"/>
+      <line num="6" count="8" type="stmt"/>
+      <line num="7" count="8" type="cond" truecount="3" falsecount="1"/>
+      <line num="9" count="8" type="stmt"/>
+      <line num="15" count="8" type="stmt"/>
+      <line num="16" count="0" type="stmt"/>
+      <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+      <line num="20" count="8" type="stmt"/>
+      <line num="23" count="8" type="stmt"/>
+    </file>
+    <file name="DialogueNode.js" path="/home/matt/Programming/react-dialogue-tree/src/DialogueNode.js">
+      <metrics statements="7" coveredstatements="7" conditionals="16" coveredconditionals="16" methods="4" coveredmethods="4"/>
+      <line num="14" count="22" type="cond" truecount="2" falsecount="0"/>
+      <line num="15" count="5" type="stmt"/>
+      <line num="16" count="15" type="cond" truecount="2" falsecount="0"/>
+      <line num="18" count="7" type="stmt"/>
+      <line num="24" count="1" type="cond" truecount="4" falsecount="0"/>
+      <line num="30" count="17" type="cond" truecount="2" falsecount="0"/>
+      <line num="38" count="22" type="stmt"/>
+    </file>
+    <file name="DialogueTree.js" path="/home/matt/Programming/react-dialogue-tree/src/DialogueTree.js">
+      <metrics statements="3" coveredstatements="3" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+      <line num="12" count="8" type="cond" truecount="2" falsecount="0"/>
+      <line num="13" count="8" type="stmt"/>
+      <line num="16" count="22" type="cond" truecount="2" falsecount="0"/>
+    </file>
+    <file name="DialogueTreeContainer.js" path="/home/matt/Programming/react-dialogue-tree/src/DialogueTreeContainer.js">
+      <metrics statements="12" coveredstatements="12" conditionals="8" coveredconditionals="8" methods="6" coveredmethods="6"/>
+      <line num="17" count="8" type="stmt"/>
+      <line num="26" count="8" type="stmt"/>
+      <line num="27" count="3" type="stmt"/>
+      <line num="28" count="3" type="stmt"/>
+      <line num="29" count="3" type="stmt"/>
+      <line num="32" count="8" type="stmt"/>
+      <line num="34" count="8" type="stmt"/>
+      <line num="35" count="6" type="stmt"/>
+      <line num="36" count="6" type="stmt"/>
+      <line num="37" count="6" type="cond" truecount="2" falsecount="0"/>
+      <line num="38" count="2" type="stmt"/>
+      <line num="42" count="8" type="stmt"/>
+    </file>
+    <file name="use-force-update.js" path="/home/matt/Programming/react-dialogue-tree/src/use-force-update.js">
+      <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <line num="4" count="8" type="stmt"/>
+      <line num="5" count="8" type="stmt"/>
+    </file>
+  </project>
+</coverage>

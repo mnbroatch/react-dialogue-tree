@@ -3664,7 +3664,7 @@
         if (next instanceof runner.TextResult && this.combineTextAndOptionsResults && buffered instanceof runner.OptionsResult) {
           next = Object.assign(buffered, next);
           buffered = null;
-        } else if (upcoming.done) {
+        } else if (next && upcoming.done) {
           next = Object.assign(next, {
             isDialogueEnd: true
           });
@@ -3710,7 +3710,8 @@
     handleCommand,
     combineTextAndOptionsResults = true,
     onDialogueEnd = () => {},
-    defaultOption = 'Next'
+    defaultOption = 'Next',
+    finalOption = 'End'
   }) {
     const runner = React.useMemo(() => new YarnBound({
       dialogue,

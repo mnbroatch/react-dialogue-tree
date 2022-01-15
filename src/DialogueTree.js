@@ -7,6 +7,7 @@ export default function DialogueTree ({
   history,
   advance,
   defaultOption,
+  finalOption,
 }) {
   const nodes = currentResult ? [...history, currentResult] : history
   return (
@@ -19,6 +20,7 @@ export default function DialogueTree ({
                 node={node}
                 advance={advance}
                 defaultOption={defaultOption}
+                finalOption={finalOption}
                 isHistory={history.includes(node)}
               />
             </div>

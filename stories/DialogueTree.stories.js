@@ -36,6 +36,7 @@ export const Template = (props) => {
       <div className="dialogue-tree-container">
         <DialogueTree
           {...props}
+          onDialogueEnd={() => { alert('onDialogueEnd called') }}
         />
       </div>
     </div>

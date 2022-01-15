@@ -6,6 +6,7 @@ export default function DialogueNode ({
     text, options, selected, isDialogueEnd
   },
   defaultOption,
+  finalOption,
   isHistory,
   advance
 }) {
@@ -26,11 +27,11 @@ export default function DialogueNode ({
         </li>
       ))
   } else {
-    optionItems = !isDialogueEnd && !isHistory && <li
+    optionItems = !isHistory && <li
       className='dialogue-node__option dialogue-node__option--default'
-      onClick={!isHistory ? () => { advance() } : undefined }
+      onClick={advance}
     >
-      { defaultOption }
+      { isDialogueEnd ? finalOption : defaultOption }
     </li>
   }
 
