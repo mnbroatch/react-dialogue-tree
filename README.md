@@ -4,6 +4,7 @@ React Dialogue Tree is a component for displaying a videogame-style dialog box o
 
 Under the hood, it uses [YarnBound](https://github.com/mnbroatch/yarn-bound). This repo also functions as an example of how to integrate YarnBound into a component.
 
+A live demo is [on the author's web site](https://matthewbroatch.com/)
 
 # Installation
 ----------------
