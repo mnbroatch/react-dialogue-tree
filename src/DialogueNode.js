@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 export default function DialogueNode ({
   node,
@@ -47,4 +48,21 @@ export default function DialogueNode ({
       }
     </div>
   )
+}
+
+DialogueNode.propTypes = {
+  node:
+  PropTypes.shape({
+    text: PropTypes.string,
+    options: PropTypes.arrayOf(PropTypes.shape({
+      text: PropTypes.string,
+      isAvailable: PropTypes.bool
+    })),
+    selected: PropTypes.number,
+    isDialogueEnd: PropTypes.bool
+  }),
+  defaultOption: PropTypes.string,
+  finalOption: PropTypes.string,
+  isHistory: PropTypes.bool,
+  advance: PropTypes.func
 }

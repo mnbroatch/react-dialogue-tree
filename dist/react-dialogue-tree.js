@@ -1,12 +1,13 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'react'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ReactDialogueTree = {}, global.React));
-})(this, (function (exports, React) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react'), require('prop-types')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'react', 'prop-types'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ReactDialogueTree = {}, global.React, global.PropTypes));
+})(this, (function (exports, React, PropTypes) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
+  var PropTypes__default = /*#__PURE__*/_interopDefaultLegacy(PropTypes);
 
   function useForceUpdate() {
     const [value, setValue] = React.useState(0);
@@ -22,6 +23,7 @@
       isDialogueEnd
     },
     defaultOption,
+    finalOption,
     isHistory,
     advance
   }) {
@@ -36,12 +38,10 @@
         } : undefined
       }, option.text));
     } else {
-      optionItems = !isDialogueEnd && !isHistory && /*#__PURE__*/React__default["default"].createElement("li", {
+      optionItems = !isHistory && /*#__PURE__*/React__default["default"].createElement("li", {
         className: "dialogue-node__option dialogue-node__option--default",
-        onClick: !isHistory ? () => {
-          advance();
-        } : undefined
-      }, defaultOption);
+        onClick: advance
+      }, isDialogueEnd ? finalOption : defaultOption);
     }
 
     return /*#__PURE__*/React__default["default"].createElement("div", {
@@ -50,6 +50,21 @@
       className: "dialogue-node__options"
     }, optionItems));
   }
+  DialogueNode.propTypes = {
+    node: PropTypes__default["default"].shape({
+      text: PropTypes__default["default"].string,
+      options: PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
+        text: PropTypes__default["default"].string,
+        isAvailable: PropTypes__default["default"].bool
+      })),
+      selected: PropTypes__default["default"].number,
+      isDialogueEnd: PropTypes__default["default"].bool
+    }),
+    defaultOption: PropTypes__default["default"].string,
+    finalOption: PropTypes__default["default"].string,
+    isHistory: PropTypes__default["default"].bool,
+    advance: PropTypes__default["default"].func
+  };
 
   function ChatScroller({
     children,
@@ -78,12 +93,17 @@
       }
     }, children));
   }
+  ChatScroller.propTypes = {
+    children: PropTypes__default["default"].node,
+    scrollSpeed: PropTypes__default["default"].number
+  };
 
   function DialogueTree({
     currentResult,
     history,
     advance,
-    defaultOption
+    defaultOption,
+    finalOption
   }) {
     const nodes = currentResult ? [...history, currentResult] : history;
     return /*#__PURE__*/React__default["default"].createElement("div", {
@@ -99,9 +119,26 @@
       node: node,
       advance: advance,
       defaultOption: defaultOption,
+      finalOption: finalOption,
       isHistory: history.includes(node)
     }))))));
   }
+  const node = PropTypes__default["default"].shape({
+    text: PropTypes__default["default"].string,
+    options: PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
+      text: PropTypes__default["default"].string,
+      isAvailable: PropTypes__default["default"].bool
+    })),
+    selected: PropTypes__default["default"].number,
+    isDialogueEnd: PropTypes__default["default"].bool
+  });
+  DialogueTree.propTypes = {
+    currentResult: node,
+    history: PropTypes__default["default"].arrayOf(node),
+    advance: PropTypes__default["default"].func,
+    defaultOption: PropTypes__default["default"].string,
+    finalOption: PropTypes__default["default"].string
+  };
 
   function ownKeys(object, enumerableOnly) {
     var keys = Object.keys(object);
@@ -3707,7 +3744,7 @@
     startAt = 'Start',
     functions,
     variableStorage,
-    handleCommand,
+    handleCommand = () => {},
     combineTextAndOptionsResults = true,
     onDialogueEnd = () => {},
     defaultOption = 'Next',
@@ -3731,7 +3768,7 @@
       runner.advance(optionIndex);
       forceUpdate();
 
-      if (runner.currentResult.isDialogueEnd) {
+      if (!runner.currentResult) {
         onDialogueEnd();
       }
     }, [runner]);
@@ -3740,9 +3777,27 @@
       currentResult: runner.currentResult,
       history: runner.history,
       advance: advance,
-      defaultOption: defaultOption
+      defaultOption: defaultOption,
+      finalOption: finalOption
     });
   }
+  DialogueTreeContainer.propTypes = {
+    dialogue: PropTypes__default["default"].oneOfType([PropTypes__default["default"].string, PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
+      title: PropTypes__default["default"].string.isRequired,
+      body: PropTypes__default["default"].string.isRequired
+    }))]).isRequired,
+    startAt: PropTypes__default["default"].string,
+    functions: PropTypes__default["default"].objectOf(PropTypes__default["default"].func),
+    variableStorage: PropTypes__default["default"].shape({
+      get: PropTypes__default["default"].func,
+      set: PropTypes__default["default"].func
+    }),
+    handleCommand: PropTypes__default["default"].func,
+    combineTextAndOptionsResults: PropTypes__default["default"].bool,
+    onDialogueEnd: PropTypes__default["default"].func,
+    defaultOption: PropTypes__default["default"].string,
+    finalOption: PropTypes__default["default"].string
+  };
 
   exports.DialogueNode = DialogueNode;
   exports["default"] = DialogueTreeContainer;

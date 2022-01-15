@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
+import PropTypes from 'prop-types'
 import useForceUpdate from './use-force-update'
 import DialogueTree from './DialogueTree.js'
 import YarnBound from 'yarn-bound/src/index'
@@ -12,7 +13,7 @@ export default function DialogueTreeContainer ({
   combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
-  finalOption = 'End',
+  finalOption = 'End'
 }) {
   const runner = useMemo(() => new YarnBound({
     dialogue,
@@ -49,4 +50,25 @@ export default function DialogueTreeContainer ({
       finalOption={finalOption}
     />
   )
+}
+
+DialogueTreeContainer.propTypes = {
+  dialogue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      body: PropTypes.string.isRequired
+    }))
+  ]).isRequired,
+  startAt: PropTypes.string,
+  functions: PropTypes.objectOf(PropTypes.func),
+  variableStorage: PropTypes.shape({
+    get: PropTypes.func,
+    set: PropTypes.func
+  }),
+  handleCommand: PropTypes.func,
+  combineTextAndOptionsResults: PropTypes.bool,
+  onDialogueEnd: PropTypes.func,
+  defaultOption: PropTypes.string,
+  finalOption: PropTypes.string
 }

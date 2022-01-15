@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from 'react'
+import PropTypes from 'prop-types'
 
-export default function ChatScroller ({ children, scrollSpeed = 8 }) {
+export default function ChatScroller ({
+  children,
+  scrollSpeed = 8
+}) {
   const innerRef = useRef()
 
   useEffect(() => {
@@ -33,4 +37,9 @@ export default function ChatScroller ({ children, scrollSpeed = 8 }) {
       </div>
     </div>
   )
+}
+
+ChatScroller.propTypes = {
+  children: PropTypes.node,
+  scrollSpeed: PropTypes.number
 }

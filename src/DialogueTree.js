@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import DialogueNode from './DialogueNode.js'
 import ChatScroller from './ChatScroller.js'
 
@@ -7,7 +8,7 @@ export default function DialogueTree ({
   history,
   advance,
   defaultOption,
-  finalOption,
+  finalOption
 }) {
   const nodes = currentResult ? [...history, currentResult] : history
   return (
@@ -29,4 +30,22 @@ export default function DialogueTree ({
       </ChatScroller>
     </div>
   )
+}
+
+const node = PropTypes.shape({
+  text: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.shape({
+    text: PropTypes.string,
+    isAvailable: PropTypes.bool
+  })),
+  selected: PropTypes.number,
+  isDialogueEnd: PropTypes.bool
+})
+
+DialogueTree.propTypes = {
+  currentResult: node,
+  history: PropTypes.arrayOf(node),
+  advance: PropTypes.func,
+  defaultOption: PropTypes.string,
+  finalOption: PropTypes.string
 }
