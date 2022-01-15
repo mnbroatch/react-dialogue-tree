@@ -3748,7 +3748,8 @@
     combineTextAndOptionsResults = true,
     onDialogueEnd = () => {},
     defaultOption = 'Next',
-    finalOption = 'End'
+    finalOption = 'End',
+    locale
   }) {
     const runner = React.useMemo(() => new YarnBound({
       dialogue,
@@ -3756,7 +3757,8 @@
       functions,
       variableStorage,
       handleCommand,
-      combineTextAndOptionsResults
+      combineTextAndOptionsResults,
+      locale
     }), [dialogue]);
     React.useEffect(() => {
       runner.combineTextAndOptionsResults = combineTextAndOptionsResults;
@@ -3796,7 +3798,8 @@
     combineTextAndOptionsResults: PropTypes__default["default"].bool,
     onDialogueEnd: PropTypes__default["default"].func,
     defaultOption: PropTypes__default["default"].string,
-    finalOption: PropTypes__default["default"].string
+    finalOption: PropTypes__default["default"].string,
+    locale: PropTypes__default["default"].string
   };
 
   exports.DialogueNode = DialogueNode;

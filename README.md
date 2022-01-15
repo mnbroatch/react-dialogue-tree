@@ -51,6 +51,8 @@ export default function SomeComponent (dialogue) {
 
 **finalOption**: *string* - User will click this to end the dialogue.
 
+**locale**: *string* - Used for pluralization markdown attributes.
+
 # Styling
 
 `import 'react-dialogue-tree/dist/react-dialogue-tree.css'`

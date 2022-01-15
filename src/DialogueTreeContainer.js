@@ -13,7 +13,8 @@ export default function DialogueTreeContainer ({
   combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
-  finalOption = 'End'
+  finalOption = 'End',
+  locale
 }) {
   const runner = useMemo(() => new YarnBound({
     dialogue,
@@ -21,7 +22,8 @@ export default function DialogueTreeContainer ({
     functions,
     variableStorage,
     handleCommand,
-    combineTextAndOptionsResults
+    combineTextAndOptionsResults,
+    locale
   }), [dialogue])
 
   useEffect(() => {
@@ -70,5 +72,6 @@ DialogueTreeContainer.propTypes = {
   combineTextAndOptionsResults: PropTypes.bool,
   onDialogueEnd: PropTypes.func,
   defaultOption: PropTypes.string,
-  finalOption: PropTypes.string
+  finalOption: PropTypes.string,
+  locale: PropTypes.string
 }
