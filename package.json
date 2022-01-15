@@ -1,6 +1,6 @@
 {
   "name": "react-dialogue-tree",
-  "version": "0.8.7",
+  "version": "0.8.10",
   "description": "Flexible Dialogue Tree for React",
   "main": "dist/react-dialogue-tree.js",
   "scripts": {
@@ -59,6 +59,7 @@
     "react-syntax-highlighter": "",
     "react-useinterval": "",
     "rollup": "^2.63.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-scss": "^3.0.0",
     "rollup-plugin-terser": "",
     "sass-loader": "^12.4.0",
@@ -68,6 +69,6 @@
   "dependencies": {
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "yarn-bound": "^0.2.9"
+    "yarn-bound": "^0.2.10"
   }
 }

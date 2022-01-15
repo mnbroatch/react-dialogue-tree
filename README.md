@@ -26,7 +26,9 @@ const myDialogueTree = TODO
 
 ### Styling
 
-For now, override css classes yourself.
+`import 'react-dialogue-tree/dist/react-dialogue-tree.css'`
+
+or however else you like 
 
 
 #### Start somewhere other than "root"
@@ -44,4 +46,11 @@ How do I run this project locally?
 The flag is needed per: https://github.com/storybookjs/storybook/issues/12983
 
 `npm start`
+
+
+# Other versions included
+
+A minified version is available at `react-dialogue-tree/dist/react-dialogue-tree.min.js`.
+
+If you want to transpile for yourself, use `import DialogueTree from 'react-dialogue-tree/src/index'` and make sure your transpiler isn't ignoring it. You will also need to transpile `yarn-bound` and `@mnbroatch/bondage`, and include all in your bundle, if necessary.
 
