@@ -4,16 +4,6 @@ html, body {
   margin: 0;
 }
 
-.story {
-  overflow-x: hidden;
-}
-
-.source-code {
-  display: inline-block !important;
-  padding-bottom: 320px !important;
-  background-color: transparent !important;
-}
-
 .dialogue-tree-container {
   bottom: 10px;
   height: 300px;
@@ -24,20 +14,5 @@ html, body {
 
 .dialogue-tree-container .dialogue-tree {
   height: 100%;
-}
-
-.dialogue-node__choice--default {
-  background-color: darkOrange;
-  padding: 10px 20px;
-  font-size: 1.5em;
-  text-transform: uppercase;
-}
-
-.reset-button {
-  bottom: 10px;
-  height: 300px;
-  left: 10px;
-  position: fixed;
-  right: 10px;
 }
 

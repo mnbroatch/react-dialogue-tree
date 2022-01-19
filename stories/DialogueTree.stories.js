@@ -30,7 +30,7 @@ export default {
   }
 }
 
-export const Template = (props) => {
+const Template = (props) => {
   return (
     <div className="story">
       <div className="dialogue-tree-container">

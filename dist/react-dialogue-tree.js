@@ -14,58 +14,6 @@
     return () => setValue(value => value + 1);
   }
 
-  function DialogueNode({
-    node,
-    node: {
-      text,
-      options,
-      selected,
-      isDialogueEnd
-    },
-    defaultOption,
-    finalOption,
-    isHistory,
-    advance
-  }) {
-    let optionItems;
-
-    if (options) {
-      optionItems = options.filter((option, index) => !isHistory || index === selected).map((option, index) => /*#__PURE__*/React__default["default"].createElement("li", {
-        key: index,
-        className: ['dialogue-node__option', !option.isAvailable && 'dialogue-node__option--disabled'].filter(Boolean).join(' '),
-        onClick: !isHistory && option.isAvailable ? () => {
-          advance(index);
-        } : undefined
-      }, option.text));
-    } else {
-      optionItems = !isHistory && /*#__PURE__*/React__default["default"].createElement("li", {
-        className: "dialogue-node__option dialogue-node__option--default",
-        onClick: advance
-      }, isDialogueEnd ? finalOption : defaultOption);
-    }
-
-    return /*#__PURE__*/React__default["default"].createElement("div", {
-      className: "dialogue-node"
-    }, text, optionItems && /*#__PURE__*/React__default["default"].createElement("ul", {
-      className: "dialogue-node__options"
-    }, optionItems));
-  }
-  DialogueNode.propTypes = {
-    node: PropTypes__default["default"].shape({
-      text: PropTypes__default["default"].string,
-      options: PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
-        text: PropTypes__default["default"].string,
-        isAvailable: PropTypes__default["default"].bool
-      })),
-      selected: PropTypes__default["default"].number,
-      isDialogueEnd: PropTypes__default["default"].bool
-    }),
-    defaultOption: PropTypes__default["default"].string,
-    finalOption: PropTypes__default["default"].string,
-    isHistory: PropTypes__default["default"].bool,
-    advance: PropTypes__default["default"].func
-  };
-
   function ChatScroller({
     children,
     scrollSpeed = 8
@@ -3800,6 +3748,58 @@
     defaultOption: PropTypes__default["default"].string,
     finalOption: PropTypes__default["default"].string,
     locale: PropTypes__default["default"].string
+  };
+
+  function DialogueNode({
+    node,
+    node: {
+      text,
+      options,
+      selected,
+      isDialogueEnd
+    },
+    defaultOption,
+    finalOption,
+    isHistory,
+    advance
+  }) {
+    let optionItems;
+
+    if (options) {
+      optionItems = options.filter((option, index) => !isHistory || index === selected).map((option, index) => /*#__PURE__*/React__default["default"].createElement("li", {
+        key: index,
+        className: ['dialogue-node__option', !option.isAvailable && 'dialogue-node__option--disabled'].filter(Boolean).join(' '),
+        onClick: !isHistory && option.isAvailable ? () => {
+          advance(index);
+        } : undefined
+      }, option.text));
+    } else {
+      optionItems = !isHistory && /*#__PURE__*/React__default["default"].createElement("li", {
+        className: "dialogue-node__option dialogue-node__option--default",
+        onClick: advance
+      }, isDialogueEnd ? finalOption : defaultOption);
+    }
+
+    return /*#__PURE__*/React__default["default"].createElement("div", {
+      className: "dialogue-node"
+    }, text, optionItems && /*#__PURE__*/React__default["default"].createElement("ul", {
+      className: "dialogue-node__options"
+    }, optionItems));
+  }
+  DialogueNode.propTypes = {
+    node: PropTypes__default["default"].shape({
+      text: PropTypes__default["default"].string,
+      options: PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
+        text: PropTypes__default["default"].string,
+        isAvailable: PropTypes__default["default"].bool
+      })),
+      selected: PropTypes__default["default"].number,
+      isDialogueEnd: PropTypes__default["default"].bool
+    }),
+    defaultOption: PropTypes__default["default"].string,
+    finalOption: PropTypes__default["default"].string,
+    isHistory: PropTypes__default["default"].bool,
+    advance: PropTypes__default["default"].func
   };
 
   exports.DialogueNode = DialogueNode;

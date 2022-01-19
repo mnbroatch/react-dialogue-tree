@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import DialogueNode from './DialogueNode.js'
+import { DialogueNode } from './index.js'
 import ChatScroller from './ChatScroller.js'
 
 export default function DialogueTree ({
@@ -15,7 +15,10 @@ export default function DialogueTree ({
     <div className='dialogue-tree'>
       <ChatScroller scrollSpeed={8}>
         {nodes.map((node, index) => node && (
-          <div className='dialogue-tree__node-spacer' key={index}>
+          <div
+            className='dialogue-tree__node-spacer'
+            key={index}
+          >
             <div className='dialogue-tree__node-wrapper'>
               <DialogueNode
                 node={node}
