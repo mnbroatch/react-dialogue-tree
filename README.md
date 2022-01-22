@@ -123,11 +123,6 @@ The flag is needed per: https://github.com/storybookjs/storybook/issues/12983
 `npm start`
 
 
-# Caveats
-
-Escaping square brackets is iffy and you'll have to double escape `\\` them. Probably better to use `nomarkup` attributes if you need to do so.
-
-
 # Other versions included
 
 A minified version is available at `react-dialogue-tree/dist/react-dialogue-tree.min.js`.
