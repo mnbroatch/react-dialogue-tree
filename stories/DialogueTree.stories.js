@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import DialogueTree from '../src/index'
+import { ErrorBoundary } from 'react-error-boundary'
 import './styles.css'
 
 const dialogue = `title: Start
@@ -34,10 +35,21 @@ const Template = (props) => {
   return (
     <div className="story">
       <div className="dialogue-tree-container">
-        <DialogueTree
-          {...props}
-          onDialogueEnd={() => { alert('onDialogueEnd called') }}
-        />
+        <ErrorBoundary
+          resetKeys={[props.dialogue]}
+          fallbackRender={({ error }) => {
+            return (
+              <div>
+                Invalid Dialogue: {error.message}
+              </div>
+            )
+          }}
+        >
+          <DialogueTree
+            {...props}
+            onDialogueEnd={() => { alert('onDialogueEnd called') }}
+          />
+        </ErrorBoundary>
       </div>
     </div>
   )

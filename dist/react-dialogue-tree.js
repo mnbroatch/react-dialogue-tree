@@ -214,7 +214,7 @@
         this.type = 'GenericCommandNode';
         this.command = command;
         this.hashtags = hashtags;
-        this.lineNum = lineNo ? lineNo.first_line : -1;
+        this.lineNum = lineNo.first_line;
       }
 
     },
@@ -239,7 +239,7 @@
         super();
         this.type = 'TextNode';
         this.text = text;
-        this.lineNum = lineNo ? lineNo.first_line : -1;
+        this.lineNum = lineNo.first_line;
         this.hashtags = hashtags;
       }
 
@@ -249,7 +249,7 @@
         super();
         this.type = 'EscapedCharacterNode';
         this.text = text;
-        this.lineNum = lineNo ? lineNo.first_line : -1;
+        this.lineNum = lineNo.first_line;
         this.hashtags = hashtags;
       }
 
@@ -451,13 +451,13 @@
 
     },
     // /////////////// Function Nodes
-    FunctionResultNode: class extends FunctionCall {
+    FunctionCallNode: class extends FunctionCall {
       constructor(functionName, args, lineNo, hashtags = []) {
         super();
-        this.type = 'FunctionResultNode';
+        this.type = 'FunctionCallNode';
         this.functionName = functionName;
         this.args = args;
-        this.lineNum = lineNo ? lineNo.first_line : -1;
+        this.lineNum = lineNo.first_line;
         this.hashtags = hashtags;
       }
 
@@ -1421,11 +1421,11 @@
           break;
 
         case 70:
-          this.$ = new yy.FunctionResultNode($$[$0 - 2], []);
+          this.$ = new yy.FunctionCallNode($$[$0 - 2], [], this._$);
           break;
 
         case 71:
-          this.$ = new yy.FunctionResultNode($$[$0 - 3], $$[$0 - 1]);
+          this.$ = new yy.FunctionCallNode($$[$0 - 3], $$[$0 - 1], this._$);
           break;
 
         case 72:
@@ -2731,7 +2731,7 @@
 
   class Result {}
 
-  class TextResult$1 extends Result {
+  class TextResult extends Result {
     /**
      * Create a text display result
      * @param {string} [text] text to be displayed
@@ -2747,7 +2747,7 @@
 
   }
 
-  class CommandResult$1 extends Result {
+  class CommandResult extends Result {
     /**
      * Return a command string
      * @param {string} [command] the command text
@@ -2781,7 +2781,7 @@
 
   }
 
-  class OptionsResult$1 extends Result {
+  class OptionsResult extends Result {
     /**
      * Create a selectable list of options from the given list of text
      * @param {Node[]} [options] list of the text of options to be shown
@@ -2807,9 +2807,9 @@
 
   var results = {
     Result,
-    TextResult: TextResult$1,
-    CommandResult: CommandResult$1,
-    OptionsResult: OptionsResult$1
+    TextResult,
+    CommandResult,
+    OptionsResult
   };
 
   class DefaultVariableStorage {
@@ -2852,19 +2852,23 @@
   */
 
   /* eslint-enable */
-  function convertYarn(content) {
+  function convertYarnToJS(content) {
     const objects = [];
     const lines = content.split(/\r?\n+/).filter(line => {
       return !line.match(/^\s*$/);
     });
     let obj = null;
     let readingBody = false;
-    let filetags;
+    let filetags; // per-node, we will uniformly strip leading space
+    // which can result from constructing dialogues
+    // using template strings.
+
+    let leadingSpace = '';
     let i = 0;
 
-    while (lines[i][0] === '#' || !lines[i].trim()) {
+    while (lines[i].trim()[0] === '#') {
       if (!filetags) filetags = [];
-      filetags.push(lines[i].substr(1).trim());
+      filetags.push(lines[i].trim().substr(1));
       i += 1;
     }
 
@@ -2875,10 +2879,11 @@
         objects.push(obj);
         obj = null;
       } else if (readingBody) {
-        obj.body += `${lines[i]}\n`;
+        obj.body += `${lines[i].replace(leadingSpace, '')}\n`;
       } else if (lines[i].trim() === '---') {
         readingBody = true;
         obj.body = '';
+        leadingSpace = lines[i].match(/^\s*/)[0];
       } else if (lines[i].indexOf(':') > -1) {
         const [key, value] = lines[i].split(':');
         const trimmedKey = key.trim();
@@ -2901,33 +2906,30 @@
 
   const nodeTypes = types.types;
 
-  class Runner {
+  class Runner$1 {
     constructor() {
       this.noEscape = false;
       this.yarnNodes = {};
       this.variables = new DefaultVariableStorage();
       this.functions = {};
-      this.visited = {}; // Which nodes have been visited
-
-      this.registerFunction('visited', nodeTitle => {
-        return !!this.visited[nodeTitle];
-      });
     }
     /**
      * Loads the yarn node data into this.nodes
-     * @param {any[]} yarn dialogue as string or array
+     * @param dialogue {any[]} yarn dialogue as string or array
      */
 
 
-    load(data) {
-      if (!data) {
+    load(dialogue) {
+      if (!dialogue) {
         throw new Error('No dialogue supplied');
       }
 
-      let nodes = data;
+      let nodes;
 
-      if (typeof data === 'string') {
-        nodes = convertYarn(data);
+      if (typeof dialogue === 'string') {
+        nodes = convertYarnToJS(dialogue);
+      } else {
+        nodes = dialogue;
       }
 
       nodes.forEach(node => {
@@ -3029,9 +3031,8 @@
 
         if (yarnNode === undefined) {
           throw new Error(`Node "${startNode}" does not exist`);
-        }
+        } // Parse the entire node
 
-        this.visited[startNode] = true; // Parse the entire node
 
         const parserNodes = Array.from(parser.parse(yarnNode.body));
 
@@ -3305,7 +3306,7 @@
         VariableNode: a => {
           return this.variables.get(a.variableName);
         },
-        FunctionResultNode: a => {
+        FunctionCallNode: a => {
           return this.evaluateFunctionCall(a);
         },
         InlineExpressionNode: a => {
@@ -3324,18 +3325,56 @@
   }
 
   var runner = {
-    Runner,
+    Runner: Runner$1,
     TextResult: results.TextResult,
     CommandResult: results.CommandResult,
     OptionsResult: results.OptionsResult
   };
 
+  runner.OptionsResult = results.OptionsResult;
+  runner.TextResult = results.TextResult;
+  runner.CommandResult = results.CommandResult;
+
   // mutates node, processing [markup /] and `character:`
-  function parseLine(node, locale) {
-    node.markup = [];
-    parseCharacterLabel(node);
-    parseMarkup(node, locale);
-    node.text = node.text.replace(/(?:\\(.))/g, '$1');
+
+  /* eslint-disable no-param-reassign */
+  function processSelectAttribute(properties) {
+    return properties[properties.value];
+  }
+
+  function processPluralAttribute(properties, locale) {
+    return properties[new Intl.PluralRules(locale).select(properties.value)].replaceAll('%', properties.value);
+  }
+
+  function processOrdinalAttribute(properties, locale) {
+    return properties[new Intl.PluralRules(locale, {
+      type: 'ordinal'
+    }).select(properties.value)].replaceAll('%', properties.value);
+  }
+
+  function parsePropertyAssignment(propAss) {
+    const [propName, ...rest] = propAss.split('=');
+    const stringValue = rest.join('='); // just in case string value had a = in it
+
+    if (!propName || !stringValue) {
+      throw new Error(`Invalid markup property assignment: ${propAss}`);
+    }
+
+    let value;
+
+    if (stringValue === 'true' || stringValue === 'false') {
+      value = stringValue === 'true';
+    } else if (/^-?\d*\.?\d+$/.test(stringValue)) {
+      value = +stringValue;
+    } else if (stringValue[0] === '"' && stringValue[stringValue.length - 1] === '"') {
+      value = stringValue.slice(1, -1);
+    } else {
+      value = stringValue;
+    }
+
+    return {
+      [propName]: value
+    };
   }
 
   function parseCharacterLabel(node) {
@@ -3350,6 +3389,53 @@
         }
       });
     }
+  }
+
+  function parseAttributeContents(contents, locale) {
+    const nameMatch = contents.match(/^\/?([^\s=/]+)(\/|\s|$)/);
+    const isClosing = contents[0] === '/';
+    const isSelfClosing = contents[contents.length - 1] === '/';
+    const isCloseAll = contents === '/';
+
+    if (isCloseAll) {
+      return {
+        name: 'closeall',
+        isCloseAll: true
+      };
+    } else if (isClosing) {
+      return {
+        name: nameMatch[1],
+        isClosing: true
+      };
+    }
+
+    const propertyAssignmentsText = nameMatch ? contents.replace(nameMatch[0], '') : contents;
+    const propertyAssignments = propertyAssignmentsText.match(/(\S+?".*?"|[^\s/]+)/g);
+    let properties = {};
+
+    if (propertyAssignments) {
+      properties = propertyAssignments.reduce((acc, propAss) => {
+        return _objectSpread2(_objectSpread2({}, acc), parsePropertyAssignment(propAss));
+      }, {});
+    }
+
+    const name = nameMatch && nameMatch[1] || Object.keys(properties)[0];
+    let replacement;
+
+    if (name === 'select') {
+      replacement = processSelectAttribute(properties);
+    } else if (name === 'plural') {
+      replacement = processPluralAttribute(properties, locale);
+    } else if (name === 'ordinal') {
+      replacement = processOrdinalAttribute(properties, locale);
+    }
+
+    return {
+      name,
+      properties,
+      isSelfClosing,
+      replacement
+    };
   }
 
   function parseMarkup(node, locale) {
@@ -3411,11 +3497,15 @@
 
     while (match) {
       const char = match[1];
-      attributes.forEach(attr => {
+
+      for (let i = 0, len = attributes.length; i < len; i += 1) {
+        const attr = attributes[i];
+
         if (attr.position > resultText.length + match.index) {
           attr.position -= 1;
         }
-      });
+      }
+
       textRemaining = textRemaining.replace(escapedCharacterRegex, char);
       resultText += textRemaining.slice(0, match.index + 1);
       textRemaining = textRemaining.slice(match.index + 1);
@@ -3468,93 +3558,15 @@
     });
   }
 
-  function parseAttributeContents(contents, locale) {
-    const nameMatch = contents.match(/^\/?([^\s=/]+)(\/|\s|$)/);
-    const isClosing = contents[0] === '/';
-    const isSelfClosing = contents[contents.length - 1] === '/';
-    const isCloseAll = contents === '/';
+  function parseLine(node, locale) {
+    node.markup = [];
+    parseCharacterLabel(node);
+    parseMarkup(node, locale); // remove escaping backslashes
 
-    if (isCloseAll) {
-      return {
-        name: 'closeall',
-        isCloseAll: true
-      };
-    } else if (isClosing) {
-      return {
-        name: nameMatch[1],
-        isClosing: true
-      };
-    } else {
-      const propertyAssignmentsText = nameMatch ? contents.replace(nameMatch[0], '') : contents;
-      const propertyAssignments = propertyAssignmentsText.match(/(\S+?".*?"|[^\s/]+)/g);
-      let properties = {};
-
-      if (propertyAssignments) {
-        properties = propertyAssignments.reduce((acc, propAss) => {
-          return _objectSpread2(_objectSpread2({}, acc), parsePropertyAssignment(propAss));
-        }, {});
-      }
-
-      const name = nameMatch && nameMatch[1] || Object.keys(properties)[0];
-      let replacement;
-
-      if (name === 'select') {
-        replacement = processSelectAttribute(properties);
-      } else if (name === 'plural') {
-        replacement = processPluralAttribute(properties, locale);
-      } else if (name === 'ordinal') {
-        replacement = processOrdinalAttribute(properties, locale);
-      }
-
-      return {
-        name,
-        properties,
-        isSelfClosing,
-        replacement
-      };
-    }
+    node.text = node.text.replace(/(?:\\(.))/g, '$1');
   }
 
-  function parsePropertyAssignment(propAss) {
-    const [propName, ...rest] = propAss.split('=');
-    const stringValue = rest.join('='); // just in case string value had a = in it
-
-    if (!propName || !stringValue) {
-      throw new Error(`Invalid markup property assignment: ${propAss}`);
-    }
-
-    let value;
-
-    if (stringValue === 'true' || stringValue === 'false') {
-      value = stringValue === 'true';
-    } else if (/^-?\d*\.?\d+$/.test(stringValue)) {
-      value = +stringValue;
-    } else if (stringValue[0] === '"' && stringValue[stringValue.length - 1] === '"') {
-      value = stringValue.slice(1, -1);
-    } else {
-      value = stringValue;
-    }
-
-    return {
-      [propName]: value
-    };
-  }
-
-  function processSelectAttribute(properties) {
-    return properties[properties.value];
-  }
-
-  function processPluralAttribute(properties, locale) {
-    return properties[new Intl.PluralRules(locale).select(properties.value)].replaceAll('%', properties.value);
-  }
-
-  function processOrdinalAttribute(properties, locale) {
-    return properties[new Intl.PluralRules(locale, {
-      type: 'ordinal'
-    }).select(properties.value)].replaceAll('%', properties.value);
-  }
-
-  class YarnBound {
+  class Runner {
     constructor({
       dialogue,
       variableStorage,
@@ -3566,25 +3578,16 @@
     }) {
       this.handleCommand = handleCommand;
       this.combineTextAndOptionsResults = combineTextAndOptionsResults;
-      this.bondage = runner;
+      this.core = runner;
       this.bufferedNode = null;
       this.currentResult = null;
       this.history = [];
       this.locale = locale;
       const runner$1 = new runner.Runner();
-      runner$1.noEscape = true; // To make template string dialogues more convenient, we will allow and strip
-      // uniform leading whitespace. The header delimiter will set the baseline.
-
-      if (typeof dialogue === 'string') {
-        const lines = dialogue.split('\n');
-        const baselineWhitespace = lines.find(line => line.trim() === '---').match(/\s*/)[0];
-        dialogue = lines.map(line => line.replace(baselineWhitespace, '')).join('\n');
-      }
-
+      runner$1.noEscape = true;
       runner$1.load(dialogue);
 
       if (variableStorage) {
-        variableStorage.display = variableStorage.display || variableStorage.get;
         runner$1.setVariableStorage(variableStorage);
       }
 
@@ -3652,14 +3655,9 @@
 
   }
 
-  const {
-    OptionsResult,
-    TextResult,
-    CommandResult
-  } = runner;
-  YarnBound.OptionsResult = OptionsResult;
-  YarnBound.TextResult = TextResult;
-  YarnBound.CommandResult = CommandResult;
+  Runner.OptionsResult = runner.OptionsResult;
+  Runner.TextResult = runner.TextResult;
+  Runner.CommandResult = runner.CommandResult;
 
   function DialogueTreeContainer({
     dialogue,
@@ -3673,7 +3671,7 @@
     finalOption = 'End',
     locale
   }) {
-    const runner = React.useMemo(() => new YarnBound({
+    const runner = React.useMemo(() => new Runner({
       dialogue,
       startAt,
       functions,
