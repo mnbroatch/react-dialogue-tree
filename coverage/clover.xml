@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1643594826893" clover="3.2.0">
-  <project timestamp="1643594826893" name="All files">
+<coverage generated="1643664810853" clover="3.2.0">
+  <project timestamp="1643664810854" name="All files">
     <metrics statements="41" coveredstatements="39" conditionals="45" coveredconditionals="40" methods="20" coveredmethods="19" elements="106" coveredelements="98" complexity="0" loc="41" ncloc="41" packages="1" files="6" classes="6"/>
     <file name="ChatScroller.js" path="/home/matt/Programming/react-dialogue-tree/src/ChatScroller.js">
       <metrics statements="10" coveredstatements="8" conditionals="7" coveredconditionals="3" methods="3" coveredmethods="2"/>

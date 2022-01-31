@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import useForceUpdate from './use-force-update'
 import DialogueTree from './DialogueTree.js'
-import Bondage from '@mnbroatch/bondage/src/index'
+import YarnBound from 'yarn-bound/src/index'
 
 export default function DialogueTreeContainer ({
   dialogue,
@@ -16,7 +16,7 @@ export default function DialogueTreeContainer ({
   finalOption = 'End',
   locale
 }) {
-  const runner = useMemo(() => new Bondage({
+  const runner = useMemo(() => new YarnBound({
     dialogue,
     startAt,
     functions,

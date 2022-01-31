@@ -612,11 +612,6 @@
        */
 
       this.isTrackingNextIndentation = false;
-      /**
-       * Whether or not this state emits EndOfLine tokens
-       */
-
-      this.isEmittingEndOfLineTokens = false;
     }
     /**
      * addTransition - Define a new transition for this state.
@@ -856,9 +851,8 @@
           this.yytext = this.getCurrentLine().substr(this.yylloc.last_column - 1, matchedText.length);
 
           if (rule.token === 'String') {
-            // If that's a String, we're removing the quotes and
-            // un-escaping double-escaped characters.
-            this.yytext = this.yytext.substring(1, this.yytext.length - 1).replace(/\\/g, '');
+            // If that's a String, remove the quotes
+            this.yytext = this.yytext.substring(1, this.yytext.length - 1);
           } // Update our line and column info
 
 
@@ -876,12 +870,12 @@
           }
 
           const nextState = this.states[rule.state];
-          const hasText = !nextState || nextState.transitions.find(transition => {
+          const nextStateHasText = !rule.state || nextState.transitions.find(transition => {
             return transition.token === 'Text';
           }); // inline expressions and escaped characters interrupt text
           // but should still preserve surrounding whitespace.
 
-          if (rule.token !== 'EndInlineExp' && rule.token !== 'EscapedCharacter' || !hasText // we never want leading whitespace if not in text-supporting state
+          if (rule.token !== 'EndInlineExp' && rule.token !== 'EscapedCharacter' || !nextStateHasText // we never want leading whitespace if not in text-supporting state
           ) {
             // Remove leading whitespace characters
             const spaceMatch = this.getCurrentLine().substring(this.yylloc.last_column - 1).match(/^\s*/);
@@ -2731,7 +2725,7 @@
 
   class Result {}
 
-  class TextResult extends Result {
+  class TextResult$1 extends Result {
     /**
      * Create a text display result
      * @param {string} [text] text to be displayed
@@ -2747,7 +2741,7 @@
 
   }
 
-  class CommandResult extends Result {
+  class CommandResult$1 extends Result {
     /**
      * Return a command string
      * @param {string} [command] the command text
@@ -2781,7 +2775,7 @@
 
   }
 
-  class OptionsResult extends Result {
+  class OptionsResult$1 extends Result {
     /**
      * Create a selectable list of options from the given list of text
      * @param {Node[]} [options] list of the text of options to be shown
@@ -2807,9 +2801,9 @@
 
   var results = {
     Result,
-    TextResult,
-    CommandResult,
-    OptionsResult
+    TextResult: TextResult$1,
+    CommandResult: CommandResult$1,
+    OptionsResult: OptionsResult$1
   };
 
   class DefaultVariableStorage {
@@ -2906,7 +2900,7 @@
 
   const nodeTypes = types.types;
 
-  class Runner$1 {
+  class Runner {
     constructor() {
       this.noEscape = false;
       this.yarnNodes = {};
@@ -3053,7 +3047,6 @@
 
     *evalNodes(nodes, metadata) {
       let shortcutNodes = [];
-      let prevnode = null;
       let textRun = '';
       const filteredNodes = nodes.filter(Boolean); // Yield the individual user-visible results
       // Need to accumulate all adjacent selectables
@@ -3061,20 +3054,8 @@
 
       for (let nodeIdx = 0; nodeIdx < filteredNodes.length; nodeIdx += 1) {
         const node = filteredNodes[nodeIdx];
-        const nextNode = filteredNodes[nodeIdx + 1];
-
-        if (prevnode instanceof nodeTypes.Shortcut && !(node instanceof nodeTypes.Shortcut)) {
-          // Last shortcut in the series, so yield the shortcuts.
-          const result = yield* this.handleShortcuts(shortcutNodes, metadata);
-
-          if (result && (result.stop || result.jump)) {
-            return result;
-          }
-
-          shortcutNodes = [];
-        } // Text and the output of Inline Expressions
+        const nextNode = filteredNodes[nodeIdx + 1]; // Text and the output of Inline Expressions
         // are combined to deliver a TextNode.
-
 
         if (node instanceof nodeTypes.Text || node instanceof nodeTypes.Expression) {
           textRun += this.evaluateExpressionOrLiteral(node).toString();
@@ -3082,10 +3063,20 @@
           if (nextNode && node.lineNum === nextNode.lineNum && (nextNode instanceof nodeTypes.Text || nextNode instanceof nodeTypes.Expression)) ; else {
             yield new results.TextResult(textRun, node.hashtags, metadata);
             textRun = '';
-          } // Other nodes are more straightforward:
-
+          }
         } else if (node instanceof nodeTypes.Shortcut) {
           shortcutNodes.push(node);
+
+          if (!(nextNode instanceof nodeTypes.Shortcut)) {
+            // Last shortcut in the series, so yield the shortcuts.
+            const result = yield* this.handleShortcuts(shortcutNodes, metadata);
+
+            if (result && (result.stop || result.jump)) {
+              return result;
+            }
+
+            shortcutNodes = [];
+          }
         } else if (node instanceof nodeTypes.Assignment) {
           this.evaluateAssignment(node);
         } else if (node instanceof nodeTypes.Conditional) {
@@ -3100,35 +3091,23 @@
               return result;
             }
           }
+        } else if (node instanceof types.JumpCommandNode) {
+          // ignore the rest of this outer loop and
+          // tell parent loops to ignore following nodes.
+          // Recursive call here would cause stack overflow
+          return {
+            jump: node.destination
+          };
+        } else if (node instanceof types.StopCommandNode) {
+          // ignore the rest of this outer loop and
+          // tell parent loops to ignore following nodes
+          return {
+            stop: true
+          };
         } else {
-          // Command
-          if (node.type === 'JumpCommandNode') {
-            // ignore the rest of this outer loop and
-            // tell parent loops to ignore following nodes.
-            // Recursive call here would cause stack overflow
-            return {
-              jump: node.destination
-            };
-          }
-
-          if (node.type === 'StopCommandNode') {
-            // ignore the rest of this outer loop and
-            // tell parent loops to ignore following nodes
-            return {
-              stop: true
-            };
-          }
-
           const command = this.evaluateExpressionOrLiteral(node.command);
           yield new results.CommandResult(command, node.hashtags, metadata);
         }
-
-        prevnode = node;
-      } // The last node might be a shortcut
-
-
-      if (shortcutNodes.length > 0) {
-        return yield* this.handleShortcuts(shortcutNodes, metadata);
       }
 
       return undefined;
@@ -3325,7 +3304,7 @@
   }
 
   var runner = {
-    Runner: Runner$1,
+    Runner,
     TextResult: results.TextResult,
     CommandResult: results.CommandResult,
     OptionsResult: results.OptionsResult
@@ -3336,45 +3315,11 @@
   runner.CommandResult = results.CommandResult;
 
   // mutates node, processing [markup /] and `character:`
-
-  /* eslint-disable no-param-reassign */
-  function processSelectAttribute(properties) {
-    return properties[properties.value];
-  }
-
-  function processPluralAttribute(properties, locale) {
-    return properties[new Intl.PluralRules(locale).select(properties.value)].replaceAll('%', properties.value);
-  }
-
-  function processOrdinalAttribute(properties, locale) {
-    return properties[new Intl.PluralRules(locale, {
-      type: 'ordinal'
-    }).select(properties.value)].replaceAll('%', properties.value);
-  }
-
-  function parsePropertyAssignment(propAss) {
-    const [propName, ...rest] = propAss.split('=');
-    const stringValue = rest.join('='); // just in case string value had a = in it
-
-    if (!propName || !stringValue) {
-      throw new Error(`Invalid markup property assignment: ${propAss}`);
-    }
-
-    let value;
-
-    if (stringValue === 'true' || stringValue === 'false') {
-      value = stringValue === 'true';
-    } else if (/^-?\d*\.?\d+$/.test(stringValue)) {
-      value = +stringValue;
-    } else if (stringValue[0] === '"' && stringValue[stringValue.length - 1] === '"') {
-      value = stringValue.slice(1, -1);
-    } else {
-      value = stringValue;
-    }
-
-    return {
-      [propName]: value
-    };
+  function parseLine(node, locale) {
+    node.markup = [];
+    parseCharacterLabel(node);
+    parseMarkup(node, locale);
+    node.text = node.text.replace(/(?:\\(.))/g, '$1');
   }
 
   function parseCharacterLabel(node) {
@@ -3389,53 +3334,6 @@
         }
       });
     }
-  }
-
-  function parseAttributeContents(contents, locale) {
-    const nameMatch = contents.match(/^\/?([^\s=/]+)(\/|\s|$)/);
-    const isClosing = contents[0] === '/';
-    const isSelfClosing = contents[contents.length - 1] === '/';
-    const isCloseAll = contents === '/';
-
-    if (isCloseAll) {
-      return {
-        name: 'closeall',
-        isCloseAll: true
-      };
-    } else if (isClosing) {
-      return {
-        name: nameMatch[1],
-        isClosing: true
-      };
-    }
-
-    const propertyAssignmentsText = nameMatch ? contents.replace(nameMatch[0], '') : contents;
-    const propertyAssignments = propertyAssignmentsText.match(/(\S+?".*?"|[^\s/]+)/g);
-    let properties = {};
-
-    if (propertyAssignments) {
-      properties = propertyAssignments.reduce((acc, propAss) => {
-        return _objectSpread2(_objectSpread2({}, acc), parsePropertyAssignment(propAss));
-      }, {});
-    }
-
-    const name = nameMatch && nameMatch[1] || Object.keys(properties)[0];
-    let replacement;
-
-    if (name === 'select') {
-      replacement = processSelectAttribute(properties);
-    } else if (name === 'plural') {
-      replacement = processPluralAttribute(properties, locale);
-    } else if (name === 'ordinal') {
-      replacement = processOrdinalAttribute(properties, locale);
-    }
-
-    return {
-      name,
-      properties,
-      isSelfClosing,
-      replacement
-    };
   }
 
   function parseMarkup(node, locale) {
@@ -3497,15 +3395,11 @@
 
     while (match) {
       const char = match[1];
-
-      for (let i = 0, len = attributes.length; i < len; i += 1) {
-        const attr = attributes[i];
-
+      attributes.forEach(attr => {
         if (attr.position > resultText.length + match.index) {
           attr.position -= 1;
         }
-      }
-
+      });
       textRemaining = textRemaining.replace(escapedCharacterRegex, char);
       resultText += textRemaining.slice(0, match.index + 1);
       textRemaining = textRemaining.slice(match.index + 1);
@@ -3558,15 +3452,93 @@
     });
   }
 
-  function parseLine(node, locale) {
-    node.markup = [];
-    parseCharacterLabel(node);
-    parseMarkup(node, locale); // remove escaping backslashes
+  function parseAttributeContents(contents, locale) {
+    const nameMatch = contents.match(/^\/?([^\s=/]+)(\/|\s|$)/);
+    const isClosing = contents[0] === '/';
+    const isSelfClosing = contents[contents.length - 1] === '/';
+    const isCloseAll = contents === '/';
 
-    node.text = node.text.replace(/(?:\\(.))/g, '$1');
+    if (isCloseAll) {
+      return {
+        name: 'closeall',
+        isCloseAll: true
+      };
+    } else if (isClosing) {
+      return {
+        name: nameMatch[1],
+        isClosing: true
+      };
+    } else {
+      const propertyAssignmentsText = nameMatch ? contents.replace(nameMatch[0], '') : contents;
+      const propertyAssignments = propertyAssignmentsText.match(/(\S+?".*?"|[^\s/]+)/g);
+      let properties = {};
+
+      if (propertyAssignments) {
+        properties = propertyAssignments.reduce((acc, propAss) => {
+          return _objectSpread2(_objectSpread2({}, acc), parsePropertyAssignment(propAss));
+        }, {});
+      }
+
+      const name = nameMatch && nameMatch[1] || Object.keys(properties)[0];
+      let replacement;
+
+      if (name === 'select') {
+        replacement = processSelectAttribute(properties);
+      } else if (name === 'plural') {
+        replacement = processPluralAttribute(properties, locale);
+      } else if (name === 'ordinal') {
+        replacement = processOrdinalAttribute(properties, locale);
+      }
+
+      return {
+        name,
+        properties,
+        isSelfClosing,
+        replacement
+      };
+    }
   }
 
-  class Runner {
+  function parsePropertyAssignment(propAss) {
+    const [propName, ...rest] = propAss.split('=');
+    const stringValue = rest.join('='); // just in case string value had a = in it
+
+    if (!propName || !stringValue) {
+      throw new Error(`Invalid markup property assignment: ${propAss}`);
+    }
+
+    let value;
+
+    if (stringValue === 'true' || stringValue === 'false') {
+      value = stringValue === 'true';
+    } else if (/^-?\d*\.?\d+$/.test(stringValue)) {
+      value = +stringValue;
+    } else if (stringValue[0] === '"' && stringValue[stringValue.length - 1] === '"') {
+      value = stringValue.slice(1, -1);
+    } else {
+      value = stringValue;
+    }
+
+    return {
+      [propName]: value
+    };
+  }
+
+  function processSelectAttribute(properties) {
+    return properties[properties.value];
+  }
+
+  function processPluralAttribute(properties, locale) {
+    return properties[new Intl.PluralRules(locale).select(properties.value)].replaceAll('%', properties.value);
+  }
+
+  function processOrdinalAttribute(properties, locale) {
+    return properties[new Intl.PluralRules(locale, {
+      type: 'ordinal'
+    }).select(properties.value)].replaceAll('%', properties.value);
+  }
+
+  class YarnBound {
     constructor({
       dialogue,
       variableStorage,
@@ -3578,26 +3550,27 @@
     }) {
       this.handleCommand = handleCommand;
       this.combineTextAndOptionsResults = combineTextAndOptionsResults;
-      this.core = runner;
+      this.bondage = runner;
       this.bufferedNode = null;
       this.currentResult = null;
       this.history = [];
       this.locale = locale;
-      const runner$1 = new runner.Runner();
-      runner$1.noEscape = true;
-      runner$1.load(dialogue);
+      this.runner = new runner.Runner();
+      this.runner.noEscape = true;
+      this.runner.load(dialogue);
 
       if (variableStorage) {
-        runner$1.setVariableStorage(variableStorage);
+        variableStorage.display = variableStorage.display || variableStorage.get;
+        this.runner.setVariableStorage(variableStorage);
       }
 
       if (functions) {
         Object.entries(functions).forEach(entry => {
-          runner$1.registerFunction(...entry);
+          this.registerFunction(...entry);
         });
       }
 
-      this.generator = runner$1.run(startAt);
+      this.generator = this.runner.run(startAt);
       this.advance();
     }
 
@@ -3653,11 +3626,20 @@
       this.bufferedNode = buffered;
     }
 
+    registerFunction(name, func) {
+      this.runner.registerFunction(name, func);
+    }
+
   }
 
-  Runner.OptionsResult = runner.OptionsResult;
-  Runner.TextResult = runner.TextResult;
-  Runner.CommandResult = runner.CommandResult;
+  const {
+    OptionsResult,
+    TextResult,
+    CommandResult
+  } = runner;
+  YarnBound.OptionsResult = OptionsResult;
+  YarnBound.TextResult = TextResult;
+  YarnBound.CommandResult = CommandResult;
 
   function DialogueTreeContainer({
     dialogue,
@@ -3671,7 +3653,7 @@
     finalOption = 'End',
     locale
   }) {
-    const runner = React.useMemo(() => new Runner({
+    const runner = React.useMemo(() => new YarnBound({
       dialogue,
       startAt,
       functions,
