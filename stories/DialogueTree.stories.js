@@ -1,11 +1,13 @@
-import React, { useRef, useEffect } from 'react'
+import React from 'react'
 import DialogueTree from '../src/index'
 import { ErrorBoundary } from 'react-error-boundary'
+import WriteInTheWordsNode from './write-in-the-words/custom-node'
 import './styles.css'
+import './write-in-the-words/styles.scss'
 
 const dialogue = `title: Start
 ---
-I am a line
+I am a line that is long enough to wrap around smaller text boxes
 -> I am an option
   I am the line after the first option!
 -> I am a second option
@@ -18,6 +20,7 @@ I am another line. Today's date is {getTodaysDate()}
 export default {
   title: 'DialogueTree',
   component: DialogueTree,
+  className: 'dialogue-tree-container',
   args: {
     dialogue,
     functions: {
@@ -34,7 +37,7 @@ export default {
 const Template = (props) => {
   return (
     <div className="story">
-      <div className="dialogue-tree-container">
+      <div className={props.className}>
         <ErrorBoundary
           resetKeys={[props.dialogue]}
           fallbackRender={({ error }) => {
@@ -56,3 +59,12 @@ const Template = (props) => {
 }
 
 export const Basic = Template.bind({})
+
+
+export const WriteInTheWords = Template.bind({})
+WriteInTheWords.args = {
+  customNode: WriteInTheWordsNode,
+  className: 'write-in-the-words',
+  combineTextAndOptionsResults: false
+}
+

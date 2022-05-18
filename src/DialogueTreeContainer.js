@@ -14,6 +14,7 @@ export default function DialogueTreeContainer ({
   onDialogueEnd = () => {},
   defaultOption = 'Next',
   finalOption = 'End',
+  customNode,
   locale
 }) {
   const runner = useMemo(() => new YarnBound({
@@ -50,6 +51,7 @@ export default function DialogueTreeContainer ({
       advance={advance}
       defaultOption={defaultOption}
       finalOption={finalOption}
+      customNode={customNode}
     />
   )
 }
@@ -73,5 +75,6 @@ DialogueTreeContainer.propTypes = {
   onDialogueEnd: PropTypes.func,
   defaultOption: PropTypes.string,
   finalOption: PropTypes.string,
-  locale: PropTypes.string
+  locale: PropTypes.string,
+  customNode: PropTypes.elementType
 }

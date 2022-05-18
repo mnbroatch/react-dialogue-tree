@@ -8,9 +8,11 @@ export default function DialogueTree ({
   history,
   advance,
   defaultOption,
-  finalOption
+  finalOption,
+  customNode
 }) {
   const nodes = currentResult ? [...history, currentResult] : history
+  const NodeComponent = customNode || DialogueNode
   return (
     <div className='dialogue-tree'>
       <ChatScroller scrollSpeed={8}>
@@ -20,7 +22,7 @@ export default function DialogueTree ({
             key={index}
           >
             <div className='dialogue-tree__node-wrapper'>
-              <DialogueNode
+              <NodeComponent
                 node={node}
                 advance={advance}
                 defaultOption={defaultOption}
@@ -50,5 +52,6 @@ DialogueTree.propTypes = {
   history: PropTypes.arrayOf(node),
   advance: PropTypes.func,
   defaultOption: PropTypes.string,
-  finalOption: PropTypes.string
+  finalOption: PropTypes.string,
+  customNode: PropTypes.elementType
 }
