@@ -4,8 +4,6 @@ React Dialogue Tree is a component for displaying a videogame-style dialog box o
 
 Under the hood, it uses [Bondage.js](https://github.com/mnbroatch/bondage). This repo also functions as an example of how to integrate Bondage.js into a component.
 
-A live demo is [on the author's web site](https://matthewbroatch.com/)
-
 # Installation
 ----------------
 
