@@ -1,5 +1,6 @@
+// WIP
 import React, { useCallback, useState } from 'react'
-import rough from 'roughjs'
+// import rough from 'roughjs'
 import PropTypes from 'prop-types'
 import CustomText from './custom-text'
 import useInterval from './use-interval'
@@ -15,7 +16,6 @@ export default function WriteInTheWordsDialogueNode ({
   isHistory,
   advance
 }) {
-  useRef()
   const [bubblePath, setBubblePath] = useState('')
   if (isHistory) return null
   if (!options) {

@@ -51,9 +51,11 @@
     history,
     advance,
     defaultOption,
-    finalOption
+    finalOption,
+    customNode
   }) {
     const nodes = currentResult ? [...history, currentResult] : history;
+    const NodeComponent = customNode || DialogueNode;
     return /*#__PURE__*/React__default["default"].createElement("div", {
       className: "dialogue-tree"
     }, /*#__PURE__*/React__default["default"].createElement(ChatScroller, {
@@ -63,7 +65,7 @@
       key: index
     }, /*#__PURE__*/React__default["default"].createElement("div", {
       className: "dialogue-tree__node-wrapper"
-    }, /*#__PURE__*/React__default["default"].createElement(DialogueNode, {
+    }, /*#__PURE__*/React__default["default"].createElement(NodeComponent, {
       node: node,
       advance: advance,
       defaultOption: defaultOption,
@@ -85,7 +87,8 @@
     history: PropTypes__default["default"].arrayOf(node),
     advance: PropTypes__default["default"].func,
     defaultOption: PropTypes__default["default"].string,
-    finalOption: PropTypes__default["default"].string
+    finalOption: PropTypes__default["default"].string,
+    customNode: PropTypes__default["default"].elementType
   };
 
   function ownKeys(object, enumerableOnly) {
@@ -3651,6 +3654,7 @@
     onDialogueEnd = () => {},
     defaultOption = 'Next',
     finalOption = 'End',
+    customNode,
     locale
   }) {
     const runner = React.useMemo(() => new YarnBound({
@@ -3682,7 +3686,8 @@
       history: runner.history,
       advance: advance,
       defaultOption: defaultOption,
-      finalOption: finalOption
+      finalOption: finalOption,
+      customNode: customNode
     });
   }
   DialogueTreeContainer.propTypes = {
@@ -3701,7 +3706,8 @@
     onDialogueEnd: PropTypes__default["default"].func,
     defaultOption: PropTypes__default["default"].string,
     finalOption: PropTypes__default["default"].string,
-    locale: PropTypes__default["default"].string
+    locale: PropTypes__default["default"].string,
+    customNode: PropTypes__default["default"].elementType
   };
 
   function DialogueNode({
