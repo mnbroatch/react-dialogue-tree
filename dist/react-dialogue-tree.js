@@ -3573,6 +3573,10 @@
         });
       }
 
+      this.jump(startAt);
+    }
+
+    jump(startAt) {
       this.generator = this.runner.run(startAt);
       this.advance();
     }
