@@ -3532,13 +3532,13 @@
   }
 
   function processPluralAttribute(properties, locale) {
-    return properties[new Intl.PluralRules(locale).select(properties.value)].replaceAll('%', properties.value);
+    return properties[new Intl.PluralRules(locale).select(properties.value)].replace(/%/g, properties.value);
   }
 
   function processOrdinalAttribute(properties, locale) {
     return properties[new Intl.PluralRules(locale, {
       type: 'ordinal'
-    }).select(properties.value)].replaceAll('%', properties.value);
+    }).select(properties.value)].replace(/%/g, properties.value);
   }
 
   class YarnBound {
@@ -3578,6 +3578,7 @@
 
     jump(startAt) {
       this.generator = this.runner.run(startAt);
+      this.bufferedNode = null;
       this.advance();
     }
 

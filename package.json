@@ -67,7 +67,7 @@
     "storybook": "^6.4.8"
   },
   "dependencies": {
-    "yarn-bound": "^0.3.0",
+    "yarn-bound": "^0.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-error-boundary": "^3.1.4"
