@@ -114,10 +114,7 @@ How do I run this project locally?
 
 Storybook is available for development:
 
-`npm install --legacy-peer-deps`
-
-The flag is needed per: https://github.com/storybookjs/storybook/issues/12983
-
+`npm install`
 `npm start`
 
 
