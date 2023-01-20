@@ -1,7 +1,19 @@
+const path = require('path');
 module.exports = {
-  stories: ['../stories/**/*.stories.js'],
-  addons: ['@storybook/preset-scss'],
-  core: {
-    builder: 'webpack5',
+  "stories": [
+    "../src/**/*.mdx",
+    "../src/**/*.stories.@(js|jsx|ts|tsx)"
+  ],
+  "addons": [
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/addon-interactions"
+  ],
+  "framework": {
+    "name": "@storybook/react-webpack5",
+    "options": {}
   },
+  "docs": {
+    "autodocs": "tag"
+  }
 }
