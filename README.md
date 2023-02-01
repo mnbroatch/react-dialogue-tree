@@ -60,7 +60,7 @@ or however else you like to manage your css.
 
 # Command Result
 
-Generic commands in your story will 
+Generic commands in your story will call the handleCommand function with an object like this:
 
 ```javascript
 {
