@@ -3438,7 +3438,7 @@
     dialogue: PropTypes__default["default"].oneOfType([PropTypes__default["default"].string, PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
       title: PropTypes__default["default"].string.isRequired,
       body: PropTypes__default["default"].string.isRequired
-    }))]).isRequired,
+    }))]),
     runner: PropTypes__default["default"].object,
     startAt: PropTypes__default["default"].string,
     functions: PropTypes__default["default"].objectOf(PropTypes__default["default"].func),

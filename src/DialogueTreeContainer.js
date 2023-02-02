@@ -67,7 +67,7 @@ DialogueTreeContainer.propTypes = {
       title: PropTypes.string.isRequired,
       body: PropTypes.string.isRequired
     }))
-  ]).isRequired,
+  ]),
   runner: PropTypes.object,
   startAt: PropTypes.string,
   functions: PropTypes.objectOf(PropTypes.func),
