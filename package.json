@@ -1,6 +1,6 @@
 {
   "name": "react-dialogue-tree",
-  "version": "0.9.5",
+  "version": "0.10.0",
   "description": "Flexible Dialogue Tree for React",
   "main": "dist/react-dialogue-tree.js",
   "scripts": {

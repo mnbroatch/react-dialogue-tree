@@ -26,7 +26,9 @@ export default function SomeComponent (dialogue) {
 
 ### Props
 
-**dialogue (required)**: *string* - The Yarn dialogue to run. A .yarn file in string form.
+**dialogue (required if no "runner" prop)**: *string* - The Yarn dialogue to run. A .yarn file in string form.
+
+**runner (required if no "dialogue" prop)**: *YarnBound* - An existing YarnBound runner to use instead of instantiating a new one
 
 **startAt**: *string*: - The title of the node to start the dialogue on.
   - default: "Start"

@@ -3396,34 +3396,38 @@
     defaultOption = 'Next',
     finalOption = 'End',
     customNode,
+    runner,
     locale
   }) {
-    const runner = React.useMemo(() => new YarnBound({
-      dialogue,
-      startAt,
-      functions,
-      variableStorage,
-      handleCommand,
-      combineTextAndOptionsResults,
-      locale
-    }), [dialogue]);
+    const runnerRef = React.useRef(runner || null);
+    if (runnerRef.current === null) {
+      runnerRef.current = new YarnBound({
+        dialogue,
+        startAt,
+        functions,
+        variableStorage,
+        handleCommand,
+        combineTextAndOptionsResults,
+        locale
+      });
+    }
     React.useEffect(() => {
-      runner.combineTextAndOptionsResults = combineTextAndOptionsResults;
-      runner.handleCommand = handleCommand;
-      runner.variableStorage = variableStorage;
+      runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults;
+      runnerRef.current.handleCommand = handleCommand;
+      runnerRef.current.variableStorage = variableStorage;
     }, [combineTextAndOptionsResults, handleCommand, variableStorage]);
     const forceUpdate = useForceUpdate();
     const advance = React.useCallback(optionIndex => {
-      runner.advance(optionIndex);
+      runnerRef.current.advance(optionIndex);
       forceUpdate();
-      if (!runner.currentResult) {
+      if (!runnerRef.current.currentResult) {
         onDialogueEnd();
       }
-    }, [runner]);
+    }, [runnerRef.current]);
     return /*#__PURE__*/React__default["default"].createElement(DialogueTree, {
       className: "mnbroatch-react-dialogue-tree",
-      currentResult: runner.currentResult,
-      history: runner.history,
+      currentResult: runnerRef.current.currentResult,
+      history: runnerRef.current.history,
       advance: advance,
       defaultOption: defaultOption,
       finalOption: finalOption,
@@ -3435,6 +3439,7 @@
       title: PropTypes__default["default"].string.isRequired,
       body: PropTypes__default["default"].string.isRequired
     }))]).isRequired,
+    runner: PropTypes__default["default"].object,
     startAt: PropTypes__default["default"].string,
     functions: PropTypes__default["default"].objectOf(PropTypes__default["default"].func),
     variableStorage: PropTypes__default["default"].shape({
