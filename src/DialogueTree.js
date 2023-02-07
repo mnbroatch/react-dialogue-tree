@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import YarnBound from 'yarn-bound/src/index'
 import { DialogueNode } from './index.js'
 import ChatScroller from './ChatScroller.js'
 
@@ -16,22 +17,24 @@ export default function DialogueTree ({
   return (
     <div className='dialogue-tree'>
       <ChatScroller scrollSpeed={8}>
-        {nodes.map((node, index) => node && (
-          <div
-            className='dialogue-tree__node-spacer'
-            key={index}
-          >
-            <div className='dialogue-tree__node-wrapper'>
-              <NodeComponent
-                node={node}
-                advance={advance}
-                defaultOption={defaultOption}
-                finalOption={finalOption}
-                isHistory={history.includes(node)}
-              />
+        {nodes
+          .filter(node => !(node instanceof YarnBound.CommandResult))
+          .map((node, index) => node && (
+            <div
+              className='dialogue-tree__node-spacer'
+              key={index}
+            >
+              <div className='dialogue-tree__node-wrapper'>
+                <NodeComponent
+                  node={node}
+                  advance={advance}
+                  defaultOption={defaultOption}
+                  finalOption={finalOption}
+                  isHistory={history.includes(node)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </ChatScroller>
     </div>
   )

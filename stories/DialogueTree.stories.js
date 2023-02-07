@@ -17,6 +17,11 @@ I am a line that is long enough to wrap around smaller text boxes
 I am another line. Today's date is {getTodaysDate()}
 ===`
 
+// I am another line. Today's date is {getTodaysDate()}
+// <<do thing>>
+// blah
+// ===`
+
 export default {
   title: 'DialogueTree',
   component: DialogueTree,

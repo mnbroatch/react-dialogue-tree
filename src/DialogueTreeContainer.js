@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import useForceUpdate from './use-force-update'
 import DialogueTree from './DialogueTree.js'
-import YarnBound from 'yarn-bound/src/index'
+import useYarnBound from './use-yarn-bound.js'
 
 export default function DialogueTreeContainer ({
   dialogue,
@@ -10,42 +9,29 @@ export default function DialogueTreeContainer ({
   functions,
   variableStorage,
   handleCommand = () => {},
+  stopAtCommand = false,
   combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
   finalOption = 'End',
   customNode,
-  runner,
+  useRunner = useYarnBound,
   locale
 }) {
-  const runnerRef = useRef(runner || null)
-  if (runnerRef.current === null) {
-    runnerRef.current = new YarnBound({
-      dialogue,
-      startAt,
-      functions,
-      variableStorage,
-      handleCommand,
-      combineTextAndOptionsResults,
-      locale
-    })
-  }
-
-  useEffect(() => {
-    runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults
-    runnerRef.current.handleCommand = handleCommand
-    runnerRef.current.variableStorage = variableStorage
-  }, [combineTextAndOptionsResults, handleCommand, variableStorage])
-
-  const forceUpdate = useForceUpdate()
-
-  const advance = useCallback((optionIndex) => {
-    runnerRef.current.advance(optionIndex)
-    forceUpdate()
-    if (!runnerRef.current.currentResult) {
-      onDialogueEnd()
-    }
-  }, [runnerRef.current])
+  const { runnerRef, advance } = useRunner({
+    dialogue,
+    startAt,
+    functions,
+    variableStorage,
+    handleCommand,
+    stopAtCommand,
+    combineTextAndOptionsResults,
+    onDialogueEnd,
+    defaultOption,
+    finalOption,
+    customNode,
+    locale
+  })
 
   return (
     <DialogueTree
@@ -76,10 +62,12 @@ DialogueTreeContainer.propTypes = {
     set: PropTypes.func
   }),
   handleCommand: PropTypes.func,
+  stopAtCommand: PropTypes.bool,
   combineTextAndOptionsResults: PropTypes.bool,
   onDialogueEnd: PropTypes.func,
   defaultOption: PropTypes.string,
   finalOption: PropTypes.string,
   locale: PropTypes.string,
-  customNode: PropTypes.elementType
+  customNode: PropTypes.elementType,
+  useRunner: PropTypes.func
 }
