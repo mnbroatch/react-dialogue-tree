@@ -27,7 +27,9 @@ export default function useYarnBound ({
 
   useEffect(() => {
     runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults
-    runnerRef.current.variableStorage = variableStorage
+    if (variableStorage) {
+      runnerRef.current.runner.setVariableStorage(variableStorage)
+    }
   }, [combineTextAndOptionsResults, variableStorage])
 
   const forceUpdate = useForceUpdate()
