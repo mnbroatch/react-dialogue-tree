@@ -3431,7 +3431,7 @@
       }
     }, [runnerRef.current]);
     React.useEffect(() => {
-      if (runnerRef.current.currentResult instanceof YarnBound.CommandResult && runnerRef.current.currentResult.command !== pauseCommand) {
+      if (runnerRef.current.currentResult instanceof YarnBound.CommandResult && runnerRef.current.currentResult.command !== runnerRef.current.pauseCommand) {
         if (handleCommand) handleCommand(runnerRef.current.currentResult);
         advance();
       }
