@@ -22,6 +22,9 @@ describe('react-dialogue-tree', () => {
       -> I am a disabled option<<if $var1 is true>>
         I should not show
       I am another line. $var2 is {$var2}
+      <<if true == true>>
+        <<some command>>
+      <<endif>>
       I am yet another line. Here's a three: {returnThree()}
       ===
     `

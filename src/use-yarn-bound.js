@@ -3,7 +3,7 @@ import YarnBound from 'yarn-bound/src/index'
 import useForceUpdate from './use-force-update'
 
 export default function useYarnBound ({
-  dialogue,
+  dialogue = 'title: Start\n---\ndummy\n===',
   startAt,
   functions,
   variableStorage,
@@ -27,9 +27,8 @@ export default function useYarnBound ({
 
   useEffect(() => {
     runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults
-    runnerRef.current.stopAtCommand = stopAtCommand
     runnerRef.current.variableStorage = variableStorage
-  }, [combineTextAndOptionsResults, handleCommand, variableStorage, stopAtCommand])
+  }, [combineTextAndOptionsResults, variableStorage])
 
   const forceUpdate = useForceUpdate()
 
@@ -40,6 +39,13 @@ export default function useYarnBound ({
       onDialogueEnd()
     }
   }, [runnerRef.current])
+
+  useEffect(() => {
+    if (runnerRef.current.currentResult instanceof YarnBound.CommandResult) {
+      if (handleCommand) handleCommand(runnerRef.current.currentResult)
+      if (!stopAtCommand) advance()
+    }
+  }, [runnerRef.current.currentResult])
 
   return {
     runnerRef,

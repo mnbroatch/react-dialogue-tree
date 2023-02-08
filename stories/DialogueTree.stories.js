@@ -5,7 +5,8 @@ import WriteInTheWordsNode from './write-in-the-words/custom-node'
 import './styles.css'
 import './write-in-the-words/styles.scss'
 
-const dialogue = `title: Start
+const dialogue = `
+title: Start
 ---
 I am a line that is long enough to wrap around smaller text boxes
 -> I am an option
@@ -15,7 +16,19 @@ I am a line that is long enough to wrap around smaller text boxes
 -> I am a disabled option<<if false is true>>
   X
 I am another line. Today's date is {getTodaysDate()}
-===`
+<<if true == true>>
+Let's jump!
+<<jump Two>>
+<<else>>
+X
+<<endif>>
+===
+
+title: Two
+---
+You Jumped!
+===
+`
 
 // I am another line. Today's date is {getTodaysDate()}
 // <<do thing>>

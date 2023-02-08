@@ -9,86 +9,6 @@
   var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
   var PropTypes__default = /*#__PURE__*/_interopDefaultLegacy(PropTypes);
 
-  function useForceUpdate() {
-    const [value, setValue] = React.useState(0);
-    return () => setValue(value => value + 1);
-  }
-
-  function ChatScroller({
-    children,
-    scrollSpeed = 8
-  }) {
-    const innerRef = React.useRef();
-    React.useEffect(() => {
-      if (!innerRef.current || !innerRef.current.lastChild) return;
-      const scrollEnd = innerRef.current.scrollHeight - Math.max(innerRef.current.lastChild.offsetHeight, innerRef.current.offsetHeight);
-      const animate = () => {
-        innerRef.current.scrollTop += scrollSpeed;
-        if (innerRef.current.scrollTop < scrollEnd) requestAnimationFrame(animate);
-      };
-      requestAnimationFrame(animate);
-    }, [children, scrollSpeed]);
-    return /*#__PURE__*/React__default["default"].createElement("div", {
-      className: "chat-scroller"
-    }, /*#__PURE__*/React__default["default"].createElement("div", {
-      className: "chat-scroller__inner",
-      ref: innerRef,
-      style: {
-        height: '100%',
-        overflowY: 'auto'
-      }
-    }, children));
-  }
-  ChatScroller.propTypes = {
-    children: PropTypes__default["default"].node,
-    scrollSpeed: PropTypes__default["default"].number
-  };
-
-  function DialogueTree({
-    currentResult,
-    history,
-    advance,
-    defaultOption,
-    finalOption,
-    customNode
-  }) {
-    const nodes = currentResult ? [...history, currentResult] : history;
-    const NodeComponent = customNode || DialogueNode;
-    return /*#__PURE__*/React__default["default"].createElement("div", {
-      className: "dialogue-tree"
-    }, /*#__PURE__*/React__default["default"].createElement(ChatScroller, {
-      scrollSpeed: 8
-    }, nodes.map((node, index) => node && /*#__PURE__*/React__default["default"].createElement("div", {
-      className: "dialogue-tree__node-spacer",
-      key: index
-    }, /*#__PURE__*/React__default["default"].createElement("div", {
-      className: "dialogue-tree__node-wrapper"
-    }, /*#__PURE__*/React__default["default"].createElement(NodeComponent, {
-      node: node,
-      advance: advance,
-      defaultOption: defaultOption,
-      finalOption: finalOption,
-      isHistory: history.includes(node)
-    }))))));
-  }
-  const node = PropTypes__default["default"].shape({
-    text: PropTypes__default["default"].string,
-    options: PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
-      text: PropTypes__default["default"].string,
-      isAvailable: PropTypes__default["default"].bool
-    })),
-    selected: PropTypes__default["default"].number,
-    isDialogueEnd: PropTypes__default["default"].bool
-  });
-  DialogueTree.propTypes = {
-    currentResult: node,
-    history: PropTypes__default["default"].arrayOf(node),
-    advance: PropTypes__default["default"].func,
-    defaultOption: PropTypes__default["default"].string,
-    finalOption: PropTypes__default["default"].string,
-    customNode: PropTypes__default["default"].elementType
-  };
-
   function ownKeys(object, enumerableOnly) {
     var keys = Object.keys(object);
     if (Object.getOwnPropertySymbols) {
@@ -729,12 +649,13 @@
      * reset - Reset the lexer location, text and line number. Nothing fancy.
      */
     reset() {
+      const firstColumn = this.getFirstColumn();
       // Locations, used by both the lexer and the Jison parser.
       this.yytext = '';
       this.yylloc = {
-        first_column: 1,
+        first_column: firstColumn,
         first_line: 1,
-        last_column: 1,
+        last_column: firstColumn,
         last_line: 1
       };
       this.yylineno = 1;
@@ -764,16 +685,23 @@
       }
       return this.lexNextTokenOnCurrentLine();
     }
+
+    // if indentation doesn't matter, strip it.
+    getFirstColumn() {
+      const currentLine = this.getCurrentLine();
+      return !currentLine || this.shouldTrackNextIndentation ? 1 : currentLine.match(/^(\s*)/g)[0].length + 1;
+    }
     advanceLine() {
       this.yylineno += 1;
-      const currentLine = this.getCurrentLine().replace(/\t/, '    ');
+      const currentLine = this.getCurrentLine();
+      const firstColumn = this.getFirstColumn();
       this.lines[this.yylineno - 1] = currentLine;
       this.previousLevelOfIndentation = this.getLastRecordedIndentation()[0];
       this.yytext = '';
       this.yylloc = {
-        first_column: 1,
+        first_column: firstColumn,
         first_line: this.yylineno,
-        last_column: 1,
+        last_column: firstColumn,
         last_line: this.yylineno
       };
     }
@@ -874,7 +802,7 @@
       // Delete carriage return while keeping a similar semantic.
       this.originalText = text.replace(/(\r\n)/g, '\n').replace(/\r/g, '\n').replace(/[\n\r]+$/, '');
       // Transform the input into an array of lines.
-      this.lines = this.originalText.split('\n');
+      this.lines = this.originalText.split('\n').map(line => line.replace(/\t/, '    '));
       this.reset();
     }
 
@@ -1132,6 +1060,7 @@
           this.$ = [$$[$0]];
           break;
         case 3:
+        case 19:
           this.$ = $$[$0 - 1].concat($$[$0]);
           break;
         case 5:
@@ -1160,9 +1089,6 @@
           break;
         case 16:
           this.$ = new yy.EscapedCharacterNode($$[$0], this._$);
-          break;
-        case 19:
-          this.$ = $$[$0 - 1].concat($$[$0]);
           break;
         case 20:
           this.$ = [$$[$0].substring(1)];
@@ -3385,37 +3311,112 @@
   YarnBound.TextResult = TextResult;
   YarnBound.CommandResult = CommandResult;
 
-  function DialogueTreeContainer({
-    dialogue,
-    startAt = 'Start',
+  function ChatScroller({
+    children,
+    scrollSpeed = 8
+  }) {
+    const innerRef = React.useRef();
+    React.useEffect(() => {
+      if (!innerRef.current || !innerRef.current.lastChild) return;
+      const scrollEnd = innerRef.current.scrollHeight - Math.max(innerRef.current.lastChild.offsetHeight, innerRef.current.offsetHeight);
+      const animate = () => {
+        innerRef.current.scrollTop += scrollSpeed;
+        if (innerRef.current.scrollTop < scrollEnd) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+    }, [children, scrollSpeed]);
+    return /*#__PURE__*/React__default["default"].createElement("div", {
+      className: "chat-scroller"
+    }, /*#__PURE__*/React__default["default"].createElement("div", {
+      className: "chat-scroller__inner",
+      ref: innerRef,
+      style: {
+        height: '100%',
+        overflowY: 'auto'
+      }
+    }, children));
+  }
+  ChatScroller.propTypes = {
+    children: PropTypes__default["default"].node,
+    scrollSpeed: PropTypes__default["default"].number
+  };
+
+  function DialogueTree({
+    currentResult,
+    history,
+    advance,
+    defaultOption,
+    finalOption,
+    customNode
+  }) {
+    const nodes = currentResult ? [...history, currentResult] : history;
+    const NodeComponent = customNode || DialogueNode;
+    return /*#__PURE__*/React__default["default"].createElement("div", {
+      className: "dialogue-tree"
+    }, /*#__PURE__*/React__default["default"].createElement(ChatScroller, {
+      scrollSpeed: 8
+    }, nodes.filter(node => !(node instanceof YarnBound.CommandResult)).map((node, index) => node && /*#__PURE__*/React__default["default"].createElement("div", {
+      className: "dialogue-tree__node-spacer",
+      key: index
+    }, /*#__PURE__*/React__default["default"].createElement("div", {
+      className: "dialogue-tree__node-wrapper"
+    }, /*#__PURE__*/React__default["default"].createElement(NodeComponent, {
+      node: node,
+      advance: advance,
+      defaultOption: defaultOption,
+      finalOption: finalOption,
+      isHistory: history.includes(node)
+    }))))));
+  }
+  const node = PropTypes__default["default"].shape({
+    text: PropTypes__default["default"].string,
+    options: PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
+      text: PropTypes__default["default"].string,
+      isAvailable: PropTypes__default["default"].bool
+    })),
+    selected: PropTypes__default["default"].number,
+    isDialogueEnd: PropTypes__default["default"].bool
+  });
+  DialogueTree.propTypes = {
+    currentResult: node,
+    history: PropTypes__default["default"].arrayOf(node),
+    advance: PropTypes__default["default"].func,
+    defaultOption: PropTypes__default["default"].string,
+    finalOption: PropTypes__default["default"].string,
+    customNode: PropTypes__default["default"].elementType
+  };
+
+  function useForceUpdate() {
+    const [value, setValue] = React.useState(0);
+    return () => setValue(value => value + 1);
+  }
+
+  function useYarnBound({
+    dialogue = 'title: Start\n---\ndummy\n===',
+    startAt,
     functions,
     variableStorage,
-    handleCommand = () => {},
-    combineTextAndOptionsResults = true,
-    onDialogueEnd = () => {},
-    defaultOption = 'Next',
-    finalOption = 'End',
+    handleCommand,
+    stopAtCommand,
+    combineTextAndOptionsResults,
+    onDialogueEnd,
+    defaultOption,
+    finalOption,
     customNode,
-    runner,
     locale
   }) {
-    const runnerRef = React.useRef(runner || null);
-    if (runnerRef.current === null) {
-      runnerRef.current = new YarnBound({
-        dialogue,
-        startAt,
-        functions,
-        variableStorage,
-        handleCommand,
-        combineTextAndOptionsResults,
-        locale
-      });
-    }
+    const runnerRef = React.useRef(new YarnBound({
+      dialogue,
+      startAt,
+      functions,
+      variableStorage,
+      combineTextAndOptionsResults,
+      locale
+    }));
     React.useEffect(() => {
       runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults;
-      runnerRef.current.handleCommand = handleCommand;
       runnerRef.current.variableStorage = variableStorage;
-    }, [combineTextAndOptionsResults, handleCommand, variableStorage]);
+    }, [combineTextAndOptionsResults, variableStorage]);
     const forceUpdate = useForceUpdate();
     const advance = React.useCallback(optionIndex => {
       runnerRef.current.advance(optionIndex);
@@ -3424,6 +3425,51 @@
         onDialogueEnd();
       }
     }, [runnerRef.current]);
+    React.useEffect(() => {
+      if (runnerRef.current.currentResult instanceof YarnBound.CommandResult) {
+        if (handleCommand) handleCommand(runnerRef.current.currentResult);
+        if (!stopAtCommand) advance();
+      }
+    }, [runnerRef.current.currentResult]);
+    return {
+      runnerRef,
+      advance
+    };
+  }
+
+  function DialogueTreeContainer({
+    dialogue,
+    startAt = 'Start',
+    functions,
+    variableStorage,
+    handleCommand,
+    stopAtCommand = false,
+    combineTextAndOptionsResults = true,
+    onDialogueEnd = () => {},
+    defaultOption = 'Next',
+    finalOption = 'End',
+    customNode,
+    runnerObject,
+    locale
+  }) {
+    const defaultRunnerObject = useYarnBound({
+      dialogue,
+      startAt,
+      functions,
+      variableStorage,
+      handleCommand,
+      stopAtCommand,
+      combineTextAndOptionsResults,
+      onDialogueEnd,
+      defaultOption,
+      finalOption,
+      customNode,
+      locale
+    });
+    const {
+      runnerRef,
+      advance
+    } = runnerObject || defaultRunnerObject;
     return /*#__PURE__*/React__default["default"].createElement(DialogueTree, {
       className: "mnbroatch-react-dialogue-tree",
       currentResult: runnerRef.current.currentResult,
@@ -3439,7 +3485,7 @@
       title: PropTypes__default["default"].string.isRequired,
       body: PropTypes__default["default"].string.isRequired
     }))]),
-    runner: PropTypes__default["default"].object,
+    runnerObject: PropTypes__default["default"].object,
     startAt: PropTypes__default["default"].string,
     functions: PropTypes__default["default"].objectOf(PropTypes__default["default"].func),
     variableStorage: PropTypes__default["default"].shape({
@@ -3447,6 +3493,7 @@
       set: PropTypes__default["default"].func
     }),
     handleCommand: PropTypes__default["default"].func,
+    stopAtCommand: PropTypes__default["default"].bool,
     combineTextAndOptionsResults: PropTypes__default["default"].bool,
     onDialogueEnd: PropTypes__default["default"].func,
     defaultOption: PropTypes__default["default"].string,
@@ -3521,6 +3568,7 @@
 
   exports.DialogueNode = DialogueNode;
   exports["default"] = DialogueTreeContainer;
+  exports.useYarnBound = useYarnBound;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

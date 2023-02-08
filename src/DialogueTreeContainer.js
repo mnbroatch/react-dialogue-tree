@@ -8,17 +8,17 @@ export default function DialogueTreeContainer ({
   startAt = 'Start',
   functions,
   variableStorage,
-  handleCommand = () => {},
+  handleCommand,
   stopAtCommand = false,
   combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
   finalOption = 'End',
   customNode,
-  useRunner = useYarnBound,
+  runnerObject,
   locale
 }) {
-  const { runnerRef, advance } = useRunner({
+  const defaultRunnerObject = useYarnBound({
     dialogue,
     startAt,
     functions,
@@ -32,6 +32,8 @@ export default function DialogueTreeContainer ({
     customNode,
     locale
   })
+
+  const { runnerRef, advance } = (runnerObject || defaultRunnerObject)
 
   return (
     <DialogueTree
@@ -54,7 +56,7 @@ DialogueTreeContainer.propTypes = {
       body: PropTypes.string.isRequired
     }))
   ]),
-  runner: PropTypes.object,
+  runnerObject: PropTypes.object,
   startAt: PropTypes.string,
   functions: PropTypes.objectOf(PropTypes.func),
   variableStorage: PropTypes.shape({
@@ -68,6 +70,5 @@ DialogueTreeContainer.propTypes = {
   defaultOption: PropTypes.string,
   finalOption: PropTypes.string,
   locale: PropTypes.string,
-  customNode: PropTypes.elementType,
-  useRunner: PropTypes.func
+  customNode: PropTypes.elementType
 }
