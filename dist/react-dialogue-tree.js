@@ -3400,7 +3400,7 @@
     functions,
     variableStorage,
     handleCommand,
-    stopAtCommand,
+    pauseCommand,
     combineTextAndOptionsResults,
     onDialogueEnd,
     defaultOption,
@@ -3431,9 +3431,9 @@
       }
     }, [runnerRef.current]);
     React.useEffect(() => {
-      if (runnerRef.current.currentResult instanceof YarnBound.CommandResult) {
+      if (runnerRef.current.currentResult instanceof YarnBound.CommandResult && runnerRef.current.currentResult.command !== pauseCommand) {
         if (handleCommand) handleCommand(runnerRef.current.currentResult);
-        if (!stopAtCommand) advance();
+        advance();
       }
     }, [runnerRef.current.currentResult]);
     return {
@@ -3448,7 +3448,7 @@
     functions,
     variableStorage,
     handleCommand,
-    stopAtCommand = false,
+    pauseCommand,
     combineTextAndOptionsResults = true,
     onDialogueEnd = () => {},
     defaultOption = 'Next',
@@ -3463,7 +3463,7 @@
       functions,
       variableStorage,
       handleCommand,
-      stopAtCommand,
+      pauseCommand,
       combineTextAndOptionsResults,
       onDialogueEnd,
       defaultOption,
@@ -3498,7 +3498,7 @@
       set: PropTypes__default["default"].func
     }),
     handleCommand: PropTypes__default["default"].func,
-    stopAtCommand: PropTypes__default["default"].bool,
+    pauseCommand: PropTypes__default["default"].string,
     combineTextAndOptionsResults: PropTypes__default["default"].bool,
     onDialogueEnd: PropTypes__default["default"].func,
     defaultOption: PropTypes__default["default"].string,

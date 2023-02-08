@@ -8,7 +8,7 @@ export default function useYarnBound ({
   functions,
   variableStorage,
   handleCommand,
-  stopAtCommand,
+  pauseCommand,
   combineTextAndOptionsResults,
   onDialogueEnd,
   defaultOption,
@@ -43,9 +43,12 @@ export default function useYarnBound ({
   }, [runnerRef.current])
 
   useEffect(() => {
-    if (runnerRef.current.currentResult instanceof YarnBound.CommandResult) {
+    if (
+      runnerRef.current.currentResult instanceof YarnBound.CommandResult
+      && runnerRef.current.currentResult.command !== pauseCommand
+    ) {
       if (handleCommand) handleCommand(runnerRef.current.currentResult)
-      if (!stopAtCommand) advance()
+      advance()
     }
   }, [runnerRef.current.currentResult])
 
