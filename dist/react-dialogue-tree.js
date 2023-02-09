@@ -3400,7 +3400,7 @@
     startAt = 'Start',
     functions,
     variableStorage,
-    handleCommand,
+    handleCommand = () => {},
     pauseCommand,
     combineTextAndOptionsResults = true,
     onDialogueEnd = () => {},
@@ -3531,53 +3531,8 @@
     advance: PropTypes__default["default"].func
   };
 
-  function useYarnBound({
-    dialogue = 'title: Start\n---\ndummy\n===',
-    startAt,
-    functions,
-    variableStorage,
-    handleCommand,
-    pauseCommand,
-    combineTextAndOptionsResults,
-    onDialogueEnd,
-    defaultOption,
-    finalOption,
-    customNode,
-    locale
-  }) {
-    const runnerRef = React.useRef(new YarnBound({
-      dialogue,
-      startAt,
-      functions,
-      variableStorage,
-      handleCommand,
-      pauseCommand,
-      combineTextAndOptionsResults,
-      locale
-    }));
-    React.useEffect(() => {
-      runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults;
-      if (variableStorage) {
-        runnerRef.current.runner.setVariableStorage(variableStorage);
-      }
-    }, [combineTextAndOptionsResults, variableStorage]);
-    const forceUpdate = useForceUpdate();
-    const advance = React.useCallback(optionIndex => {
-      runnerRef.current.advance(optionIndex);
-      forceUpdate();
-      if (!runnerRef.current.currentResult) {
-        onDialogueEnd();
-      }
-    }, [runnerRef.current]);
-    return {
-      runnerRef,
-      advance
-    };
-  }
-
   exports.DialogueNode = DialogueNode;
   exports["default"] = DialogueTreeContainer;
-  exports.useYarnBound = useYarnBound;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
