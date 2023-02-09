@@ -3394,55 +3394,8 @@
     return () => setValue(value => value + 1);
   }
 
-  function useYarnBound({
-    dialogue = 'title: Start\n---\ndummy\n===',
-    startAt,
-    functions,
-    variableStorage,
-    handleCommand,
-    pauseCommand,
-    combineTextAndOptionsResults,
-    onDialogueEnd,
-    defaultOption,
-    finalOption,
-    customNode,
-    locale
-  }) {
-    const runnerRef = React.useRef(new YarnBound({
-      dialogue,
-      startAt,
-      functions,
-      variableStorage,
-      combineTextAndOptionsResults,
-      locale
-    }));
-    React.useEffect(() => {
-      runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults;
-      if (variableStorage) {
-        runnerRef.current.runner.setVariableStorage(variableStorage);
-      }
-    }, [combineTextAndOptionsResults, variableStorage]);
-    const forceUpdate = useForceUpdate();
-    const advance = React.useCallback(optionIndex => {
-      runnerRef.current.advance(optionIndex);
-      forceUpdate();
-      if (!runnerRef.current.currentResult) {
-        onDialogueEnd();
-      }
-    }, [runnerRef.current]);
-    React.useEffect(() => {
-      if (runnerRef.current.currentResult instanceof YarnBound.CommandResult && runnerRef.current.currentResult.command !== runnerRef.current.pauseCommand) {
-        if (handleCommand) handleCommand(runnerRef.current.currentResult);
-        advance();
-      }
-    }, [runnerRef.current.currentResult]);
-    return {
-      runnerRef,
-      advance
-    };
-  }
-
   function DialogueTreeContainer({
+    runner,
     dialogue,
     startAt = 'Start',
     functions,
@@ -3454,10 +3407,9 @@
     defaultOption = 'Next',
     finalOption = 'End',
     customNode,
-    runnerObject,
     locale
   }) {
-    const defaultRunnerObject = useYarnBound({
+    const runnerRef = React.useRef(runner || new YarnBound({
       dialogue,
       startAt,
       functions,
@@ -3465,16 +3417,24 @@
       handleCommand,
       pauseCommand,
       combineTextAndOptionsResults,
-      onDialogueEnd,
-      defaultOption,
-      finalOption,
-      customNode,
       locale
-    });
-    const {
-      runnerRef,
-      advance
-    } = runnerObject || defaultRunnerObject;
+    }));
+    const advance = React.useCallback(optionIndex => {
+      runnerRef.current.advance(optionIndex);
+      forceUpdate();
+      if (!runnerRef.current.currentResult) {
+        onDialogueEnd();
+      }
+    }, [runnerRef.current]);
+    const forceUpdate = useForceUpdate();
+
+    // todo: think about what should be supported here
+    React.useEffect(() => {
+      runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults;
+      if (variableStorage) {
+        runnerRef.current.runner.setVariableStorage(variableStorage);
+      }
+    }, [combineTextAndOptionsResults, variableStorage]);
     return /*#__PURE__*/React__default["default"].createElement(DialogueTree, {
       className: "mnbroatch-react-dialogue-tree",
       currentResult: runnerRef.current.currentResult,
@@ -3486,11 +3446,11 @@
     });
   }
   DialogueTreeContainer.propTypes = {
+    runner: PropTypes__default["default"].object,
     dialogue: PropTypes__default["default"].oneOfType([PropTypes__default["default"].string, PropTypes__default["default"].arrayOf(PropTypes__default["default"].shape({
       title: PropTypes__default["default"].string.isRequired,
       body: PropTypes__default["default"].string.isRequired
     }))]),
-    runnerObject: PropTypes__default["default"].object,
     startAt: PropTypes__default["default"].string,
     functions: PropTypes__default["default"].objectOf(PropTypes__default["default"].func),
     variableStorage: PropTypes__default["default"].shape({
@@ -3570,6 +3530,50 @@
     isHistory: PropTypes__default["default"].bool,
     advance: PropTypes__default["default"].func
   };
+
+  function useYarnBound({
+    dialogue = 'title: Start\n---\ndummy\n===',
+    startAt,
+    functions,
+    variableStorage,
+    handleCommand,
+    pauseCommand,
+    combineTextAndOptionsResults,
+    onDialogueEnd,
+    defaultOption,
+    finalOption,
+    customNode,
+    locale
+  }) {
+    const runnerRef = React.useRef(new YarnBound({
+      dialogue,
+      startAt,
+      functions,
+      variableStorage,
+      handleCommand,
+      pauseCommand,
+      combineTextAndOptionsResults,
+      locale
+    }));
+    React.useEffect(() => {
+      runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults;
+      if (variableStorage) {
+        runnerRef.current.runner.setVariableStorage(variableStorage);
+      }
+    }, [combineTextAndOptionsResults, variableStorage]);
+    const forceUpdate = useForceUpdate();
+    const advance = React.useCallback(optionIndex => {
+      runnerRef.current.advance(optionIndex);
+      forceUpdate();
+      if (!runnerRef.current.currentResult) {
+        onDialogueEnd();
+      }
+    }, [runnerRef.current]);
+    return {
+      runnerRef,
+      advance
+    };
+  }
 
   exports.DialogueNode = DialogueNode;
   exports["default"] = DialogueTreeContainer;

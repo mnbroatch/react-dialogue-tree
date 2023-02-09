@@ -1,24 +1,25 @@
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
+import YarnBound from 'yarn-bound/src/index'
 import DialogueTree from './DialogueTree.js'
-import useYarnBound from './use-yarn-bound.js'
+import useForceUpdate from './use-force-update'
 
 export default function DialogueTreeContainer ({
+  runner,
   dialogue,
   startAt = 'Start',
   functions,
   variableStorage,
-  handleCommand,
+  handleCommand = () => {},
   pauseCommand,
   combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
   defaultOption = 'Next',
   finalOption = 'End',
   customNode,
-  runnerObject,
   locale
 }) {
-  const defaultRunnerObject = useYarnBound({
+  const runnerRef = useRef(runner || new YarnBound({
     dialogue,
     startAt,
     functions,
@@ -26,14 +27,26 @@ export default function DialogueTreeContainer ({
     handleCommand,
     pauseCommand,
     combineTextAndOptionsResults,
-    onDialogueEnd,
-    defaultOption,
-    finalOption,
-    customNode,
     locale
-  })
+  }))
 
-  const { runnerRef, advance } = (runnerObject || defaultRunnerObject)
+  const advance = useCallback((optionIndex) => {
+    runnerRef.current.advance(optionIndex)
+    forceUpdate()
+    if (!runnerRef.current.currentResult) {
+      onDialogueEnd()
+    }
+  }, [runnerRef.current])
+
+  const forceUpdate = useForceUpdate()
+
+  // todo: think about what should be supported here
+  useEffect(() => {
+    runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults
+    if (variableStorage) {
+      runnerRef.current.runner.setVariableStorage(variableStorage)
+    }
+  }, [combineTextAndOptionsResults, variableStorage])
 
   return (
     <DialogueTree
@@ -49,6 +62,7 @@ export default function DialogueTreeContainer ({
 }
 
 DialogueTreeContainer.propTypes = {
+  runner: PropTypes.object,
   dialogue: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.shape({
@@ -56,7 +70,6 @@ DialogueTreeContainer.propTypes = {
       body: PropTypes.string.isRequired
     }))
   ]),
-  runnerObject: PropTypes.object,
   startAt: PropTypes.string,
   functions: PropTypes.objectOf(PropTypes.func),
   variableStorage: PropTypes.shape({
