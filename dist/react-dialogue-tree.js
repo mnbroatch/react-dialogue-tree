@@ -3500,7 +3500,7 @@
       }));
     }
     return /*#__PURE__*/React__default["default"].createElement("div", {
-      className: ['dialogue-node', isHistory && 'dialogue-node--history'].filter(Boolean)
+      className: ['dialogue-node', isHistory && 'dialogue-node--history'].filter(Boolean).join(' ')
     }, text, options && /*#__PURE__*/React__default["default"].createElement("ul", {
       className: "dialogue-node__options"
     }, options.map(({

@@ -42,7 +42,7 @@ export default function DialogueNode ({
     <div className={[
       'dialogue-node',
       isHistory && 'dialogue-node--history'
-    ].filter(Boolean)}>
+    ].filter(Boolean).join(' ')}>
       {text}
       { options && (
         <ul className='dialogue-node__options'>
