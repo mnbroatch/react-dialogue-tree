@@ -31,11 +31,11 @@ export default function DialogueTreeContainer ({
   }))
 
   const advance = useCallback((optionIndex) => {
-    runnerRef.current.advance(optionIndex)
-    forceUpdate()
-    if (!runnerRef.current.currentResult) {
+    if (runnerRef.current.currentResult.isDialogueEnd) {
       onDialogueEnd()
     }
+    runnerRef.current.advance(optionIndex)
+    forceUpdate()
   }, [runnerRef.current])
 
   const forceUpdate = useForceUpdate()
