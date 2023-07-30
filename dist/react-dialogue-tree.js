@@ -3408,12 +3408,13 @@
     advance,
     defaultOption,
     finalOption,
+    hasDialogueEnded,
     customNode
   }) {
     const nodes = currentResult ? [...history, currentResult] : history;
     const NodeComponent = customNode || DialogueNode;
     return /*#__PURE__*/React__default["default"].createElement("div", {
-      className: "dialogue-tree"
+      className: ['dialogue-tree', hasDialogueEnded && 'dialogue-tree--dialogue-ended'].filter(Boolean).join(' ')
     }, /*#__PURE__*/React__default["default"].createElement(ChatScroller, {
       scrollSpeed: 8
     }, nodes.filter(node => typeof node.command === 'undefined').map((node, index) => node && /*#__PURE__*/React__default["default"].createElement("div", {
@@ -3426,6 +3427,7 @@
       advance: advance,
       defaultOption: defaultOption,
       finalOption: finalOption,
+      hasDialogueEnded: hasDialogueEnded,
       isHistory: history.includes(node)
     }))))));
   }
@@ -3444,6 +3446,7 @@
     advance: PropTypes__default["default"].func,
     defaultOption: PropTypes__default["default"].string,
     finalOption: PropTypes__default["default"].string,
+    hasDialogueEnded: PropTypes__default["default"].bool,
     customNode: PropTypes__default["default"].elementType
   };
 
@@ -3467,6 +3470,7 @@
     customNode,
     locale
   }) {
+    const [hasDialogueEnded, setHasDialogueEnded] = React.useState(false);
     const runnerRef = React.useRef(runner || new YarnBound({
       dialogue,
       startAt,
@@ -3477,16 +3481,15 @@
       combineTextAndOptionsResults,
       locale
     }));
+    const forceUpdate = useForceUpdate();
     const advance = React.useCallback(optionIndex => {
       if (runnerRef.current.currentResult.isDialogueEnd) {
+        setHasDialogueEnded(true);
         onDialogueEnd();
       }
       runnerRef.current.advance(optionIndex);
       forceUpdate();
     }, [runnerRef.current]);
-    const forceUpdate = useForceUpdate();
-
-    // todo: think about what should be supported here
     React.useEffect(() => {
       runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults;
       if (variableStorage) {
@@ -3495,11 +3498,12 @@
     }, [combineTextAndOptionsResults, variableStorage]);
     return /*#__PURE__*/React__default["default"].createElement(DialogueTree, {
       className: "mnbroatch-react-dialogue-tree",
-      currentResult: runnerRef.current.currentResult,
+      currentResult: hasDialogueEnded ? null : runnerRef.current.currentResult,
       history: runnerRef.current.history,
       advance: advance,
       defaultOption: defaultOption,
       finalOption: finalOption,
+      hasDialogueEnded: hasDialogueEnded,
       customNode: customNode
     });
   }
@@ -3535,6 +3539,7 @@
     defaultOption,
     finalOption,
     isHistory,
+    hasDialogueEnded,
     advance
   }) {
     let options;
@@ -3543,7 +3548,9 @@
         text: isDialogueEnd ? finalOption : defaultOption,
         className: ['dialogue-node__option', isDialogueEnd && 'dialogue-node__option--final', !isDialogueEnd && 'dialogue-node__option--default'].filter(Boolean).join(' '),
         onClick: !isHistory ? () => {
-          advance();
+          if (!hasDialogueEnded) {
+            advance();
+          }
         } : undefined
       }];
     } else if (allOptions) {
@@ -3554,7 +3561,9 @@
         text,
         className: ['dialogue-node__option', !isAvailable && 'dialogue-node__option--disabled'].filter(Boolean).join(' '),
         onClick: !isHistory && isAvailable ? () => {
-          advance(index);
+          if (!hasDialogueEnded) {
+            advance(index);
+          }
         } : undefined
       }));
     }
@@ -3583,6 +3592,7 @@
       selected: PropTypes__default["default"].number,
       isDialogueEnd: PropTypes__default["default"].bool
     }),
+    hasDialogueEnded: PropTypes__default["default"].bool,
     defaultOption: PropTypes__default["default"].string,
     finalOption: PropTypes__default["default"].string,
     isHistory: PropTypes__default["default"].bool,

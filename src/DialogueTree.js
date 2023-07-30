@@ -9,12 +9,18 @@ export default function DialogueTree ({
   advance,
   defaultOption,
   finalOption,
+  hasDialogueEnded,
   customNode
 }) {
   const nodes = currentResult ? [...history, currentResult] : history
   const NodeComponent = customNode || DialogueNode
   return (
-    <div className='dialogue-tree'>
+    <div
+      className={[
+        'dialogue-tree',
+        hasDialogueEnded && 'dialogue-tree--dialogue-ended'
+      ].filter(Boolean).join(' ')}
+    >
       <ChatScroller scrollSpeed={8}>
         {nodes
           .filter(node => typeof node.command === 'undefined')
@@ -29,6 +35,7 @@ export default function DialogueTree ({
                   advance={advance}
                   defaultOption={defaultOption}
                   finalOption={finalOption}
+                  hasDialogueEnded={hasDialogueEnded}
                   isHistory={history.includes(node)}
                 />
               </div>
@@ -55,5 +62,6 @@ DialogueTree.propTypes = {
   advance: PropTypes.func,
   defaultOption: PropTypes.string,
   finalOption: PropTypes.string,
+  hasDialogueEnded: PropTypes.bool,
   customNode: PropTypes.elementType
 }

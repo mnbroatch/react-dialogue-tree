@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import YarnBound from 'yarn-bound/src/index'
 import DialogueTree from './DialogueTree.js'
@@ -19,6 +19,8 @@ export default function DialogueTreeContainer ({
   customNode,
   locale
 }) {
+  const [hasDialogueEnded, setHasDialogueEnded] = useState(false)
+
   const runnerRef = useRef(runner || new YarnBound({
     dialogue,
     startAt,
@@ -30,17 +32,17 @@ export default function DialogueTreeContainer ({
     locale
   }))
 
+  const forceUpdate = useForceUpdate()
+
   const advance = useCallback((optionIndex) => {
     if (runnerRef.current.currentResult.isDialogueEnd) {
+      setHasDialogueEnded(true)
       onDialogueEnd()
     }
     runnerRef.current.advance(optionIndex)
     forceUpdate()
   }, [runnerRef.current])
 
-  const forceUpdate = useForceUpdate()
-
-  // todo: think about what should be supported here
   useEffect(() => {
     runnerRef.current.combineTextAndOptionsResults = combineTextAndOptionsResults
     if (variableStorage) {
@@ -51,11 +53,12 @@ export default function DialogueTreeContainer ({
   return (
     <DialogueTree
       className='mnbroatch-react-dialogue-tree'
-      currentResult={runnerRef.current.currentResult}
+      currentResult={hasDialogueEnded ? null : runnerRef.current.currentResult}
       history={runnerRef.current.history}
       advance={advance}
       defaultOption={defaultOption}
       finalOption={finalOption}
+      hasDialogueEnded={hasDialogueEnded}
       customNode={customNode}
     />
   )

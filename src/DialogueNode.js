@@ -8,6 +8,7 @@ export default function DialogueNode ({
   defaultOption,
   finalOption,
   isHistory,
+  hasDialogueEnded,
   advance
 }) {
   let options
@@ -20,7 +21,11 @@ export default function DialogueNode ({
         !isDialogueEnd && 'dialogue-node__option--default'
       ].filter(Boolean).join(' '),
       onClick: !isHistory
-        ? () => { advance() }
+        ? () => {
+            if (!hasDialogueEnded) {
+              advance()
+            }
+          }
         : undefined
     }]
   } else if (allOptions) {
@@ -33,7 +38,11 @@ export default function DialogueNode ({
           !isAvailable && 'dialogue-node__option--disabled'
         ].filter(Boolean).join(' '),
         onClick: !isHistory && isAvailable
-          ? () => { advance(index) }
+          ? () => {
+              if (!hasDialogueEnded) {
+                advance(index)
+              }
+            }
           : undefined
       }))
   }
@@ -73,6 +82,7 @@ DialogueNode.propTypes = {
     selected: PropTypes.number,
     isDialogueEnd: PropTypes.bool
   }),
+  hasDialogueEnded: PropTypes.bool,
   defaultOption: PropTypes.string,
   finalOption: PropTypes.string,
   isHistory: PropTypes.bool,
