@@ -1,6 +1,6 @@
 {
   "name": "react-dialogue-tree",
-  "version": "0.12.6",
+  "version": "0.12.9",
   "description": "Flexible Dialogue Tree for React",
   "main": "dist/react-dialogue-tree.js",
   "scripts": {
@@ -78,6 +78,6 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-error-boundary": "^3.1.4",
-    "yarn-bound": "0.5.2"
+    "yarn-bound": "0.5.4"
   }
 }

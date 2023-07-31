@@ -58,7 +58,6 @@ export default function DialogueTreeContainer ({
       advance={advance}
       defaultOption={defaultOption}
       finalOption={finalOption}
-      hasDialogueEnded={hasDialogueEnded}
       customNode={customNode}
     />
   )
