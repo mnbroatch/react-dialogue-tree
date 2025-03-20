@@ -14,6 +14,7 @@ export default function DialogueTreeContainer ({
   pauseCommand,
   combineTextAndOptionsResults = true,
   onDialogueEnd = () => {},
+  onAdvance = () => {},
   defaultOption = 'Next',
   finalOption = 'End',
   customNode,
@@ -21,7 +22,8 @@ export default function DialogueTreeContainer ({
 }) {
   const [hasDialogueEnded, setHasDialogueEnded] = useState(false)
 
-  const runnerRef = useRef(runner || new YarnBound({
+  const runnerRef = useRef(runner)
+  runnerRef.current ??= new YarnBound({
     dialogue,
     startAt,
     functions,
@@ -30,7 +32,7 @@ export default function DialogueTreeContainer ({
     pauseCommand,
     combineTextAndOptionsResults,
     locale
-  }))
+  })
 
   const forceUpdate = useForceUpdate()
 
@@ -40,6 +42,7 @@ export default function DialogueTreeContainer ({
       onDialogueEnd()
     }
     runnerRef.current.advance(optionIndex)
+    onAdvance(runnerRef.current)
     forceUpdate()
   }, [runnerRef.current])
 
@@ -49,6 +52,10 @@ export default function DialogueTreeContainer ({
       runnerRef.current.runner.setVariableStorage(variableStorage)
     }
   }, [combineTextAndOptionsResults, variableStorage])
+
+  useEffect(() => {
+    onAdvance(runnerRef.current)
+  }, [])
 
   return (
     <DialogueTree
@@ -82,6 +89,7 @@ DialogueTreeContainer.propTypes = {
   pauseCommand: PropTypes.string,
   combineTextAndOptionsResults: PropTypes.bool,
   onDialogueEnd: PropTypes.func,
+  onAdvance: PropTypes.func,
   defaultOption: PropTypes.string,
   finalOption: PropTypes.string,
   locale: PropTypes.string,
