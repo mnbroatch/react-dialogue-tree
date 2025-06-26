@@ -3471,13 +3471,15 @@
     pauseCommand,
     combineTextAndOptionsResults = true,
     onDialogueEnd = () => {},
+    onAdvance = () => {},
     defaultOption = 'Next',
     finalOption = 'End',
     customNode,
     locale
   }) {
     const [hasDialogueEnded, setHasDialogueEnded] = React.useState(false);
-    const runnerRef = React.useRef(runner || new YarnBound({
+    const runnerRef = React.useRef(runner);
+    runnerRef.current ??= new YarnBound({
       dialogue,
       startAt,
       functions,
@@ -3486,7 +3488,7 @@
       pauseCommand,
       combineTextAndOptionsResults,
       locale
-    }));
+    });
     const forceUpdate = useForceUpdate();
     const advance = React.useCallback(optionIndex => {
       if (runnerRef.current.currentResult.isDialogueEnd) {
@@ -3494,6 +3496,7 @@
         onDialogueEnd();
       }
       runnerRef.current.advance(optionIndex);
+      onAdvance(runnerRef.current);
       forceUpdate();
     }, [runnerRef.current]);
     React.useEffect(() => {
@@ -3502,6 +3505,9 @@
         runnerRef.current.runner.setVariableStorage(variableStorage);
       }
     }, [combineTextAndOptionsResults, variableStorage]);
+    React.useEffect(() => {
+      onAdvance(runnerRef.current);
+    }, []);
     return /*#__PURE__*/React__default["default"].createElement(DialogueTree, {
       className: "mnbroatch-react-dialogue-tree",
       currentResult: hasDialogueEnded ? null : runnerRef.current.currentResult,
@@ -3528,6 +3534,7 @@
     pauseCommand: PropTypes__default["default"].string,
     combineTextAndOptionsResults: PropTypes__default["default"].bool,
     onDialogueEnd: PropTypes__default["default"].func,
+    onAdvance: PropTypes__default["default"].func,
     defaultOption: PropTypes__default["default"].string,
     finalOption: PropTypes__default["default"].string,
     locale: PropTypes__default["default"].string,
