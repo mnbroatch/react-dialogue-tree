@@ -38,6 +38,7 @@
   .dialogue-tree__node-spacer:last-of-type .dialogue-tree__node-wrapper {
     /* The node matching `last-of-type` is the current active node */
     background-color: white;
+    color: black;
   }
 
   .dialogue-tree__node-spacer:last-of-type .dialogue-node-choices__choice {
